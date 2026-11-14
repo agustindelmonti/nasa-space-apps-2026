@@ -239,3 +239,80 @@
   value: rule
   reference: criterio del equipo, pendiente AFA
   status: PENDING_AFA
+
+- assumption_id: A-SOIL-01
+  description: Pesos w_k de los componentes del índice ΔSuelo (suman 1)
+  value: {cover: 0.25, carbon: 0.25, nitrogen: 0.15, weeds: 0.20, roots: 0.15}
+  unit: adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-02
+  description: Persistencia de la cobertura del rastrojo después de la cosecha o terminación, por cultivo
+  value: {SOY_1ST: 60, SOY_2ND: 60, MAIZE_EARLY: 240, MAIZE_LATE: 240, WHEAT: 180, COVER_VETCH: 60, COVER_RYE: 150, COVER_OAT: 120}
+  unit: días
+  reference: valores de ejemplo del equipo, pendiente AFA (literatura de cobertura de rastrojos en siembra directa)
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-03
+  description: Referencia y escala de la fracción del año con suelo cubierto
+  value: {ref: 0.6, scale: 0.4}
+  unit: fraction
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-04
+  description: Aporte de carbono de rastrojo y biomasa por cultivo (gramíneas mayor que leguminosas)
+  value: {SOY_1ST: 1500, SOY_2ND: 1200, MAIZE_EARLY: 4500, MAIZE_LATE: 4000, WHEAT: 2500, COVER_VETCH: 1200, COVER_RYE: 2500, COVER_OAT: 2000}
+  unit: kg C/ha
+  reference: valores de ejemplo del equipo, pendiente AFA (índices de cosecha publicados, ej. INTA)
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-05
+  description: Aporte de carbono de mantenimiento de la materia orgánica y escala de normalización
+  value: {ref: 3000, scale: 2500}
+  unit: kg C/ha/año
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-06
+  description: Balance neto de nitrógeno por cultivo sin fertilización (fijación menos extracción e inmovilización)
+  value: {SOY_1ST: -20, SOY_2ND: -15, MAIZE_EARLY: -80, MAIZE_LATE: -70, WHEAT: -50, COVER_VETCH: 60, COVER_RYE: -10, COVER_OAT: -5}
+  unit: kg N/ha
+  reference: valores de ejemplo del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-07
+  description: Escala de normalización del balance de nitrógeno
+  value: 80
+  unit: kg N/ha/año
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-08
+  description: Especies máximas D_max y peso β de diversidad frente a presencia de cultivo de invierno
+  value: {d_max: 6, beta: 0.5}
+  unit: adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-09
+  description: Coeficiente de efecto radicular por cultivo (fasciculada mayor que pivotante)
+  value: {SOY_1ST: 0.3, SOY_2ND: 0.3, MAIZE_EARLY: 0.7, MAIZE_LATE: 0.7, WHEAT: 0.6, COVER_VETCH: 0.4, COVER_RYE: 0.8, COVER_OAT: 0.7}
+  unit: fraction
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-10
+  description: Umbral de NDVI por debajo del cual el suelo se considera desnudo en el compuesto
+  value: 0.3
+  unit: index
+  reference: pendiente AFA (literatura MODIS)
+  status: PENDING_AFA
+
+- assumption_id: A-SOIL-11
+  description: Tolerancia entre cobertura modelada y observada por NDVI
+  value: 0.15
+  unit: fraction
+  reference: pendiente AFA
+  status: PENDING_AFA
