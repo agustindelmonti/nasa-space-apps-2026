@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: rastrojo-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DEMO_MODE
+        value: "1"
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://rastrojo.vercel.app,http://localhost:5173
