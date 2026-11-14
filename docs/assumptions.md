@@ -50,6 +50,8 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-ECO-02 | Desfase entre cosecha y cobro | pendiente | meses | pendiente AFA | economics | media |
 | A-ECO-03 | Mes de inicio del año de campaña y mes de pago del arrendamiento | julio (ejemplo) | mes | pendiente AFA; práctica de contratos | economics | media |
 | A-ECO-04 | Conversión de quintales de soja a USD con el precio neto de soja del mismo set | 1 qq = 100 kg | USD/qq | convención; pendiente AFA el precio de referencia | economics | baja |
+| A-ECO-05 | Arrendamiento de referencia para comparar sembrar contra alquilar el campo | 14 | qq soja/ha/año | ejemplo zona núcleo, pendiente AFA | sowing-decision | alta |
+| A-ECO-06 | Costo anual de dejar el lote en barbecho (control de malezas) | 60 | USD/ha/año | ejemplo, pendiente AFA | sowing-decision | media |
 | A-ACT-01 | Perfil OWNER: H, i, α, λ, restricciones | H 10, i 0.06, α 5, λ 0.3, capital sin tope | años, fracción, USD/ha por punto, adim. | pendiente AFA | actor-profiles | alta |
 | A-ACT-02 | Perfil TENANT | H 1, i 0.12, α 0, λ 0.5, capital 400 USD/ha | ídem | pendiente AFA | actor-profiles | alta |
 | A-ACT-03 | Perfil COOP | H 5, i 0.08, α 3, λ 0.5, capital sin tope | ídem | pendiente AFA | actor-profiles | alta |
@@ -78,6 +80,7 @@ Total: 63 supuestos activos (AGR 1, CLI 11, WAT 17, SOIL 11, ECO 4, ACT 7, FLD 6
 |---|---|---|---|
 | A-ACT-08 | κ_w del término de prioridad de agua (USD/ha por unidad de fracción) | REJECTED | No inventar valores; reemplazado por filtro. La prioridad de agua ahora solo ordena la presentación (primero las rotaciones que no son RISKY en agua) y no toca el puntaje del motor. |
 | A-ACT-09 | κ_i del término de ingreso suplementario (USD/ha por unidad de fracción) | REJECTED | No inventar valores; reemplazado por filtro. La prioridad de ingreso suplementario ahora solo ordena la presentación (primero las de doble cultivo) y no toca el puntaje del motor. |
+| A-ACT-10 | Fracción máxima de campañas en que sembrar deja menos que alquilar para decir "sí, conviene" sin advertir riesgo | 0.2 | fracción de campañas | criterio del equipo, pendiente AFA | sowing-decision | media |
 
 ## Cambios de ids en la reconciliación
 

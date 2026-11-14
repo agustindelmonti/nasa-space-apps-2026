@@ -78,3 +78,25 @@ def test_no_forbidden_and_deterministic() -> None:
         b = respond(AskRequest(text=t, state=ConversationState(actor="BANK")))
         assert canonical_json(a) == canonical_json(b)
         assert forbidden_hits(a.text, phrases) == []
+
+
+def test_me_conviene_sembrar_answers_yes_or_no_with_the_decision_tool() -> None:
+    r = respond(AskRequest(text="¿Me conviene sembrar?"))
+    assert r.intent == "sowing"
+    assert [t.tool for t in r.trace] == ["evaluate_rotations", "sowing_decision"]
+    assert r.text.split("\n")[0].startswith(("Sí, conviene", "Conviene más", "No conviene"))
+    assert "A-ECO-05" in r.text
+
+
+def test_keep_renting_next_year_is_the_tenant_question_not_a_forecast() -> None:
+    r = respond(AskRequest(text="¿Me conviene seguir arrendando el año que viene?"))
+    assert r.intent == "sowing"
+    assert r.state.actor == "TENANT"
+    assert r.text.startswith("No pronostico el año que viene")
+
+
+def test_plain_me_conviene_leads_with_the_verdict_then_the_ranking() -> None:
+    r = respond(AskRequest(text="¿Cuál me conviene?"))
+    assert r.intent == "ranking"
+    assert "sowing_decision" in [t.tool for t in r.trace]
+    assert "1. " in r.text

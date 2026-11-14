@@ -113,6 +113,13 @@ class MarginRange(DomainModel):
         return self
 
 
+class AnnualMargin(DomainModel):
+    """Margen bruto anual de la rotación en una campaña histórica (promedio sobre posiciones)."""
+
+    campaign_start_year: int
+    margin: PValue
+
+
 class LossYears(DomainModel):
     count: int = Field(ge=0)
     total: int = Field(ge=1)
@@ -189,6 +196,8 @@ class RotationResult(DomainModel):
     water_adjustments: tuple[WaterAdjustment, ...] = ()
     score_delta_vs_current: PValue | None = None
     margin_ranges: tuple[MarginRange, ...] = ()
+    expected_annual_margin: PValue | None = None
+    annual_margins: tuple[AnnualMargin, ...] = ()
     loss_years: LossYears | None = None
     worst_year_margin: PValue | None = None
     worst_year: int | None = None

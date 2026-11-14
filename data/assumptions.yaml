@@ -345,6 +345,20 @@
   reference: convención 1 qq = 100 kg
   status: VALIDATED
 
+- assumption_id: A-ECO-05
+  description: Arrendamiento de referencia del lote, en quintales de soja por hectárea y por año, para comparar "sembrar" contra "alquilar el campo" (se valúa con el precio neto de soja y A-ECO-04)
+  value: 14
+  unit: qq/ha
+  reference: valor de ejemplo para zona núcleo, pendiente AFA (el usuario lo reemplaza por su contrato)
+  status: PENDING_AFA
+
+- assumption_id: A-ECO-06
+  description: Costo anual de dejar el lote en barbecho (control químico de malezas sin cultivo), para comparar "sembrar" contra "no sembrar"
+  value: 60
+  unit: USD/ha
+  reference: valor de ejemplo, pendiente AFA
+  status: PENDING_AFA
+
 - assumption_id: A-ACT-01
   description: Perfil OWNER (propietario) - horizonte, tasa, peso del suelo, aversión al riesgo y restricciones
   value: {label: Propietario, horizon_years: 10, discount_rate: 0.06, alpha: 5, lambda: 0.3, allow_double_crop: true, allow_cover_crop: true, max_working_capital_usd_ha: null}
@@ -391,6 +405,13 @@
   description: Multiplicador m de las prioridades del productor sobre los pesos de ΔSuelo (prioridad 1 duplica el peso antes de renormalizar)
   value: 1.0
   unit: adimensional
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-10
+  description: Fracción máxima de campañas históricas en que sembrar habría dejado menos que alquilar para responder "sí, conviene" sin advertir riesgo
+  value: 0.2
+  unit: fracción de campañas
   reference: criterio del equipo, pendiente AFA
   status: PENDING_AFA
 

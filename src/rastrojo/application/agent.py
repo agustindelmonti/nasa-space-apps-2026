@@ -23,6 +23,7 @@ from rastrojo.application.demo import (
     PROFILE_ASSUMPTIONS,
     actor_profile,
     build_engine_input,
+    demo_economics,
 )
 from rastrojo.application.explanations import (
     DISCLAIMERS,
@@ -31,12 +32,14 @@ from rastrojo.application.explanations import (
     fmt,
     load_glossary,
 )
+from rastrojo.application.sowing import SowingDecision, sowing_decision
 from rastrojo.domain import YearClassFilter
 from rastrojo.domain.engine_io import EngineOutput
 from rastrojo.engine.rotation import evaluate
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 Intent = Literal[
+    "sowing",
     "scope",
     "describe_situation",
     "what_if_dry",
@@ -58,6 +61,7 @@ ACTOR_LABEL = {
     "BANK": "banco",
 }
 SUGGESTIONS = (
+    "¿Me conviene sembrar?",
     "¿Cuál me conviene?",
     "¿Por qué sale primera?",
     "¿Y si el año viene seco?",
@@ -109,7 +113,8 @@ def normalize(text: str) -> str:
 @lru_cache(maxsize=1)
 def _intents() -> list[dict[str, Any]]:
     raw = yaml.safe_load((DATA_DIR / "intents.yaml").read_text(encoding="utf-8"))
-    return [{**i, "phrases": [normalize(p) for p in i["phrases"]]} for i in raw]
+    # Sin tildes "año" y "ano" quedan iguales: deduplicar para que una frase no cuente doble.
+    return [{**i, "phrases": sorted({normalize(p) for p in i["phrases"]})} for i in raw]
 
 
 def classify(text: str) -> Intent:
@@ -127,7 +132,7 @@ def classify(text: str) -> Intent:
 def extract(text: str) -> dict[str, Any]:
     t = normalize(text)
     ent: dict[str, Any] = {}
-    if any(w in t for w in ("alquilo", "arriendo", "arrendatario")):
+    if any(w in t for w in ("alquilo", "arriendo", "arrendatario", "arrendando")):
         ent["actor"] = "TENANT"
     elif any(w in t for w in ("propietario", "dueno", "el campo es mio")):
         ent["actor"] = "OWNER"
@@ -200,6 +205,38 @@ def _ranking_text(out: EngineOutput, state: ConversationState) -> str:
     cur = next(r for r in out.results if r.is_current)
     if cur.rank > 3:
         lines.append(f"Tu rotación actual queda en el puesto {cur.rank}.")
+    return "\n".join(lines)
+
+
+def _sowing(out: EngineOutput, trace: list[ToolTrace]) -> SowingDecision:
+    reg = AssumptionRegistry.load()
+    d = sowing_decision(out, NAMES, reg, demo_economics(reg))
+    trace.append(
+        ToolTrace(
+            tool="sowing_decision",
+            params={
+                "actor": out.profile_id,
+                "rent_qq_ha": d.rent_qq,
+                "alternatives": ["rent", "fallow"],
+            },
+            input_hash=out.input_hash,
+            engine_version=out.engine_version,
+        )
+    )
+    return d
+
+
+def _sowing_text(d: SowingDecision, asks_future: bool) -> str:
+    lines = [d.headline, *d.reasons]
+    lines.append(
+        "El arriendo de referencia (A-ECO-05) y el costo de barbecho (A-ECO-06) son supuestos de ejemplo:"
+        " cambialos por los de tu contrato en la web."
+    )
+    if asks_future:
+        lines.insert(
+            0,
+            "No pronostico el año que viene: te muestro qué pasó en las campañas reales del registro.",
+        )
     return "\n".join(lines)
 
 
@@ -297,7 +334,16 @@ def respond(req: AskRequest) -> AskResponse:
     if state.pending_profile and normalize(req.text) in ("si", "sí", "dale", "ok", "correcto"):
         state = state.model_copy(update={"actor": state.pending_profile, "pending_profile": None})
         intent = "ranking"
-    if intent == "scope":
+    if intent == "sowing":
+        actor = ent.get("actor", state.actor)
+        state = state.model_copy(update={"actor": actor, "pending_profile": None})
+        out = _evaluate(state, trace)
+        t = normalize(req.text)
+        text = _sowing_text(
+            _sowing(out, trace),
+            any(w in t for w in ("ano que viene", "proximo ano", "proxima campana")),
+        )
+    elif intent == "scope":
         text = "No pronostico el clima ni precios. Trabajo con años históricos reales: puedo mostrarte cómo le fue a cada rotación en los años secos del registro."
     elif intent == "describe_situation":
         actor = ent.get("actor", state.actor)
@@ -338,9 +384,17 @@ def respond(req: AskRequest) -> AskResponse:
         flt = YearClassFilter.DRY if intent == "what_if_dry" else YearClassFilter.ALL
         out = _evaluate(state, trace, flt)
         if intent in ("ranking", "what_if_dry"):
+            # "¿Me conviene?" a secas: primero el sí o no, después el orden.
+            head = _sowing(out, trace).headline + "\n\n" if intent == "ranking" else ""
             text = (
-                "Mirando solo los años secos del registro.\n" if flt is YearClassFilter.DRY else ""
-            ) + _ranking_text(out, state)
+                head
+                + (
+                    "Mirando solo los años secos del registro.\n"
+                    if flt is YearClassFilter.DRY
+                    else ""
+                )
+                + _ranking_text(out, state)
+            )
         elif intent == "why":
             text = _why_text(out)
         elif intent == "risk":
@@ -351,7 +405,7 @@ def respond(req: AskRequest) -> AskResponse:
             text = _bare_text(out)
         else:
             text = _vulnerability_text(out)
-    if intent in ("ranking", "what_if_dry", "why", "risk") or compare:
+    if intent in ("sowing", "ranking", "what_if_dry", "why", "risk") or compare:
         text = f"{text}\n\n{DISCLAIMERS[0]} {DISCLAIMERS[1]}"
     suggestions = [s for s in SUGGESTIONS if normalize(s) != normalize(req.text)][:3]
     return AskResponse(text=text, intent=intent, trace=trace, state=state, suggestions=suggestions)

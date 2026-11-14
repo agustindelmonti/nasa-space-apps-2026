@@ -1,5 +1,24 @@
 {
   "$defs": {
+    "AnnualMargin": {
+      "additionalProperties": false,
+      "description": "Margen bruto anual de la rotación en una campaña histórica (promedio sobre posiciones).",
+      "properties": {
+        "campaign_start_year": {
+          "title": "Campaign Start Year",
+          "type": "integer"
+        },
+        "margin": {
+          "$ref": "#/$defs/PValue"
+        }
+      },
+      "required": [
+        "campaign_start_year",
+        "margin"
+      ],
+      "title": "AnnualMargin",
+      "type": "object"
+    },
     "AssumptionProvenance": {
       "additionalProperties": false,
       "properties": {
@@ -423,6 +442,14 @@
       "additionalProperties": false,
       "description": "Resultado por rotación. Sin puntaje (campos de economía y suelo ausentes) solo cuando\nfaltan parámetros o supuestos: en ese caso la rotación es no elegible con su motivo.",
       "properties": {
+        "annual_margins": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/AnnualMargin"
+          },
+          "title": "Annual Margins",
+          "type": "array"
+        },
         "bare_soil_calendar": {
           "anyOf": [
             {
@@ -472,6 +499,17 @@
           },
           "title": "Exclusion Reasons",
           "type": "array"
+        },
+        "expected_annual_margin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "is_current": {
           "title": "Is Current",

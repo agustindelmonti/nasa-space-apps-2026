@@ -14,6 +14,7 @@ from rastrojo.domain.crops import CROP_INFO, Crop, Rotation
 from rastrojo.domain.engine_io import EngineInput, EngineOutput, ResolvedAssumption
 from rastrojo.domain.provenance import DerivedProvenance, PValue
 from rastrojo.domain.results import (
+    AnnualMargin,
     Benefit,
     ExclusionReason,
     MissingInfo,
@@ -485,6 +486,13 @@ def evaluate(inp: EngineInput) -> EngineOutput:
                 water_adjustments=tuple(c["adjustments"]),
                 score_delta_vs_current=delta,
                 margin_ranges=eco.margin_ranges if eco else (),
+                expected_annual_margin=eco.expected_mean if eco else None,
+                annual_margins=tuple(
+                    AnnualMargin(campaign_start_year=a.campaign_start_year, margin=a.margin)
+                    for a in eco.annual_margins
+                )
+                if eco
+                else (),
                 loss_years=eco.loss_years if eco else None,
                 worst_year_margin=eco.worst_year_margin if eco else None,
                 worst_year=eco.worst_year if eco else None,

@@ -1,4 +1,7 @@
 # Intenciones del agente por reglas. Prioridad menor gana en empate. Texto normalizado (minúsculas, sin tildes).
+- intent: sowing
+  priority: -1
+  phrases: ["conviene sembrar", "me conviene sembrar", "vale la pena sembrar", "sembrar o no", "sembrar o alquilar", "alquilar o sembrar", "alquilar el campo", "alquilarlo", "conviene alquilar", "conviene arrendar", "seguir arrendando", "sigo arrendando", "renovar el arriendo", "renovar el contrato", "renuevo el arriendo", "barbecho", "dejarlo quieto", "no sembrar"]
 - intent: scope
   priority: 0
   phrases: ["va a llover", "pronostico", "pronóstico", "el ano que viene", "el año que viene", "que precio va", "dolar", "dólar"]

@@ -24,8 +24,10 @@ from rastrojo.application.demo import (
     PROFILE_ASSUMPTIONS,
     actor_profile,
     build_engine_input,
+    demo_economics,
 )
 from rastrojo.application.explanations import explain, load_glossary, render_web
+from rastrojo.application.sowing import sowing_decision
 from rastrojo.data.errors import DataError
 from rastrojo.domain import Rotation, YearClassFilter, canonical_json
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
@@ -134,6 +136,9 @@ class LiteEvaluateRequest(_Strict):
     overrides: ProfileOverrides | None = None
     year_class_filter: YearClassFilter = YearClassFilter.ALL
     display_preferences: tuple[DisplayPreference, ...] = ()
+    # Alternativas sin cultivo para "¿me conviene sembrar?": si faltan se usan A-ECO-05 y A-ECO-06.
+    rent_qq_ha: float | None = Field(default=None, ge=0, le=60)
+    fallow_cost_usd_ha: float | None = Field(default=None, ge=0, le=500)
 
 
 # ---------------------------------------------------------------------------
@@ -209,7 +214,11 @@ def _evaluate_lite(req: LiteEvaluateRequest) -> dict[str, Any]:
     out = evaluate(inp)
     names = {r.rotation_id: r.name for r in (*CATALOG, current)}
     exp = explain(out, names)
+    sowing = sowing_decision(
+        out, names, reg, demo_economics(reg), req.rent_qq_ha, req.fallow_cost_usd_ha
+    )
     return {
+        "sowing": sowing.model_dump(mode="json"),
         "explanation": exp.model_dump(mode="json"),
         "explanation_text": render_web(exp),
         "input_hash": out.input_hash,
