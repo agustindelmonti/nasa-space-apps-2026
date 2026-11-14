@@ -4,8 +4,10 @@ Uso: ``uv run python scripts/fetch_demo_smap.py``
 
 - Busca en CMR (sin login) los granulos 3-horarios del último día disponible.
 - Calcula la celda EASE-Grid 2.0 global de 9 km que contiene el lote y pide solo esa celda
-  (``sm_rootzone`` y ``sm_rootzone_pctl``) a ``opendap.earthdata.nasa.gov``. El token de
-  Earthdata lo agrega el proxy del entorno; el script no lo lee ni lo guarda.
+  (``sm_rootzone`` y ``sm_rootzone_pctl``) a ``opendap.earthdata.nasa.gov``. Token de
+  Earthdata: si existe la variable ``EARTHDATA_TOKEN`` (GitHub Actions, ``.env`` local) se manda
+  como ``Authorization: Bearer`` solo a ese host; si no, lo agrega el proxy del entorno.
+  El script nunca lo imprime ni lo guarda.
 - Escribe ``data/fixtures/demo/SMAP_L4/sm_rootzone_<lat>_<lon>.json`` con el promedio del día,
   cada granulo usado y su procedencia. Ese fixture se commitea para correr sin red.
 
@@ -17,7 +19,7 @@ from __future__ import annotations
 import io
 import json
 import math
-from datetime import UTC, datetime
+import os
 from pathlib import Path
 
 import h5py
@@ -88,7 +90,9 @@ def cell_values(client: httpx.Client, opendap: str, row: int, col: int) -> dict[
             "/cell_lon",
         )
     )
-    resp = client.get(f"{opendap}.dap.nc4?dap4.ce={ce}", timeout=120)
+    token = os.environ.get("EARTHDATA_TOKEN", "").strip()
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+    resp = client.get(f"{opendap}.dap.nc4?dap4.ce={ce}", timeout=120, headers=headers)
     resp.raise_for_status()
     with h5py.File(io.BytesIO(resp.content), "r") as f:
         return {
@@ -137,7 +141,6 @@ def main() -> int:
             }
             for r in rows
         ],
-        "fetched_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
     path = ROOT / "data" / "fixtures" / "demo" / "SMAP_L4"
     path.mkdir(parents=True, exist_ok=True)

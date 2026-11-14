@@ -1,0 +1,68 @@
+# Refresca a diario la humedad de suelo SMAP L4 del lote demo y la commitea a main.
+# Vercel redespliega con el commit, así producción nunca consulta a Earthdata en vivo.
+#
+# Requiere el secret de repositorio EARTHDATA_TOKEN (token de urs.earthdata.nasa.gov).
+# Si el token vence o Earthdata falla, el workflow falla y el último dato queda como está.
+name: Refrescar SMAP L4
+
+on:
+  schedule:
+    - cron: "17 13 * * *" # 10:17 en Argentina (UTC-3)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-smap
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias (core + data + dev)
+        run: uv sync --frozen
+
+      - name: Bajar SMAP L4 de la celda del lote
+        env:
+          EARTHDATA_TOKEN: ${{ secrets.EARTHDATA_TOKEN }}
+        run: |
+          if [ -z "$EARTHDATA_TOKEN" ]; then
+            echo "::error::Falta el secret EARTHDATA_TOKEN"
+            exit 1
+          fi
+          uv run python scripts/fetch_demo_smap.py
+
+      - name: ¿Cambió el dato?
+        id: diff
+        run: |
+          if git diff --quiet -- data/fixtures/demo/SMAP_L4; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "SMAP sin cambios; no hay nada para commitear."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tests
+        if: steps.diff.outputs.changed == 'true'
+        run: uv run pytest -q -p no:warnings
+
+      - name: Commit y push a main
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          DAY=$(python3 -c "import json,glob;print(json.load(open(glob.glob('data/fixtures/demo/SMAP_L4/*.json')[0]))['date'])")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/fixtures/demo/SMAP_L4
+          git commit -m "chore(data): refresh SMAP L4 root zone moisture for the demo lot ($DAY)"
+          git push origin HEAD:main
