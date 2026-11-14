@@ -87,7 +87,7 @@ Hay agua para el cultivo, alcanza el capital del rol y se respetan las reglas de
 NASA POWER → ET0 y balance FAO-56  
 
 **Notas del orador:** [0:45] Esta es la función que elige la rotación. Tres términos. El margen: cuánta plata deja por hectárea en las 41 campañas reales, llevada al horizonte de cada uno. ΔSuelo: si la rotación mejora o empeora el suelo. Y el riesgo: cuánto cae el margen en el peor tercio de los años. Lo importante es que α y λ, y el horizonte, cambian según quién decide: el dueño le da peso al suelo, el arrendatario no, el banco castiga mucho el riesgo. ¿De dónde sale cada cosa? El clima, de NASA POWER. Rindes, precios y costos hoy son supuestos que vamos a validar con AFA y la Bolsa de Comercio; no son de la NASA y lo decimos en la pantalla. Y solo compiten las rotaciones factibles: que tengan agua según el balance FAO-56 y que le alcance el capital a quien decide.
-(Versión formal, por si preguntan: el margen es el VAN de los márgenes esperados, factor de anualidad por el margen medio; el riesgo es el expected shortfall del tercio inferior.)  
+(Versión formal, por si preguntan: el margen es el VAN de los márgenes esperados, factor de anualidad por el margen medio; el riesgo es el expected shortfall del tercio inferior.)
 
 ---
 
@@ -140,20 +140,28 @@ Validación: rindes por año seco contra MAGyP
 
 ## 8. equipo
 
-Por qué nosotros  
-**PolPilot, de Rosario.**  
+Por qué somos el equipo indicado  
+**Ya hacemos software para el campo.**  
+01  
+- **PolPilot ya existe**  
+Nuestro producto acompaña al productor del lote al camión. Esto le suma el satélite a algo que ya existe.  
+02  
+- **Llegamos por donde el productor ya está**  
+Ya hacemos bots de WhatsApp para el agro: el chat de la demo es la puerta de entrada.  
+03  
+- **Somos de acá**  
+Rosario, al lado de los lotes que modelamos. Podemos validar con AFA y con productores la semana que viene.  
 - **Lucas**  
-[COMPLETAR perfil: una línea]  
+[COMPLETAR perfil]  
 - **Agustín**  
-[COMPLETAR perfil: una línea]  
+[COMPLETAR perfil]  
 - **Wenceslao**  
-[COMPLETAR perfil: una línea]  
+[COMPLETAR perfil]  
 - **Luciano**  
-[COMPLETAR perfil: una línea]  
-Software, electrónica y economía: [COMPLETAR: confirmar quién es quién]  
-Próximo paso: sumar humedad de suelo (SMAP), lluvia satelital (IMERG) y agua regional (GRACE-FO), validar con AFA, y abrir la herramienta a acopios y vendedores de insumos.  
+[COMPLETAR perfil]  
+Próximo paso: sumar SMAP, IMERG y GRACE-FO al cálculo, validar los supuestos con AFA y abrirlo a acopios y vendedores de insumos.  
 
-**Notas del orador:** [0:25] Somos PolPilot, un equipo de acá, de Rosario. [Presentar en una frase a cada integrante y su perfil: Lucas, Agustín, Wenceslao y Luciano Raffagnini; software, electrónica, economía.] Vivimos al lado de la zona núcleo y conocemos a quienes deciden estos lotes. Lo que sigue: sumar la humedad de suelo de SMAP, la lluvia de IMERG y el agua regional de GRACE-FO, que ya están diseñados en el código y solo esperan la credencial; validar los supuestos con AFA; y abrir la herramienta a otros actores, como acopios y vendedores de insumos. Gracias.
+**Notas del orador:** [0:25] ¿Por qué nosotros? Porque esto no arranca de cero. Somos el equipo de PolPilot, un producto que ya acompaña al productor del lote al camión. Ya hacemos bots de WhatsApp para el campo, y por eso el chat de la demo es la puerta de entrada natural. Y somos de acá, de Rosario: podemos sentarnos con AFA y con productores la semana que viene para validar cada supuesto. [Presentar en una frase a Lucas, Agustín, Wenceslao y Luciano Raffagnini, con su perfil: software, electrónica, economía, hardware.] Lo que sigue: sumar SMAP, IMERG y GRACE-FO al cálculo y abrirlo a acopios e insumos. Gracias.
 
 ---
 
@@ -173,4 +181,3 @@ Uso de IA. Desarrollamos con asistencia de Claude Code (Anthropic) para especifi
 **Notas del orador:** Slide de respaldo, no se presenta. Lista cada dataset de la NASA, qué producto o capa usamos, si entra al cálculo o solo al mapa, y el link. Abajo, la declaración de uso de IA.
 
 ---
-

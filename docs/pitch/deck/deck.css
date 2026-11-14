@@ -114,9 +114,14 @@ section.light .shot { border-color: #D3DDD6; }
 .check x-icon { width: 32px; height: 32px; color: var(--green-dark); flex: none; }
 
 /* Team */
-.team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.member { background: var(--panel); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; gap: 8px; }
-.member h3 { font-size: 40px; color: var(--light); }
+.whyus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.why { border-top: 6px solid var(--green); padding-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.why .why-k { font: 700 28px/1 'Space Grotesk', Arial, sans-serif; color: var(--green); }
+.why h3 { font-size: 40px; line-height: 1.1; color: var(--light); }
+.why .body { font-size: 28px; color: var(--light-soft); }
+.team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.member { background: var(--panel); border-radius: 12px; padding: 16px 24px; display: flex; flex-direction: column; gap: 4px; }
+.member h3 { font-size: 32px; color: var(--light); }
 .vision { font: 600 48px/1.2 'Space Grotesk', Arial, sans-serif; color: var(--light); border-left: 8px solid var(--green); padding-left: 32px; }
 
 /* References */
