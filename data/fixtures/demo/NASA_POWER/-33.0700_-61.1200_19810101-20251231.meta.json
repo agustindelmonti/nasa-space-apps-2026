@@ -1,0 +1,61 @@
+{
+  "api_version": [
+    "v2.10.3"
+  ],
+  "cache_format_version": 1,
+  "content_sha256": "a9d265af96d95056afb227ccc89fa25b57404aea48b2c665fa4f969743ae27b8",
+  "dataset": "NASA_POWER",
+  "effective_cell": {
+    "meteorology_center": [
+      -33.0,
+      -61.25
+    ],
+    "meteorology_size_deg": [
+      0.5,
+      0.625
+    ],
+    "note": "centro calculado con la definición de grilla MERRA-2"
+  },
+  "elevation_m": 76.14,
+  "endpoint": "https://power.larc.nasa.gov/api/temporal/daily/point",
+  "fill_value": -999.0,
+  "is_modeled": true,
+  "limitation": "Promedio de una celda de decenas de km; lluvia de reanálisis corregida, no pluviómetro del lote",
+  "messages": [],
+  "query": {
+    "community": "AG",
+    "end": "2025-12-31",
+    "latitude": -33.07,
+    "longitude": -61.12,
+    "parameters": [
+      "PRECTOTCORR",
+      "T2M",
+      "T2M_MIN",
+      "T2M_MAX",
+      "ALLSKY_SFC_SW_DWN",
+      "RH2M",
+      "WS2M",
+      "PS"
+    ],
+    "start": "1981-01-01"
+  },
+  "retrieved_at": "2026-11-14T13:27:57+00:00",
+  "returned_point": [
+    [
+      -33.07,
+      -61.12
+    ]
+  ],
+  "rows": 131488,
+  "spatial_resolution": {
+    "meteorology": "0.5° x 0.625° (MERRA-2)",
+    "radiation": "1° x 1° (GEWEX SRB / CERES SYN1deg según el período)"
+  },
+  "temporal_resolution": "diaria",
+  "upstream_sources": [
+    "MERRA2",
+    "POWER",
+    "SRB",
+    "SYN1DEG"
+  ]
+}
