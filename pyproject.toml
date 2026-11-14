@@ -6,6 +6,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "fastapi>=0.115,<1",
     "httpx>=0.28.1",
     "pandas>=3.1.1",
     "pandera>=0.36.0",
@@ -13,6 +14,7 @@ dependencies = [
     "pydantic>=2.9,<3",
     "pydantic-settings>=2.5,<3",
     "pyyaml>=6.0.3",
+    "uvicorn[standard]>=0.30",
 ]
 
 [dependency-groups]
@@ -24,6 +26,7 @@ dev = [
     "types-pyyaml>=6.0.12.20261113",
     "pandas-stubs>=3.1.0.261029",
     "pyarrow-stubs>=20.0.0.20260819",
+    "httpx>=0.27",
 ]
 
 [build-system]
@@ -49,4 +52,4 @@ ignore = ["E501"]  # ruff format maneja el largo; los mensajes en español puede
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
-files = ["src/rastrojo/domain", "src/rastrojo/engine", "src/rastrojo/application", "src/rastrojo/data"]
+files = ["src/rastrojo/domain", "src/rastrojo/engine", "src/rastrojo/application", "src/rastrojo/adapters", "src/rastrojo/data"]
