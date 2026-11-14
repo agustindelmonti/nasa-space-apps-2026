@@ -74,6 +74,11 @@ class EngineInput(DomainModel):
 class EngineOutput(DomainModel):
     engine_version: str = Field(min_length=1)
     input_hash: str
+    profile_id: str = ""
+    year_class_filter: YearClassFilter = YearClassFilter.ALL
+    years_used: tuple[int, ...] = ()
+    effective_soil_weights: dict[str, float] = Field(default_factory=dict)
+    warnings: tuple[str, ...] = ()
     results: tuple[RotationResult, ...] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -88,6 +93,8 @@ class EngineOutput(DomainModel):
             raise ValueError("debe haber exactamente una rotación marcada como actual")
         base = current[0].score
         for r in self.results:
+            if r.score is None or base is None or r.score_delta_vs_current is None:
+                continue
             expected = r.score - base
             if abs(r.score_delta_vs_current.value - expected) > 1e-6 * max(1.0, abs(expected)):
                 raise ValueError(

@@ -421,11 +421,21 @@
     },
     "RotationResult": {
       "additionalProperties": false,
+      "description": "Resultado por rotación. Sin puntaje (campos de economía y suelo ausentes) solo cuando\nfaltan parámetros o supuestos: en ese caso la rotación es no elegible con su motivo.",
       "properties": {
         "bare_soil_calendar": {
-          "$ref": "#/$defs/BareSoilCalendar"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BareSoilCalendar"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "benefits": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/Benefit"
           },
@@ -433,13 +443,22 @@
           "type": "array"
         },
         "breakdown": {
-          "$ref": "#/$defs/ScoreBreakdown"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreBreakdown"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "eligible": {
           "title": "Eligible",
           "type": "boolean"
         },
         "evidence": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/Evidence"
           },
@@ -459,9 +478,18 @@
           "type": "boolean"
         },
         "loss_years": {
-          "$ref": "#/$defs/LossYears"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LossYears"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "margin_ranges": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/MarginRange"
           },
@@ -469,21 +497,47 @@
           "type": "array"
         },
         "missing": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/MissingInfo"
           },
           "title": "Missing",
           "type": "array"
         },
+        "name": {
+          "default": "",
+          "title": "Name",
+          "type": "string"
+        },
         "rain_on_bare_soil": {
-          "$ref": "#/$defs/PValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "rank": {
           "minimum": 1,
           "title": "Rank",
           "type": "integer"
         },
+        "risk": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "risks": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/Risk"
           },
@@ -495,12 +549,29 @@
           "type": "string"
         },
         "score_delta_vs_current": {
-          "$ref": "#/$defs/PValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "soil_delta_index": {
-          "$ref": "#/$defs/PValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "vulnerability_calendar": {
+          "default": [],
           "items": {
             "$ref": "#/$defs/VulnerabilityEntry"
           },
@@ -518,12 +589,47 @@
         "water_feasibility": {
           "$ref": "#/$defs/WaterFeasibility"
         },
+        "water_reasons": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Water Reasons",
+          "type": "array"
+        },
+        "working_capital_peak": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "worst_year": {
-          "title": "Worst Year",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Worst Year"
         },
         "worst_year_margin": {
-          "$ref": "#/$defs/PValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -531,21 +637,7 @@
         "rank",
         "is_current",
         "eligible",
-        "breakdown",
-        "soil_delta_index",
-        "water_feasibility",
-        "score_delta_vs_current",
-        "margin_ranges",
-        "loss_years",
-        "worst_year_margin",
-        "worst_year",
-        "rain_on_bare_soil",
-        "bare_soil_calendar",
-        "vulnerability_calendar",
-        "evidence",
-        "benefits",
-        "missing",
-        "risks"
+        "water_feasibility"
       ],
       "title": "RotationResult",
       "type": "object"
@@ -803,10 +895,27 @@
       ],
       "title": "YearClass",
       "type": "string"
+    },
+    "YearClassFilter": {
+      "enum": [
+        "ALL",
+        "DRY",
+        "NORMAL",
+        "WET"
+      ],
+      "title": "YearClassFilter",
+      "type": "string"
     }
   },
   "additionalProperties": false,
   "properties": {
+    "effective_soil_weights": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Effective Soil Weights",
+      "type": "object"
+    },
     "engine_version": {
       "minLength": 1,
       "title": "Engine Version",
@@ -816,12 +925,37 @@
       "title": "Input Hash",
       "type": "string"
     },
+    "profile_id": {
+      "default": "",
+      "title": "Profile Id",
+      "type": "string"
+    },
     "results": {
       "items": {
         "$ref": "#/$defs/RotationResult"
       },
       "minItems": 1,
       "title": "Results",
+      "type": "array"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "year_class_filter": {
+      "$ref": "#/$defs/YearClassFilter",
+      "default": "ALL"
+    },
+    "years_used": {
+      "default": [],
+      "items": {
+        "type": "integer"
+      },
+      "title": "Years Used",
       "type": "array"
     }
   },

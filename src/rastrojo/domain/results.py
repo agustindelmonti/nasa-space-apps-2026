@@ -172,27 +172,34 @@ class WaterAdjustment(DomainModel):
 
 
 class RotationResult(DomainModel):
+    """Resultado por rotación. Sin puntaje (campos de economía y suelo ausentes) solo cuando
+    faltan parámetros o supuestos: en ese caso la rotación es no elegible con su motivo."""
+
     rotation_id: str
+    name: str = ""
     rank: int = Field(ge=1)
     is_current: bool
     eligible: bool
     exclusion_reasons: tuple[ExclusionReason, ...] = ()
-    breakdown: ScoreBreakdown
-    soil_delta_index: PValue
+    breakdown: ScoreBreakdown | None = None
+    soil_delta_index: PValue | None = None
+    risk: PValue | None = None
     water_feasibility: WaterFeasibility
+    water_reasons: tuple[str, ...] = ()
     water_adjustments: tuple[WaterAdjustment, ...] = ()
-    score_delta_vs_current: PValue
-    margin_ranges: tuple[MarginRange, ...]
-    loss_years: LossYears
-    worst_year_margin: PValue
-    worst_year: int
-    rain_on_bare_soil: PValue
-    bare_soil_calendar: BareSoilCalendar
-    vulnerability_calendar: tuple[VulnerabilityEntry, ...]
-    evidence: tuple[Evidence, ...]
-    benefits: tuple[Benefit, ...]
-    missing: tuple[MissingInfo, ...]
-    risks: tuple[Risk, ...]
+    score_delta_vs_current: PValue | None = None
+    margin_ranges: tuple[MarginRange, ...] = ()
+    loss_years: LossYears | None = None
+    worst_year_margin: PValue | None = None
+    worst_year: int | None = None
+    working_capital_peak: PValue | None = None
+    rain_on_bare_soil: PValue | None = None
+    bare_soil_calendar: BareSoilCalendar | None = None
+    vulnerability_calendar: tuple[VulnerabilityEntry, ...] = ()
+    evidence: tuple[Evidence, ...] = ()
+    benefits: tuple[Benefit, ...] = ()
+    missing: tuple[MissingInfo, ...] = ()
+    risks: tuple[Risk, ...] = ()
 
     @model_validator(mode="after")
     def _checks(self) -> RotationResult:
@@ -200,19 +207,22 @@ class RotationResult(DomainModel):
             raise ValueError("una rotación elegible no puede tener motivos de exclusión")
         if not self.eligible and not self.exclusion_reasons:
             raise ValueError("una rotación no elegible debe declarar sus motivos")
-        if self.soil_delta_index.unit != "index" or not (
-            -100 <= self.soil_delta_index.value <= 100
-        ):
+        if self.eligible and self.breakdown is None:
+            raise ValueError("una rotación elegible necesita puntaje")
+        sd = self.soil_delta_index
+        if sd is not None and (sd.unit != "index" or not (-100 <= sd.value <= 100)):
             raise ValueError("ΔSuelo debe ser un 'index' entre -100 y 100")
-        if self.score_delta_vs_current.unit != "USD/ha":
-            raise ValueError("score_delta_vs_current debe estar en 'USD/ha'")
-        if self.is_current and self.score_delta_vs_current.value != 0:
-            raise ValueError("la rotación actual tiene score_delta_vs_current = 0")
+        d = self.score_delta_vs_current
+        if d is not None:
+            if d.unit != "USD/ha":
+                raise ValueError("score_delta_vs_current debe estar en 'USD/ha'")
+            if self.is_current and d.value != 0:
+                raise ValueError("la rotación actual tiene score_delta_vs_current = 0")
         classes = [m.year_class for m in self.margin_ranges]
         if len(set(classes)) != len(classes):
             raise ValueError("clase de año repetida en los rangos de margen")
         return self
 
     @property
-    def score(self) -> float:
-        return self.breakdown.total.value
+    def score(self) -> float | None:
+        return self.breakdown.total.value if self.breakdown is not None else None

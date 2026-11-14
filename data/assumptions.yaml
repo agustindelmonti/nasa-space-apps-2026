@@ -344,3 +344,101 @@
   unit: t/qq
   reference: convención 1 qq = 100 kg
   status: VALIDATED
+
+- assumption_id: A-ACT-01
+  description: Perfil OWNER (propietario) - horizonte, tasa, peso del suelo, aversión al riesgo y restricciones
+  value: {label: Propietario, horizon_years: 10, discount_rate: 0.06, alpha: 5, lambda: 0.3, allow_double_crop: true, allow_cover_crop: true, max_working_capital_usd_ha: null}
+  unit: años / fracción / USD/ha por punto / adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-02
+  description: Perfil TENANT (arrendatario)
+  value: {label: Arrendatario, horizon_years: 1, discount_rate: 0.12, alpha: 0, lambda: 0.5, allow_double_crop: true, allow_cover_crop: true, max_working_capital_usd_ha: 450}
+  unit: años / fracción / USD/ha por punto / adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-03
+  description: Perfil COOP (cooperativa)
+  value: {label: Cooperativa, horizon_years: 5, discount_rate: 0.08, alpha: 3, lambda: 0.5, allow_double_crop: true, allow_cover_crop: true, max_working_capital_usd_ha: null}
+  unit: años / fracción / USD/ha por punto / adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-04
+  description: Perfil BANK (banco)
+  value: {label: Banco, horizon_years: 3, discount_rate: 0.10, alpha: 0.5, lambda: 1.5, allow_double_crop: true, allow_cover_crop: true, max_working_capital_usd_ha: 600}
+  unit: años / fracción / USD/ha por punto / adimensional
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-05
+  description: Nivel q de la cola del expected shortfall de márgenes (Riesgo)
+  value: 0.3333333333333333
+  unit: fraction
+  reference: convención de terciles, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-06
+  description: Límites de los sliders de perfil personalizado
+  value: {horizon_years: [1, 20], alpha: [0, 20], lambda: [0, 3], discount_rate: [0, 0.3]}
+  unit: varias
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ACT-07
+  description: Multiplicador m de las prioridades del productor sobre los pesos de ΔSuelo (prioridad 1 duplica el peso antes de renormalizar)
+  value: 1.0
+  unit: adimensional
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-01
+  description: Lote de ejemplo demo-casilda (parcela al sureste de Casilda dibujada sobre Sentinel-2) - ubicación y superficie aproximada
+  value: {lat: -33.07, lon: -61.12, area_ha: 31}
+  unit: grados / ha
+  reference: placeholder del equipo, a reemplazar por un lote real
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-02
+  description: Precios de EJEMPLO por cultivo de renta con base de precio (no es una cotización)
+  value: {SOY_1ST: [300, FOB], SOY_2ND: [300, FOB], MAIZE_EARLY: [190, FOB], MAIZE_LATE: [190, FOB], WHEAT: [210, FOB]}
+  unit: USD/t
+  reference: ejemplo del equipo, reemplazar por pizarra BCR con fecha
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-03
+  description: Retenciones de EJEMPLO por cultivo
+  value: {SOY_1ST: 0.26, SOY_2ND: 0.26, MAIZE_EARLY: 0.12, MAIZE_LATE: 0.12, WHEAT: 0.12}
+  unit: fraction
+  reference: ejemplo del equipo, reemplazar por la normativa vigente a la fecha de referencia
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-04
+  description: Costos directos de EJEMPLO por cultivo, incluidos los de servicio
+  value: {SOY_1ST: 250, SOY_2ND: 200, MAIZE_EARLY: 520, MAIZE_LATE: 480, WHEAT: 320, COVER_VETCH: 90, COVER_RYE: 80, COVER_OAT: 70}
+  unit: USD/ha
+  reference: ejemplo del equipo, reemplazar por márgenes brutos publicados (pendiente AFA)
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-05
+  description: Cosecha (fracción del ingreso), comercialización (fracción) y flete (USD/t) de EJEMPLO
+  value: {harvest_fraction: 0.08, marketing_fraction: 0.03, freight_usd_t: 20}
+  unit: fraction / USD/t
+  reference: ejemplo del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-06
+  description: Rindes de EJEMPLO por cultivo y clase de año [DRY, NORMAL, WET]
+  value: {SOY_1ST: [2.6, 3.6, 4.2], SOY_2ND: [1.6, 2.6, 3.1], MAIZE_EARLY: [6.5, 9.5, 11.0], MAIZE_LATE: [6.0, 8.5, 9.5], WHEAT: [2.8, 3.8, 4.5]}
+  unit: t/ha
+  reference: ejemplo del equipo, reemplazar por estimaciones MAGyP o BCR del departamento
+  status: PENDING_AFA
+
+- assumption_id: A-DEMO-07
+  description: Suelo de EJEMPLO del lote demo (textura franco limosa, materia orgánica)
+  value: {texture: SILT_LOAM, organic_matter_pct: 2.8}
+  unit: clase / %
+  reference: ejemplo del equipo, reemplazar por carta de suelo INTA del lote
+  status: PENDING_AFA

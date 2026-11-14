@@ -203,33 +203,98 @@
     },
     "CropEconomics": {
       "additionalProperties": false,
+      "description": "Parámetros de un cultivo de renta. Los campos ausentes no tienen valor por defecto:\neconomics los reporta como faltantes (error tipado) en lugar de inventarlos.",
       "properties": {
         "crop": {
           "$ref": "#/$defs/Crop"
         },
         "direct_costs": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "export_tax": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "freight": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "harvest_cost": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "harvest_cost_mode": {
-          "$ref": "#/$defs/HarvestCostMode"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HarvestCostMode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "marketing_cost": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "price": {
-          "$ref": "#/$defs/DatedPValue"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "price_basis": {
-          "$ref": "#/$defs/PriceBasis"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PriceBasis"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "yields": {
           "additionalProperties": {
@@ -243,16 +308,7 @@
         }
       },
       "required": [
-        "crop",
-        "price",
-        "price_basis",
-        "export_tax",
-        "direct_costs",
-        "harvest_cost_mode",
-        "harvest_cost",
-        "marketing_cost",
-        "freight",
-        "yields"
+        "crop"
       ],
       "title": "CropEconomics",
       "type": "object"
@@ -401,6 +457,14 @@
             }
           ],
           "default": null
+        },
+        "service_crops": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ServiceCropCosts"
+          },
+          "title": "Service Crops",
+          "type": "array"
         }
       },
       "required": [
@@ -879,6 +943,24 @@
         "sources"
       ],
       "title": "ScenarioWeather",
+      "type": "object"
+    },
+    "ServiceCropCosts": {
+      "additionalProperties": false,
+      "description": "Cultivo de servicio: solo costos (implantación, semilla, secado). Sin precio ni rinde.",
+      "properties": {
+        "crop": {
+          "$ref": "#/$defs/Crop"
+        },
+        "direct_costs": {
+          "$ref": "#/$defs/DatedPValue"
+        }
+      },
+      "required": [
+        "crop",
+        "direct_costs"
+      ],
+      "title": "ServiceCropCosts",
       "type": "object"
     },
     "Soil": {
