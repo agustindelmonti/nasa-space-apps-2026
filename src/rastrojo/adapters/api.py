@@ -15,6 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from rastrojo import __version__
+from rastrojo.application.agent import AskRequest, respond
 from rastrojo.application.assumptions import AssumptionRegistry
 from rastrojo.application.demo import (
     CATALOG,
@@ -24,6 +25,7 @@ from rastrojo.application.demo import (
     actor_profile,
     build_engine_input,
 )
+from rastrojo.application.explanations import explain, load_glossary, render_web
 from rastrojo.data.errors import DataError
 from rastrojo.domain import Rotation, YearClassFilter, canonical_json
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
@@ -206,7 +208,10 @@ def _evaluate_lite(req: LiteEvaluateRequest) -> dict[str, Any]:
         raise ApiError(ErrorCode.DATA_UNAVAILABLE, str(exc)) from exc
     out = evaluate(inp)
     names = {r.rotation_id: r.name for r in (*CATALOG, current)}
+    exp = explain(out, names)
     return {
+        "explanation": exp.model_dump(mode="json"),
+        "explanation_text": render_web(exp),
         "input_hash": out.input_hash,
         "engine_version": out.engine_version,
         "engine_output": out.model_dump(mode="json"),
@@ -321,6 +326,31 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
                 "slider_limits": reg.value("A-ACT-06"),
             }
         )
+
+    @app.post(f"{API_PREFIX}/ask")
+    async def ask(req: AskRequest) -> Response:
+        try:
+            resp = await asyncio.wait_for(
+                asyncio.to_thread(respond, req), timeout=cfg.engine_timeout_s
+            )
+        except TimeoutError as exc:
+            raise ApiError(
+                ErrorCode.TIMEOUT, f"la consulta superó {cfg.engine_timeout_s} s"
+            ) from exc
+        return canonical_response(resp.model_dump(mode="json"))
+
+    @app.post(f"{API_PREFIX}/chat/simulate")
+    async def chat_simulate(req: AskRequest) -> Response:
+        resp = await asyncio.to_thread(respond, req.model_copy(update={"channel": "whatsapp"}))
+        from rastrojo.application.explanations import partition
+
+        body = resp.model_dump(mode="json")
+        body["messages"] = partition(resp.text, tail=())
+        return canonical_response(body)
+
+    @app.get(f"{API_PREFIX}/glossary")
+    async def glossary() -> Response:
+        return canonical_response({"terms": load_glossary()})
 
     @app.get(f"{API_PREFIX}/assumptions")
     async def assumptions() -> Response:

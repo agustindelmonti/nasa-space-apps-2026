@@ -1,0 +1,33 @@
+# Glosario en lenguaje simple. "short" es la versión para WhatsApp.
+- id: evapotranspiration
+  term: Evapotranspiración (ET)
+  short: El agua que pierde el lote por evaporación del suelo y transpiración del cultivo.
+  long: Es el agua que se va del lote hacia la atmósfera, por el suelo que evapora y por las plantas que transpiran. La ET0 es la de un pasto de referencia y la calculamos con datos de NASA POWER (temperatura, radiación, humedad y viento, método FAO-56). Cada cultivo consume una fracción de esa ET0 según su etapa.
+- id: ndvi
+  term: NDVI (índice de vegetación)
+  short: Un número de satélite que dice cuán verde y vigoroso está el lote.
+  long: Compara cuánta luz roja e infrarroja refleja la superficie. Va de -1 a 1; un cultivo vigoroso da valores altos y el suelo desnudo valores bajos. Lo usamos como evidencia de cuándo el lote estuvo cubierto, con píxeles de 250 m (MODIS) o 30 m (HLS).
+- id: soil_moisture_anomaly
+  term: Anomalía de humedad del suelo
+  short: Cuánto más seco o más húmedo está el suelo que lo normal para esa época.
+  long: Es la diferencia entre la humedad de hoy y la habitual para la misma fecha. SMAP L4 estima la humedad de la zona de raíces en celdas de unos 9 km combinando satélite y modelo; describe la zona, no mide tu lote.
+- id: water_balance
+  term: Balance hídrico
+  short: La cuenta del agua del suelo - lo que entra con la lluvia menos lo que consume el cultivo.
+  long: Llevamos día a día cuánta agua útil queda en el perfil. Entra lluvia efectiva, sale lo que el cultivo transpira; si el perfil se llena, el excedente drena, y si se vacía, el cultivo sufre estrés. Así estimamos si hay agua para un doble cultivo o un cultivo de servicio.
+- id: frost
+  term: Helada
+  short: Días con temperatura mínima a 2 m por debajo del umbral en momentos sensibles del cultivo.
+  long: Contamos los años en que la temperatura mínima de NASA POWER bajó del umbral en la ventana sensible de cada cultivo (por ejemplo, la floración del trigo). Es temperatura de una celda regional a 2 m, no de la planta en tu lote; los bajos pueden helar más.
+- id: heat_stress
+  term: Estrés térmico
+  short: Días muy calurosos en la floración, que pueden bajar el rinde.
+  long: Contamos los años con días de temperatura máxima por encima del umbral durante la floración de cada cultivo de renta. Usa la temperatura a 2 m de NASA POWER, que es regional.
+- id: grace_fo
+  term: GRACE-FO (agua total de la región)
+  short: Satélites que miden si la región tiene más o menos agua guardada que lo normal.
+  long: Dos satélites miden pequeños cambios de gravedad causados por el agua del suelo, los acuíferos y los ríos. La señal es regional (unos 300 km) y sirve para saber si la región viene con reservas bajas, nunca para decidir sobre un lote solo.
+- id: satellite_vs_field
+  term: Dato satelital y medición de campo
+  short: El satélite ve grande y seguido; el campo ve chico y exacto. Combinados se completan.
+  long: Un píxel satelital promedia varios kilómetros o cientos de metros y se repite cada pocos días, sin ir al lote. Una medición de campo (pluviómetro, sonda, martillador) es exacta en un punto pero cara de repetir. Combinarlos mejora la precisión - el satélite da la tendencia y el contexto, y el dato de campo calibra lo que pasa en tu lote.

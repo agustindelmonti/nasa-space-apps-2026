@@ -57,4 +57,4 @@
 
 ## Agente (P1)
 
-- [ ] A.1 Implementar POST /api/v1/ask sobre el contrato de `ask-agent` con rate limit; tests de contrato para modo por reglas y texto vacío
+- [x] A.1 Implementar POST /api/v1/ask sobre el contrato de `ask-agent` con rate limit; tests de contrato para modo por reglas y texto vacío
