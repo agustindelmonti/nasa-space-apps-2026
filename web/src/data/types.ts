@@ -69,8 +69,30 @@ export interface EvaluateRequest {
   currentRotationId?: string;
 }
 
+/** Deterministic explanation templates rendered by the API (`explanation` in `/evaluate`). */
+export interface RotationExplanation {
+  rotation_id: string;
+  title: string;
+  /** The fixed five-section card, in order: Por qué, Evidencia, Beneficios, Qué falta saber, Riesgos. */
+  sections: Record<string, string[]>;
+  extras: Record<string, string[]>;
+  closing: string;
+}
+
+export interface Explanation {
+  input_hash: string;
+  engine_version: string;
+  templates_version: string;
+  summary: string[];
+  rotations: RotationExplanation[];
+  disclaimers: string[];
+  assumption_ids: string[];
+}
+
 /** One evaluation as the page consumes it: the engine output plus what the API adds around it. */
 export interface Evaluation {
+  /** Only from the API; the fixtures carry none. */
+  explanation?: Explanation;
   origin: Origin;
   output: EngineOutput;
   /** rotation_id -> display name, from the API response (not from a fixed context). */

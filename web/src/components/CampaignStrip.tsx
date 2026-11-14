@@ -79,6 +79,7 @@ export function StripLegend() {
       <li><i className="key crop-maize" />Maíz</li>
       <li><i className="key crop-wheat" />Trigo</li>
       <li><i className="key crop-vetch" />Vicia</li>
+      <li><i className="key crop-rye-oat" />Centeno</li>
       <li><i className="key bare" />Suelo desnudo</li>
       <li><i className="key-frost" />Helada</li>
     </ul>

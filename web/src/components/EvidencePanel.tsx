@@ -1,5 +1,6 @@
 import { Bug, CircleHelp, Snowflake, Sprout, ThermometerSun, TriangleAlert, CloudRain, Droplets } from "lucide-react";
-import type { RotationResult } from "../data/types";
+import type { RotationExplanation, RotationResult } from "../data/types";
+import { ExplanationCard } from "./ExplanationCard";
 import { DATASET_LABEL, RISK_LABEL, SEVERITY_LABEL } from "../lib/labels";
 import { formatDate } from "../lib/format";
 import { Figure } from "./Figure";
@@ -19,10 +20,12 @@ const RISK_ICON: Record<string, typeof Bug> = {
 interface Props {
   result: RotationResult;
   name: string;
+  /** The API's five-section card for this rotation, when the evaluation brought one. */
+  card?: RotationExplanation;
 }
 
 /** Evidence and provenance of the selected rotation, exactly as the engine sends it. */
-export function EvidencePanel({ result: r, name }: Props) {
+export function EvidencePanel({ result: r, name, card }: Props) {
   return (
     <section className="evidence" aria-labelledby="h-evid">
       <div className="sec-head">
@@ -34,6 +37,8 @@ export function EvidencePanel({ result: r, name }: Props) {
           {r.is_current && <span className="current-tag"> · actual</span>} · puesto {r.rank} · <WaterState state={r.water_feasibility} />
         </p>
       </div>
+
+      {card && <ExplanationCard card={card} />}
 
       <div className="ev-grid">
         <div className="ev-col">

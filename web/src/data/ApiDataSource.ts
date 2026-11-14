@@ -1,5 +1,5 @@
 import { StaleResponseError, type DataSource } from "./DataSource";
-import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, PlotContext, Rotation, SliderLimits } from "./types";
+import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, Explanation, PlotContext, Rotation, SliderLimits } from "./types";
 
 /** Typed error body of the API: `{code, message, details}`. */
 export class ApiError extends Error {
@@ -28,6 +28,7 @@ interface EvaluateResponse {
   engine_output: EngineOutput;
   rotation_names: Record<string, string>;
   display_order: string[];
+  explanation?: Explanation;
 }
 
 interface ApiAssumption {
@@ -156,6 +157,7 @@ export class ApiDataSource implements DataSource {
         output: res.engine_output,
         rotationNames: res.rotation_names,
         displayOrder: res.display_order,
+        explanation: res.explanation,
         inputHash: headers.get("X-Input-Hash") ?? res.input_hash,
       };
     } catch (e) {

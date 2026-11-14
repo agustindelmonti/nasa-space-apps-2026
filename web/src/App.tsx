@@ -10,6 +10,9 @@ import { ProfileSliders } from "./components/ProfileSliders";
 import { EvaluationOptions } from "./components/EvaluationOptions";
 import { RankingTable } from "./components/RankingTable";
 import { EvidencePanel } from "./components/EvidencePanel";
+import { AskPanel } from "./components/AskPanel";
+import type { AgentClient } from "./data/AgentClient";
+import { MessageCircle } from "lucide-react";
 
 const PLOT_ID = "demo-casilda";
 /** Slider moves are sent once the hand stops for this long. */
@@ -21,7 +24,8 @@ interface Shown {
   order: string[];
 }
 
-export function App({ source }: { source: DataSource }) {
+export function App({ source, agent }: { source: DataSource; agent?: AgentClient }) {
+  const [askOpen, setAskOpen] = useState(false);
   const [ctx, setCtx] = useState<PlotContext | null>(null);
   const [profileId, setProfileId] = useState<ProfileId>("OWNER");
   const [draft, setDraft] = useState<ProfileOverrides>({});
@@ -110,6 +114,7 @@ export function App({ source }: { source: DataSource }) {
       <a className="skip" href="#ranking">
         Ir al ranking
       </a>
+      <div className={`shell${askOpen && agent ? " has-ask" : ""}`}>
       <div className="wrap">
         <header className="top">
           <div className="brand">
@@ -122,6 +127,12 @@ export function App({ source }: { source: DataSource }) {
           <p className="soft lede">
             Rotaciones para tu lote medidas contra 45 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.
           </p>
+          {agent && (
+            <button type="button" className="btn-secondary btn-ask" aria-expanded={askOpen} onClick={() => setAskOpen((o) => !o)}>
+              <MessageCircle size={20} strokeWidth={1.5} aria-hidden="true" />
+              Preguntale a Rastrojo
+            </button>
+          )}
           {offline ? (
             <p className="example" role="status" data-mode="offline">
               Modo demo sin conexión: el motor no respondió y se muestran datos de ejemplo, no resultados del motor.
@@ -179,9 +190,17 @@ export function App({ source }: { source: DataSource }) {
                 />
               )}
             </div>
-            {selected && <EvidencePanel result={selected} name={names[selected.rotation_id] ?? selected.rotation_id} />}
+            {selected && (
+              <EvidencePanel
+                result={selected}
+                name={names[selected.rotation_id] ?? selected.rotation_id}
+                card={evaluation?.explanation?.rotations.find((c) => c.rotation_id === selected.rotation_id)}
+              />
+            )}
           </main>
         )}
+      </div>
+      {askOpen && agent && <AskPanel client={agent} actor={profileId} onClose={() => setAskOpen(false)} />}
       </div>
       <footer className="legends">
         <span>Apoya, no reemplaza al agrónomo.</span>

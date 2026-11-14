@@ -11,14 +11,16 @@ import "./styles/app.css";
 import { App } from "./App";
 import { FixtureDataSource } from "./data/FixtureDataSource";
 import { ApiDataSource } from "./data/ApiDataSource";
+import { AgentClient } from "./data/AgentClient";
 
 // With VITE_API_URL the page talks to the real engine and falls back to the fixtures if the
 // API does not answer; without it, it is the offline demo. Components do not change.
 const apiUrl = import.meta.env.VITE_API_URL?.trim();
 const source = apiUrl ? new ApiDataSource(apiUrl, new FixtureDataSource()) : new FixtureDataSource(120);
+const agent = apiUrl ? new AgentClient(apiUrl) : undefined;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App source={source} />
+    <App source={source} agent={agent} />
   </StrictMode>,
 );
