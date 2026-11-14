@@ -21,7 +21,7 @@ async function open(page: Page): Promise<string> {
   const first = page.waitForResponse(isEvaluate);
   await page.goto("/");
   const res = await first;
-  await expect(page.locator("li.row")).toHaveCount(5);
+  await expect(page.locator("li.row")).toHaveCount(5, { timeout: 20_000 }); // first load compiles on the Vite dev server
   return res.headers()["x-input-hash"];
 }
 

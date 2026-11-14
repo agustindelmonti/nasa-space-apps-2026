@@ -8,7 +8,7 @@ async function openOffline(page: Page) {
   await page.route(/127\.0\.0\.1:8000/, (r) => r.abort("connectionrefused"));
   await page.route(/tiles\.maps\.eox\.at|gibs\.earthdata\.nasa\.gov/, (r) => r.fulfill({ body: PNG, contentType: "image/png" }));
   await page.goto("/");
-  await expect(page.locator("li.row")).toHaveCount(4);
+  await expect(page.locator("li.row")).toHaveCount(4, { timeout: 20_000 }); // first load compiles on the Vite dev server
 }
 
 const order = (page: Page) => page.locator("li.row").evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.id));
