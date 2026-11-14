@@ -11,3 +11,5 @@ data/raw/
 .claude/settings.local.json
 .impeccable/config.local.json
 .impeccable/hook.cache.json
+.claude/worktrees/
+data/cache/
