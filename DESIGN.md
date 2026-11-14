@@ -156,7 +156,7 @@ Grafito mate con una marca dorada, un celeste reservado para agua y series de cu
 - **Rastrojo** (#D8B46A): marca. Contorno del lote, actor seleccionado, capa activa, primera posición del ranking (filete izquierdo de 3 px solo en esa fila), foco de teclado, selección de texto al 35 %. Texto oscuro sobre dorado da 9,3:1.
 
 ### Secondary
-- **Agua** (#5FB4D0): todo lo que habla de agua o viene del satélite como observación: badge OBSERVED, panel "Agua invisible", capa SMAP, balance hídrico. 7,8:1 sobre grafito.
+- **Agua** (#5FB4D0): todo lo que habla de agua o viene del satélite como observación: badge OBSERVED, panel "Factibilidad hídrica", capa SMAP, balance hídrico. 7,8:1 sobre grafito.
 
 ### Neutral
 - **Grafito** (#121517): fondo de página.
@@ -199,9 +199,9 @@ Grafito mate con una marca dorada, un celeste reservado para agua y series de cu
 
 ## Layout
 
-Grilla de 12 columnas, ancho máximo 1320 px, gutter de 24 px. Vista principal en proyector: imagen del lote a la izquierda (7 columnas) con selector de capas arriba y pie de resolución y limitación abajo; a la derecha (5 columnas), de arriba hacia abajo: panel "Agua invisible" (GRACE-FO, SMAP, POWER en tres celdas), selector de actor con sus parámetros, y ranking con franjas. Debajo, a todo el ancho, evidencia y procedencia de la rotación seleccionada. El simulador de WhatsApp entra como panel lateral derecho que empuja el contenido.
+Grilla de 12 columnas, ancho máximo 1320 px, gutter de 24 px. Vista principal en proyector: imagen del lote a la izquierda (7 columnas) con selector de capas arriba y pie de resolución y limitación abajo; a la derecha (5 columnas), de arriba hacia abajo: panel "Factibilidad hídrica" (GRACE-FO, SMAP, POWER en tres celdas), selector de actor con sus parámetros, y ranking con franjas. Debajo, a todo el ancho, evidencia y procedencia de la rotación seleccionada. El simulador de WhatsApp entra como panel lateral derecho que empuja el contenido.
 
-En celular (390 px): actor, ranking con franjas compactas, imagen del lote, agua invisible, evidencia. Ritmo vertical en múltiplos de 4 px; más espacio sobre un título que debajo.
+En celular (390 px): actor, ranking con franjas compactas, imagen del lote, factibilidad hídrica, evidencia. Ritmo vertical en múltiplos de 4 px; más espacio sobre un título que debajo.
 
 ## Elevation & Depth
 
@@ -222,7 +222,7 @@ Usamos íconos donde ayudan a escanear o a reconocer algo de un vistazo, **sin a
 - **Color:** heredan el color del texto que acompañan (`currentColor`). Solo los íconos de estado toman el color del estado.
 - **Dónde sí:**
   - Selector de capas: `satellite` (color natural), `droplets` (SMAP raíces), `scan-line` (suelo desnudo), `cloud-rain` (lluvia).
-  - Panel "Agua invisible": `waves` (GRACE-FO), `droplets` (SMAP), `cloud-rain` (POWER/IMERG).
+  - Panel "Factibilidad hídrica": `waves` (GRACE-FO), `droplets` (SMAP), `cloud-rain` (POWER/IMERG).
   - Selector de actor: `house` (propietario), `key-round` (arrendatario), `users` (cooperativa), `landmark` (banco).
   - Estados hídricos junto a su palabra: `circle-check` (factible), `triangle-alert` (riesgoso), `circle-x` (no factible), `circle-help` (desconocido).
   - Riesgos: `snowflake` (helada), `thermometer-sun` (estrés térmico), `sprout` (cultivo), `bug` (malezas y plagas).
@@ -263,7 +263,7 @@ Pocos momentos, cortos y con propósito: el movimiento explica un cambio de esta
 ### Imagen del lote (componente firma)
 - Imagen satelital real (Sentinel-2 o HLS vía GIBS), contorno del lote en dorado, etiqueta con superficie y coordenadas, escala gráfica calculada, selector de capas arriba y pie con dataset, resolución y limitación. Atribución del proveedor siempre visible.
 
-### Panel "Agua invisible"
+### Panel "Factibilidad hídrica"
 - Tres celdas con filete: GRACE-FO (anomalía de agua total, mm), SMAP L4 (humedad de raíces, m³/m³), POWER/IMERG (lluvia de la ventana, mm). Cada una con etiqueta mono, cifra grande, unidad y una línea de limitación.
 
 ### Ranking de rotaciones (componente firma)

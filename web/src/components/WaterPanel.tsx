@@ -11,7 +11,7 @@ export function WaterPanel({ cells }: { cells: PlotContext["water_panel"] }) {
   return (
     <section className="water" aria-labelledby="h-water">
       <h2 id="h-water" className="water-title h-title">
-        Agua invisible
+        Factibilidad hídrica <span className="water-sub">/ agua disponible</span>
       </h2>
       <div className="water-cells">
         {items.map(({ key, Icon, cell, signed }) => (

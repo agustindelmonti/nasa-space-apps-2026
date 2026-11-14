@@ -1,4 +1,4 @@
-"""Factibilidad hídrica ("agua invisible"): balance diario tipo balde FAO-56 por escenario.
+"""Factibilidad hídrica (agua disponible): balance diario tipo balde FAO-56 por escenario.
 
 Submódulo puro del motor. Recibe todo resuelto desde `EngineInput` (series diarias por año,
 Suelo, humedad SMAP, anomalía GRACE-FO y supuestos). Sin red, reloj, archivos ni azar; las

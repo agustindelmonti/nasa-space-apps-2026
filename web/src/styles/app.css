@@ -129,6 +129,7 @@ header.top {
 .panel { display: grid; gap: 16px; min-width: 0; }
 .water { border: 1px solid var(--color-rule); background: var(--color-panel); }
 .water-title { padding: 10px 16px 0; color: var(--color-water); }
+.water-sub { font-weight: 400; color: var(--color-text-soft); }
 .water-cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .water-cell { padding: 10px 16px 14px; border-right: 1px solid var(--color-rule); display: grid; gap: 6px; align-content: start; min-width: 0; }
 .water-cell:last-child { border-right: 0; }

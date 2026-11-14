@@ -41,4 +41,4 @@
 
 ## 6. Vista del balance (P2)
 
-- [ ] 6.1 Exponer la serie diaria del balance de un año elegido para el panel "agua invisible"; verificar con test de la API que devuelve la serie con procedencia
+- [ ] 6.1 Exponer la serie diaria del balance de un año elegido para el panel "factibilidad hídrica"; verificar con test de la API que devuelve la serie con procedencia

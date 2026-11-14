@@ -33,7 +33,7 @@ E y Riesgo sobre años históricos reales del registro NASA clasificados seco/no
 ## MVP
 
 1. Motor determinista de rotaciones (actual + al menos 2 alternativas) por perfil de actor.
-2. "Agua invisible": factibilidad hídrica de doble cultivo o cultivo de servicio con GRACE-FO (TWS regional) + SMAP L4 (humedad zona raíces) + GPM IMERG y POWER (lluvia, T, ET0) + NDVI histórico MODIS/HLS. Cada dato con resolución y limitación.
+2. "Factibilidad hídrica / agua disponible": factibilidad de doble cultivo o cultivo de servicio con GRACE-FO (TWS regional) + SMAP L4 (humedad zona raíces) + GPM IMERG y POWER (lluvia, T, ET0) + NDVI histórico MODIS/HLS. Cada dato con resolución y limitación.
 3. Modelo de actores (propietario, arrendatario, cooperativa, banco): mismo lote, rankings distintos.
 4. Explicación estructurada por plantillas deterministas.
 5. Canal WhatsApp: ubicación + rotación actual → resumen. LLM opcional solo reformula, sin agregar números, con fallback a plantilla. Si no llega, web que simula el chat contra la misma API.

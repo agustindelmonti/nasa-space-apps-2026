@@ -67,7 +67,7 @@ Criterios: Impacto (I), Creatividad (C), Validez (V), Pertinencia y uso de datos
 | 15 | "Puente verde" y plagas compartidas: avisar cuando dos cultivos seguidos comparten plagas (soja continua y chinches/enfermedades) usando una tabla simple marcada como ASSUMPTION | Surco | P (lo pide el enunciado: cortar ciclos de plagas) | soil-impact, explanations | P2 |
 | 16 | Audio del resumen en WhatsApp (nota de voz generada a partir de la plantilla, sin números nuevos) | space2earth (lectura en voz alta) | I (productor en el tractor) | whatsapp-channel | P2 |
 | 17 | Barrido de sensibilidad de a un parámetro por vez (α, λ, H, agua del perfil), documentado en una tabla para la página NASA | FieldShift2026 (reporte de sensibilidad) | V | quality, actor-profiles | P2 |
-| 18 | Confirmación de nuestro ángulo: ESM pregunta "¿queda humedad residual para un segundo cultivo?", la misma pregunta que nuestro "agua invisible", pero con datos simulados. Nosotros la respondemos con datos reales (GRACE-FO + SMAP L4 + IMERG + POWER). Usarlo en el pitch como "otros lo plantean, nosotros lo medimos" (sin nombrar al equipo) | ESM-FieldShift | C, P | water-feasibility, explanations | P0 (solo mensaje) |
+| 18 | Confirmación de nuestro ángulo: ESM pregunta "¿queda humedad residual para un segundo cultivo?", la misma pregunta que nuestro "factibilidad hídrica", pero con datos simulados. Nosotros la respondemos con datos reales (GRACE-FO + SMAP L4 + IMERG + POWER). Usarlo en el pitch como "otros lo plantean, nosotros lo medimos" (sin nombrar al equipo) | ESM-FieldShift | C, P | water-feasibility, explanations | P0 (solo mensaje) |
 
 ## 3. Trampas y errores vistos (para no repetirlos)
 
@@ -100,7 +100,7 @@ Criterios: Impacto (I), Creatividad (C), Validez (V), Pertinencia y uso de datos
 
 **Latinoamérica y Argentina:**
 
-- **Surco (Santa Cruz, Bolivia):** es el competidor conceptual más cercano. En español, foco en soja, simula rotaciones con el clima real de cada campaña desde 2001, muestra suelo desnudo, ganancia en un mal año, puente verde y funciona sin internet. Usa solo POWER (nada de GRACE, SMAP L4 de producto ni IMERG), no tiene actores ni WhatsApp. Diferenciarnos en el pitch: más datos NASA de verdad (agua invisible) y actores.
+- **Surco (Santa Cruz, Bolivia):** es el competidor conceptual más cercano. En español, foco en soja, simula rotaciones con el clima real de cada campaña desde 2001, muestra suelo desnudo, ganancia en un mal año, puente verde y funciona sin internet. Usa solo POWER (nada de GRACE, SMAP L4 de producto ni IMERG), no tiene actores ni WhatsApp. Diferenciarnos en el pitch: más datos NASA de verdad (factibilidad hídrica) y actores.
 - **fast-app (San Luis, Argentina):** es el único equipo argentino de Field Shift que encontramos. Lista 11 fuentes (incluido GRACE) y GeoINTA/SISINTA, pero el foco está en el login multiusuario y la digitalización de lotes. No tiene tests, ni actores, ni WhatsApp. Su último commit es del 3/11.
 - **Perú:** agrohalcon (Piura, recién arranca) y field-shift-majes (Arequipa, análisis de agua entregada contra consumida con SSEBop, sólido en datos pero no es una herramienta de rotación).
 - **Brasil:** nether (Aracaju) y terraturn, los dos solo con README.
