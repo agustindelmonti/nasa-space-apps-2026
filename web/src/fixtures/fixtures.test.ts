@@ -41,7 +41,7 @@ describe("engine output fixtures", () => {
 
   it("the validator rejects a broken output (sanity check)", () => {
     const data = load("web/src/fixtures/engine_output.demo.json");
-    data.results[0].breakdown.total.unit = "USD";
+    data.results[0].breakdown!.total.unit = "USD";
     delete data.results[1].loss_years;
     expect(validateOutput(data)).toBe(false);
   });

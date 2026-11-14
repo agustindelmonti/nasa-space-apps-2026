@@ -101,7 +101,7 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
               </div>
               <div className="score">
                 <span className="fig">
-                  {formatNumber(r.breakdown.total.value)} <span className="unit">USD/ha</span>
+                  {r.breakdown ? <>{formatNumber(r.breakdown.total.value)} <span className="unit">USD/ha</span></> : <span className="soft">sin puntaje</span>}
                 </span>
                 <span className="move" key={`${evaluationKey}-${m}`} data-move={m || undefined}>
                   {m > 0 ? `▲ ${m}` : m < 0 ? `▼ ${-m}` : ""}
@@ -110,16 +110,18 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
               <div className="facts">
                 <WaterState state={r.water_feasibility} />
                 <span>
-                  ΔSuelo <span className="fig fig-sm">{formatSigned(r.soil_delta_index.value)}</span>
+                  ΔSuelo <span className="fig fig-sm">{r.soil_delta_index ? formatSigned(r.soil_delta_index.value) : "desconocido"}</span>
                 </span>
-                <span>
-                  Pérdida en{" "}
-                  <span className="fig fig-sm">
-                    {r.loss_years.count} de {r.loss_years.total}
-                  </span>{" "}
-                  años
-                </span>
-                {!r.is_current && (
+                {r.loss_years && (
+                  <span>
+                    Pérdida en{" "}
+                    <span className="fig fig-sm">
+                      {r.loss_years.count} de {r.loss_years.total}
+                    </span>{" "}
+                    años
+                  </span>
+                )}
+                {!r.is_current && r.score_delta_vs_current && (
                   <span>
                     <span className="fig fig-sm">{formatSigned(r.score_delta_vs_current.value)}</span> vs actual
                   </span>

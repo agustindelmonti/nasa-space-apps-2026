@@ -38,6 +38,7 @@ export function EvidencePanel({ result: r, name }: Props) {
       <div className="ev-grid">
         <div className="ev-col">
           <h3 className="label">Puntaje y desglose</h3>
+          {r.breakdown && r.loss_years && r.worst_year_margin && r.rain_on_bare_soil ? (
           <dl className="kv">
             <dt>VAN de márgenes</dt>
             <dd><Figure value={r.breakdown.npv} /></dd>
@@ -59,13 +60,16 @@ export function EvidencePanel({ result: r, name }: Props) {
             <dt>Lluvia sobre suelo desnudo</dt>
             <dd><Figure value={r.rain_on_bare_soil} /></dd>
           </dl>
+          ) : (
+            <p className="soft">Sin puntaje: faltan datos para calcularlo (ver faltantes).</p>
+          )}
           <p className="small soft">Margen bruto por hectárea. El puntaje lo calcula el motor; la web solo lo muestra.</p>
         </div>
 
         <div className="ev-col ev-wide">
           <h3 className="label">Datos y supuestos</h3>
           <ul className="evid">
-            {r.evidence.map((e, i) => (
+            {(r.evidence ?? []).map((e, i) => (
               <li key={i}>
                 <span className="ev-badge"><ProvenanceBadge provenance={e.value.provenance} /></span>
                 <p>
@@ -74,7 +78,7 @@ export function EvidencePanel({ result: r, name }: Props) {
                 <Figure value={e.value} badge={false} />
               </li>
             ))}
-            {r.missing.map((m, i) => (
+            {(r.missing ?? []).map((m, i) => (
               <li key={`m${i}`} className="missing">
                 <span className="ev-badge"><ProvenanceBadge missing={{ item: m.item, howToGet: m.how_to_get }} /></span>
                 <p>
@@ -85,11 +89,11 @@ export function EvidencePanel({ result: r, name }: Props) {
             ))}
           </ul>
 
-          {r.benefits.length > 0 && (
+          {(r.benefits ?? []).length > 0 && (
             <>
               <h3 className="label">Beneficios frente a la actual</h3>
               <ul className="plain">
-                {r.benefits.map((b, i) => (
+                {(r.benefits ?? []).map((b, i) => (
                   <li key={i}>
                     {b.description} {b.value && <Figure value={b.value} signed />}
                   </li>
@@ -99,11 +103,11 @@ export function EvidencePanel({ result: r, name }: Props) {
           )}
 
           <h3 className="label">Riesgos a revisar en el lote</h3>
-          {r.risks.length === 0 ? (
+          {(r.risks ?? []).length === 0 ? (
             <p className="soft">La evaluación no informa riesgos para esta rotación.</p>
           ) : (
             <ul className="risks">
-              {r.risks.map((k, i) => {
+              {(r.risks ?? []).map((k, i) => {
                 const Icon = RISK_ICON[k.risk_type] ?? CircleHelp;
                 return (
                   <li key={i}>

@@ -39,7 +39,7 @@ export function CampaignStrip({ cells, startMonth, vulnerability, animateEntry =
   const frost = cells.map((crop, i) => {
     if (!crop) return false;
     const m = monthOf(startMonth, i);
-    return vulnerability.some((v) => v.event === "FROST" && v.crop === crop && v.in_field_by_month[m] && v.level_by_month[m] !== null);
+    return (vulnerability ?? []).some((v) => v.event === "FROST" && v.crop === crop && v.in_field_by_month[m] && v.level_by_month[m] !== null);
   });
   const campaigns = cells.length / 12;
   return (

@@ -108,6 +108,7 @@ export type HarvestCostMode = "FRACTION_OF_REVENUE" | "USD_PER_HA";
  * via the `definition` "PriceBasis".
  */
 export type PriceBasis = "FOB" | "SPOT_FAS";
+export type ServiceCrops = ServiceCropCosts[];
 export type Provenance1 = ObservedProvenance | DerivedProvenance | AssumptionProvenance | UserInputProvenance;
 export type Unit1 =
   | "mm"
@@ -259,22 +260,26 @@ export interface Campaign {
 export interface EconomicParameters {
   crops: Crops;
   rent?: Rent | null;
+  service_crops?: ServiceCrops;
 }
 /**
+ * Parámetros de un cultivo de renta. Los campos ausentes no tienen valor por defecto:
+ * economics los reporta como faltantes (error tipado) en lugar de inventarlos.
+ *
  * This interface was referenced by `EngineInput`'s JSON-Schema
  * via the `definition` "CropEconomics".
  */
 export interface CropEconomics {
   crop: Crop;
-  direct_costs: DatedPValue;
-  export_tax: DatedPValue;
-  freight: DatedPValue;
-  harvest_cost: DatedPValue;
-  harvest_cost_mode: HarvestCostMode;
-  marketing_cost: DatedPValue;
-  price: DatedPValue;
-  price_basis: PriceBasis;
-  yields: Yields;
+  direct_costs?: DatedPValue | null;
+  export_tax?: DatedPValue | null;
+  freight?: DatedPValue | null;
+  harvest_cost?: DatedPValue | null;
+  harvest_cost_mode?: HarvestCostMode | null;
+  marketing_cost?: DatedPValue | null;
+  price?: DatedPValue | null;
+  price_basis?: PriceBasis | null;
+  yields?: Yields;
 }
 /**
  * Parámetro económico: además de procedencia, lleva su fecha de referencia.
@@ -356,6 +361,16 @@ export interface Yields {
 export interface Rent {
   soy_qq_ha?: DatedPValue | null;
   usd_ha?: DatedPValue | null;
+}
+/**
+ * Cultivo de servicio: solo costos (implantación, semilla, secado). Sin precio ni rinde.
+ *
+ * This interface was referenced by `EngineInput`'s JSON-Schema
+ * via the `definition` "ServiceCropCosts".
+ */
+export interface ServiceCropCosts {
+  crop: Crop;
+  direct_costs: DatedPValue;
 }
 /**
  * This interface was referenced by `EngineInput`'s JSON-Schema

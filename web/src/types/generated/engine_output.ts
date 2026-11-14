@@ -6,6 +6,7 @@
 
 export type EngineVersion = string;
 export type InputHash = string;
+export type ProfileId = string;
 /**
  * @minItems 1
  */
@@ -131,6 +132,7 @@ export type HowToGet = string;
 export type Item = string;
 export type WhyItMatters = string;
 export type Missing = MissingInfo[];
+export type Name = string;
 export type Rank = number;
 export type Basis = "EVIDENCE" | "ASSUMPTION";
 export type Description1 = string;
@@ -241,39 +243,63 @@ export type ScenarioYear = number;
  */
 export type WaterFeasibility = "FEASIBLE" | "RISKY" | "NOT_FEASIBLE" | "UNKNOWN";
 export type WaterAdjustments = WaterAdjustment[];
-export type WorstYear = number;
+export type WaterReasons = string[];
+export type WorstYear = number | null;
+export type Warnings = string[];
+export type YearClassFilter = "ALL" | "DRY" | "NORMAL" | "WET";
+export type YearsUsed = number[];
+/**
+ * This interface was referenced by `EngineOutput`'s JSON-Schema
+ * via the `definition` "YearClassFilter".
+ */
+export type YearClassFilter1 = "ALL" | "DRY" | "NORMAL" | "WET";
 
 export interface EngineOutput {
+  effective_soil_weights?: EffectiveSoilWeights;
   engine_version: EngineVersion;
   input_hash: InputHash;
+  profile_id?: ProfileId;
   results: Results;
+  warnings?: Warnings;
+  year_class_filter?: YearClassFilter;
+  years_used?: YearsUsed;
+}
+export interface EffectiveSoilWeights {
+  [k: string]: number;
 }
 /**
+ * Resultado por rotación. Sin puntaje (campos de economía y suelo ausentes) solo cuando
+ * faltan parámetros o supuestos: en ese caso la rotación es no elegible con su motivo.
+ *
  * This interface was referenced by `EngineOutput`'s JSON-Schema
  * via the `definition` "RotationResult".
  */
 export interface RotationResult {
-  bare_soil_calendar: BareSoilCalendar;
-  benefits: Benefits;
-  breakdown: ScoreBreakdown;
+  bare_soil_calendar?: BareSoilCalendar | null;
+  benefits?: Benefits;
+  breakdown?: ScoreBreakdown | null;
   eligible: Eligible;
-  evidence: Evidence;
+  evidence?: Evidence;
   exclusion_reasons?: ExclusionReasons;
   is_current: IsCurrent;
-  loss_years: LossYears;
-  margin_ranges: MarginRanges;
-  missing: Missing;
-  rain_on_bare_soil: PValue;
+  loss_years?: LossYears | null;
+  margin_ranges?: MarginRanges;
+  missing?: Missing;
+  name?: Name;
+  rain_on_bare_soil?: PValue | null;
   rank: Rank;
-  risks: Risks;
+  risk?: PValue | null;
+  risks?: Risks;
   rotation_id: RotationId;
-  score_delta_vs_current: PValue;
-  soil_delta_index: PValue;
-  vulnerability_calendar: VulnerabilityCalendar;
+  score_delta_vs_current?: PValue | null;
+  soil_delta_index?: PValue | null;
+  vulnerability_calendar?: VulnerabilityCalendar;
   water_adjustments?: WaterAdjustments;
   water_feasibility: WaterFeasibility;
-  worst_year: WorstYear;
-  worst_year_margin: PValue;
+  water_reasons?: WaterReasons;
+  working_capital_peak?: PValue | null;
+  worst_year?: WorstYear;
+  worst_year_margin?: PValue | null;
 }
 /**
  * Días con suelo desnudo por mes (enero a diciembre).
