@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import type { RotationResult, RotationStrips } from "../data/types";
 import { EXCLUSION_LABEL, WARNING_LABEL } from "../lib/labels";
 import { orderRows } from "../lib/rankDiff";
@@ -25,6 +25,8 @@ interface Props {
   animateEntry: boolean;
   /** Hash of the input that produced these rows (X-Input-Hash), for traceability. */
   inputHash?: string;
+  /** Controls that filter or reorder the rows (year class, display preferences). */
+  toolbar?: ReactNode;
 }
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,6 +51,7 @@ export function RankingTable({
   loading,
   animateEntry,
   inputHash,
+  toolbar,
 }: Props) {
   const rows = orderRows(results, displayOrder);
   const listRef = useRef<HTMLOListElement>(null);
@@ -92,6 +95,7 @@ export function RankingTable({
         <h2 id="h-rank" className="h-title">Rotaciones comparadas</h2>
         <StripLegend />
       </div>
+      {toolbar}
       {rows.length < 3 && (
         <p className="warn" role="status">
           Evaluación incompleta: llegaron {rows.length} rotaciones y se necesitan al menos 3 para comparar.

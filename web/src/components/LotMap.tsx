@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
-import { MapContainer, TileLayer, Polygon, Tooltip, ScaleControl, ImageOverlay, AttributionControl } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, Polygon, Tooltip, ScaleControl, ImageOverlay, AttributionControl, useMap } from "react-leaflet";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
-import { CloudRain, Droplets, Satellite, ScanLine } from "lucide-react";
+import { CloudRain, Droplets, Maximize2, Minimize2, Satellite, ScanLine } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import layers from "../config/layers.json";
 import type { Plot } from "../data/types";
@@ -24,6 +24,16 @@ const dms = (v: number, pos: string, neg: string) => {
   return `${d}°${String(m).padStart(2, "0")}′ ${v < 0 ? neg : pos}`;
 };
 
+/** Leaflet measures its box once; tell it when the box changes size (compact <-> enlarged). */
+function Resize({ large }: { large: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 50);
+    return () => clearTimeout(t);
+  }, [map, large]);
+  return null;
+}
+
 let outlineDrawn = false; // entry moment runs once per session
 
 interface Props {
@@ -34,6 +44,13 @@ export function LotMap({ plot }: Props) {
   const [active, setActive] = useState<string>("base");
   const [opacity, setOpacity] = useState(0.7);
   const [baseErrors, setBaseErrors] = useState(0);
+  const [large, setLarge] = useState(false);
+  useEffect(() => {
+    if (!large) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setLarge(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [large]);
   const [drawOutline] = useState(() => {
     const first = !outlineDrawn;
     outlineDrawn = true;
@@ -58,11 +75,15 @@ export function LotMap({ plot }: Props) {
   ];
 
   return (
-    <section className="map" aria-labelledby="h-map">
+    <section className={`map${large ? " is-large" : ""}`} aria-labelledby="h-map">
       <div className="maptop">
         <h2 id="h-map" className="label">
           {plot.name}
         </h2>
+        <button type="button" className="icon-btn map-size" aria-pressed={large} onClick={() => setLarge((v) => !v)}>
+          {large ? <Minimize2 size={18} strokeWidth={1.5} aria-hidden="true" /> : <Maximize2 size={18} strokeWidth={1.5} aria-hidden="true" />}
+          <span>{large ? "Achicar" : "Ampliar"}</span>
+        </button>
         <div className="layers" role="group" aria-label="Capa sobre la imagen">
           {chips.map((c) => {
             const Icon = ICONS[c.icon as keyof typeof ICONS];
@@ -114,6 +135,7 @@ export function LotMap({ plot }: Props) {
               </Tooltip>
             </Polygon>
           )}
+          <Resize large={large} />
           <ScaleControl position="bottomleft" imperial={false} />
           <AttributionControl prefix={'<a href="https://leafletjs.com">Leaflet</a>'} />
         </MapContainer>

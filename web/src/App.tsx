@@ -6,7 +6,8 @@ import { AssumptionsContext } from "./components/AssumptionsContext";
 import { LotMap } from "./components/LotMap";
 import { WaterPanel } from "./components/WaterPanel";
 import { ActorSelector } from "./components/ActorSelector";
-import { ProfileSliders } from "./components/ProfileSliders";
+import { ProfilePanel } from "./components/ProfilePanel";
+import { Verdict } from "./components/Verdict";
 import { EvaluationOptions } from "./components/EvaluationOptions";
 import { RankingTable } from "./components/RankingTable";
 import { EvidencePanel } from "./components/EvidencePanel";
@@ -124,9 +125,13 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
             </svg>
             <h1>Rastrojo</h1>
           </div>
-          <p className="soft lede">
-            Rotaciones para tu lote medidas contra 45 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.
-          </p>
+          <div className="lede">
+            <p className="soft">Rotaciones para tu lote medidas contra 45 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.</p>
+            <p className="legends">
+              <span>Apoya, no reemplaza al agrónomo.</span>
+              <span>Escenarios históricos, no predicción.</span>
+            </p>
+          </div>
           {agent && (
             <button type="button" className="btn-secondary btn-ask" aria-expanded={askOpen} onClick={() => setAskOpen((o) => !o)}>
               <MessageCircle size={20} strokeWidth={1.5} aria-hidden="true" />
@@ -157,22 +162,16 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
 
         {ctx && (
           <main className="viewer">
-            <LotMap plot={ctx.plot} />
-            <div className="panel" id="ranking">
-              <WaterPanel cells={ctx.water_panel} />
-              <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} overridden={Object.keys(draft).length > 0}>
-                {profile && (
-                  <ProfileSliders
-                    profile={profile}
-                    limits={ctx.slider_limits}
-                    overrides={draft}
-                    onChange={changeSliders}
-                    onReset={resetSliders}
-                    disabled={exampleData}
-                  />
-                )}
-              </ActorSelector>
-              <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
+            {shown && profile ? (
+              <Verdict results={shown.evaluation.output.results} order={shown.order} names={names} actorLabel={profile.label}>
+                <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
+              </Verdict>
+            ) : (
+              <section className="verdict">
+                <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
+              </section>
+            )}
+            <div className="main-col" id="ranking">
               {shown && (
                 <RankingTable
                   results={shown.evaluation.output.results}
@@ -187,9 +186,26 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                   loading={loading}
                   animateEntry={animateEntry}
                   inputHash={shown.evaluation.inputHash}
+                  toolbar={
+                    <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
+                  }
                 />
               )}
             </div>
+            <aside className="side" aria-label="Lote, agua y perfil">
+              <LotMap plot={ctx.plot} />
+              <WaterPanel cells={ctx.water_panel} />
+              {profile && (
+                <ProfilePanel
+                  profile={profile}
+                  limits={ctx.slider_limits}
+                  overrides={draft}
+                  onChange={changeSliders}
+                  onReset={resetSliders}
+                  disabled={exampleData}
+                />
+              )}
+            </aside>
             {selected && (
               <EvidencePanel
                 result={selected}
@@ -202,10 +218,6 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
       </div>
       {askOpen && agent && <AskPanel client={agent} actor={profileId} onClose={() => setAskOpen(false)} />}
       </div>
-      <footer className="legends">
-        <span>Apoya, no reemplaza al agrónomo.</span>
-        <span>Escenarios históricos, no predicción.</span>
-      </footer>
     </AssumptionsContext.Provider>
   );
 }

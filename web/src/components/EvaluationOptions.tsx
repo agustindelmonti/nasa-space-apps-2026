@@ -18,7 +18,7 @@ const PREFS: { id: DisplayPreference; label: string }[] = [
 /** Year class sent as `year_class_filter` and presentation preferences sent as `display_preferences`. */
 export function EvaluationOptions({ yearClass, onYearClass, preferences, onPreferences, disabled = false }: Props) {
   return (
-    <section className="options" aria-label="Opciones de la comparación">
+    <div className="options" role="group" aria-label="Opciones de la comparación">
       <div className="opt">
         <h3 id="h-years" className="label">
           Campañas que se miran
@@ -53,6 +53,6 @@ export function EvaluationOptions({ yearClass, onYearClass, preferences, onPrefe
           })}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

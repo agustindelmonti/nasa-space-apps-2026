@@ -68,11 +68,9 @@ const SPECS: Spec[] = [
 export function ProfileSliders({ profile, limits, overrides, onChange, onReset, disabled = false }: Props) {
   const touched = Object.keys(overrides).length > 0;
   return (
-    <div className="sliders" role="group" aria-labelledby="h-sliders">
+    <div className="sliders" role="group" aria-labelledby="h-profile">
       <div className="sliders-head">
-        <h3 id="h-sliders" className="label">
-          Ajustar el perfil
-        </h3>
+        <p className="slider-help">Mové un parámetro y el motor vuelve a ordenar.</p>
         {touched && (
           <button type="button" className="btn-secondary btn-sm" onClick={onReset}>
             <RotateCcw size={16} strokeWidth={1.5} aria-hidden="true" />

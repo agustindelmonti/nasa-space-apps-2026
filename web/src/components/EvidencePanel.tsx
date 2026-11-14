@@ -1,4 +1,4 @@
-import { Bug, CircleHelp, Snowflake, Sprout, ThermometerSun, TriangleAlert, CloudRain, Droplets } from "lucide-react";
+import { Bug, ChevronDown, CircleHelp, Snowflake, Sprout, ThermometerSun, TriangleAlert, CloudRain, Droplets } from "lucide-react";
 import type { RotationExplanation, RotationResult } from "../data/types";
 import { ExplanationCard } from "./ExplanationCard";
 import { DATASET_LABEL, RISK_LABEL, SEVERITY_LABEL } from "../lib/labels";
@@ -38,8 +38,14 @@ export function EvidencePanel({ result: r, name, card }: Props) {
         </p>
       </div>
 
-      {card && <ExplanationCard card={card} />}
+      {card && <ExplanationCard card={card} part="primary" />}
 
+      <details className="ev-more">
+        <summary>
+          <ChevronDown className="chev" size={18} strokeWidth={1.5} aria-hidden="true" />
+          Ver detalle completo: puntaje, datos, supuestos y calendario
+        </summary>
+      {card && <ExplanationCard card={card} part="detail" />}
       <div className="ev-grid">
         <div className="ev-col">
           <h3 className="label">Puntaje y desglose</h3>
@@ -133,6 +139,7 @@ export function EvidencePanel({ result: r, name, card }: Props) {
           )}
         </div>
       </div>
+      </details>
     </section>
   );
 }

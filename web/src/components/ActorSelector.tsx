@@ -1,8 +1,5 @@
-import type { ReactNode } from "react";
 import { House, KeyRound, Landmark, Users } from "lucide-react";
 import type { ActorProfile, ProfileId } from "../data/types";
-import { formatNumber } from "../lib/format";
-import { ProvenanceBadge } from "./ProvenanceBadge";
 
 const ICON: Record<ProfileId, typeof House> = { OWNER: House, TENANT: KeyRound, COOP: Users, BANK: Landmark };
 
@@ -10,17 +7,12 @@ interface Props {
   profiles: ActorProfile[];
   value: ProfileId;
   onChange: (id: ProfileId) => void;
-  /** True when the user moved a slider: the parameters are then the user's, not the profile's. */
-  overridden?: boolean;
-  /** The sliders, rendered under the selector. */
-  children?: ReactNode;
 }
 
-export function ActorSelector({ profiles, value, onChange, overridden = false, children }: Props) {
-  const active = profiles.find((p) => p.profile_id === value);
-  const capital = active?.constraints?.max_working_capital_usd_ha;
+/** "Quién decide": the four actors. Changing it is the demo's main move, so it lives in the verdict band. */
+export function ActorSelector({ profiles, value, onChange }: Props) {
   return (
-    <section className="actorbar" aria-labelledby="h-actor">
+    <div className="actorbar">
       <h2 id="h-actor" className="label">
         Quién decide
       </h2>
@@ -36,21 +28,6 @@ export function ActorSelector({ profiles, value, onChange, overridden = false, c
           );
         })}
       </div>
-      {children}
-      {active && (
-        <div className="params">
-          <span>
-            Tasa <b>{formatNumber(active.discount_rate.value * 100)} %</b>
-          </span>
-          {capital && (
-            <span>
-              Capital de trabajo <b>{formatNumber(capital.value)}</b> <span className="unit">USD/ha</span>
-            </span>
-          )}
-          {active.constraints && !active.constraints.allow_double_crop && <span>Sin doble cultivo</span>}
-          <ProvenanceBadge provenance={overridden ? { kind: "USER_INPUT" } : active.horizon_years.provenance} />
-        </div>
-      )}
-    </section>
+    </div>
   );
 }
