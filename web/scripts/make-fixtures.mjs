@@ -49,12 +49,14 @@ const calendarDays = (strip) => {
 };
 
 const _ = null;
-const S1 = "SOY_1ST", S2 = "SOY_2ND", ME = "MAIZE_EARLY", W = "WHEAT", V = "COVER_VETCH";
+const S1 = "SOY_1ST", S2 = "SOY_2ND", ME = "MAIZE_EARLY", W = "WHEAT", V = "COVER_VETCH", RY = "COVER_RYE";
 export const STRIPS = {
   R_SOY_MONO: [_, _, _, _, _, S1, S1, S1, S1, S1, S1, _, _, _, _, _, _, S1, S1, S1, S1, S1, S1, _],
   R_MAIZE_SOY: [_, _, _, _, ME, ME, ME, ME, ME, ME, _, _, _, _, _, _, _, S1, S1, S1, S1, S1, S1, _],
   R_WHEAT_SOY2_MAIZE: [W, W, W, W, W, W, S2, S2, S2, S2, S2, _, _, _, _, _, ME, ME, ME, ME, ME, ME, _, _],
-  R_MAIZE_SOY_COVER: [_, _, _, _, ME, ME, ME, ME, ME, ME, _, V, V, V, V, V, _, S1, S1, S1, S1, S1, S1, _],
+  R_MAIZE_SOY_COVER: [_, _, _, _, ME, ME, ME, ME, ME, ME, _, RY, RY, RY, RY, RY, _, S1, S1, S1, S1, S1, S1, _],
+  // Matches the API catalog (src/rastrojo/application/demo.py): soy with a vetch service crop.
+  R_SOY_COVER: [V, V, V, V, _, S1, S1, S1, S1, S1, S1, V, V, V, V, V, _, S1, S1, S1, S1, S1, S1, _],
 };
 
 const months12 = (entries) => {
