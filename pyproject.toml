@@ -8,6 +8,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "pydantic>=2.9,<3",
     "pydantic-settings>=2.5,<3",
+    "pyyaml>=6.0.3",
 ]
 
 [dependency-groups]
@@ -16,6 +17,7 @@ dev = [
     "hypothesis>=6.100",
     "ruff>=0.6",
     "mypy>=1.11",
+    "types-pyyaml>=6.0.12.20261113",
 ]
 
 [build-system]
@@ -35,9 +37,10 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]  # ruff format maneja el largo; los mensajes en español pueden excederlo
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
 plugins = ["pydantic.mypy"]
-files = ["src/rastrojo/domain"]
+files = ["src/rastrojo/domain", "src/rastrojo/engine", "src/rastrojo/application"]

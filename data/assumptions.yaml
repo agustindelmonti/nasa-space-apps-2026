@@ -1,0 +1,34 @@
+# Registro de supuestos de Rastrojo (fuente de verdad legible por máquina).
+# La tabla para humanos está en docs/assumptions.md. Editable por agrónomos de AFA:
+# cambiar un valor cambia el input_hash de las evaluaciones que lo usan.
+# Todos los valores son EJEMPLOS pendientes de validación salvo que status diga VALIDATED.
+
+- assumption_id: A-CLI-01
+  description: Límites de las ventanas de invierno y verano de la campaña (sur de Santa Fe)
+  value:
+    winter: {start: "05-01", end: "10-31", crosses_year: false}
+    summer: {start: "11-01", end: "03-31", crosses_year: true}
+  unit: mes-día
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-02
+  description: Máximo de días faltantes de lluvia por ventana para incluir un año
+  value: 0
+  unit: días
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-03
+  description: Mínimo de años válidos para clasificar una ventana
+  value: 15
+  unit: años
+  reference: convención de climatologías cortas, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-04
+  description: Diferencia relativa POWER vs IMERG que dispara advertencia
+  value: 25
+  unit: "%"
+  reference: criterio del equipo
+  status: PENDING_AFA
