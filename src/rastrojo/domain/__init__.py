@@ -18,6 +18,7 @@ from rastrojo.domain.economics import (
     HarvestCostMode,
     PriceBasis,
     Rent,
+    ServiceCropCosts,
 )
 from rastrojo.domain.engine_io import EngineInput, EngineOutput, ResolvedAssumption
 from rastrojo.domain.plot import GeoPoint, Plot, PolygonGeometry, Soil, TextureClass, TextureValue
@@ -89,6 +90,7 @@ __all__ = [
     "PolygonGeometry",
     "PriceBasis",
     "Rent",
+    "ServiceCropCosts",
     "ResolvedAssumption",
     "Risk",
     "RiskType",

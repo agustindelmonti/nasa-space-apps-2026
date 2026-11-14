@@ -316,3 +316,31 @@
   unit: fraction
   reference: pendiente AFA
   status: PENDING_AFA
+
+- assumption_id: A-ECO-01
+  description: Calendario de egresos - fracción de los costos directos por mes relativo al mes de siembra (offset -> fracción, suman 1)
+  value: {DEFAULT: {"-1": 0.2, "0": 0.5, "1": 0.2, "2": 0.1}}
+  unit: fraction
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ECO-02
+  description: Desfase entre la cosecha y el cobro
+  value: 1
+  unit: meses
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-ECO-03
+  description: Mes de inicio del año de campaña (coincide con A-CLI-01) y mes de pago del arrendamiento
+  value: {campaign_start_month: 5, rent_payment_month: 5}
+  unit: mes
+  reference: pendiente AFA; práctica de contratos de arrendamiento
+  status: PENDING_AFA
+
+- assumption_id: A-ECO-04
+  description: Conversión de quintales de soja a toneladas (1 qq = 100 kg) para valuar el arrendamiento con el precio neto de soja
+  value: 0.1
+  unit: t/qq
+  reference: convención 1 qq = 100 kg
+  status: VALIDATED

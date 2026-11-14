@@ -34,33 +34,73 @@ def _require(
 
 
 class CropEconomics(DomainModel):
+    """Parámetros de un cultivo de renta. Los campos ausentes no tienen valor por defecto:
+    economics los reporta como faltantes (error tipado) en lugar de inventarlos."""
+
     crop: Crop
-    price: DatedPValue
-    price_basis: PriceBasis
-    export_tax: DatedPValue
-    direct_costs: DatedPValue
-    harvest_cost_mode: HarvestCostMode
-    harvest_cost: DatedPValue
-    marketing_cost: DatedPValue
-    freight: DatedPValue
-    yields: dict[YearClass, DatedPValue]
+    price: DatedPValue | None = None
+    price_basis: PriceBasis | None = None
+    export_tax: DatedPValue | None = None
+    direct_costs: DatedPValue | None = None
+    harvest_cost_mode: HarvestCostMode | None = None
+    harvest_cost: DatedPValue | None = None
+    marketing_cost: DatedPValue | None = None
+    freight: DatedPValue | None = None
+    yields: dict[YearClass, DatedPValue] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def _units(self) -> CropEconomics:
-        _require("precio", self.price, "USD/t", lo=0)
-        _require("retención", self.export_tax, "fraction", lo=0, hi=1)
-        _require("costos directos", self.direct_costs, "USD/ha", lo=0)
-        if self.harvest_cost_mode is HarvestCostMode.FRACTION_OF_REVENUE:
-            _require("costo de cosecha", self.harvest_cost, "fraction", lo=0, hi=1)
-        else:
-            _require("costo de cosecha", self.harvest_cost, "USD/ha", lo=0)
-        _require("comercialización", self.marketing_cost, "fraction", lo=0, hi=1)
-        _require("flete", self.freight, "USD/t", lo=0)
-        missing = [c.value for c in YearClass if c not in self.yields]
-        if missing:
-            raise ValueError(f"faltan rindes para las clases de año: {', '.join(missing)}")
+        if self.price is not None:
+            if self.price_basis is None:
+                raise ValueError("price_basis: el precio debe declarar base FOB o SPOT_FAS")
+            _require("precio", self.price, "USD/t", lo=0)
+        if self.export_tax is not None:
+            _require("retención", self.export_tax, "fraction", lo=0)
+            if self.export_tax.value >= 1:
+                raise ValueError("la retención debe ser menor a 1")
+        if self.direct_costs is not None:
+            _require("costos directos", self.direct_costs, "USD/ha", lo=0)
+        if self.harvest_cost is not None:
+            if self.harvest_cost_mode is None:
+                raise ValueError("harvest_cost_mode: el costo de cosecha debe declarar su modo")
+            if self.harvest_cost_mode is HarvestCostMode.FRACTION_OF_REVENUE:
+                _require("costo de cosecha", self.harvest_cost, "fraction", lo=0, hi=1)
+            else:
+                _require("costo de cosecha", self.harvest_cost, "USD/ha", lo=0)
+        if self.marketing_cost is not None:
+            _require("comercialización", self.marketing_cost, "fraction", lo=0, hi=1)
+        if self.freight is not None:
+            _require("flete", self.freight, "USD/t", lo=0)
         for cls, pv in self.yields.items():
             _require(f"rinde {cls}", pv, "t/ha", lo=0, hi=25)
+        return self
+
+    def missing_parameters(self) -> tuple[str, ...]:
+        names = [
+            n
+            for n in (
+                "direct_costs",
+                "export_tax",
+                "freight",
+                "harvest_cost",
+                "marketing_cost",
+                "price",
+            )
+            if getattr(self, n) is None
+        ]
+        names += [f"yield_{c.value.lower()}" for c in YearClass if c not in self.yields]
+        return tuple(sorted(names))
+
+
+class ServiceCropCosts(DomainModel):
+    """Cultivo de servicio: solo costos (implantación, semilla, secado). Sin precio ni rinde."""
+
+    crop: Crop
+    direct_costs: DatedPValue
+
+    @model_validator(mode="after")
+    def _units(self) -> ServiceCropCosts:
+        _require("costos directos del servicio", self.direct_costs, "USD/ha", lo=0)
         return self
 
 
@@ -85,14 +125,21 @@ class Rent(DomainModel):
 
 class EconomicParameters(DomainModel):
     crops: tuple[CropEconomics, ...] = Field(min_length=1)
+    service_crops: tuple[ServiceCropCosts, ...] = ()
     rent: Rent | None = None
 
     @model_validator(mode="after")
     def _unique(self) -> EconomicParameters:
-        crops = [c.crop for c in self.crops]
+        crops = [c.crop for c in self.crops] + [c.crop for c in self.service_crops]
         if len(set(crops)) != len(crops):
             raise ValueError("hay parámetros económicos repetidos para un mismo cultivo")
         return self
+
+    def service_for(self, crop: Crop) -> ServiceCropCosts | None:
+        for c in self.service_crops:
+            if c.crop is crop:
+                return c
+        return None
 
     def for_crop(self, crop: Crop) -> CropEconomics | None:
         for c in self.crops:
