@@ -7,7 +7,7 @@ Expone el motor, sus catálogos, el contexto NASA del lote, el glosario, los sup
 ## ADDED Requirements
 
 ### Requirement: Prefijo y contratos validados
-Todos los endpoints MUST servirse bajo `/api/v1` y MUST validar request y response con modelos Pydantic estrictos (extra prohibido). Los endpoints son: POST /evaluate, POST /sensitivity, GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate, GET /health y POST/GET /plots/{plot_id}/field-readings (P2).
+Todos los endpoints MUST servirse bajo `/api/v1` y MUST validar request y response con modelos Pydantic estrictos (extra prohibido). Los endpoints son: POST /evaluate, POST /sensitivity, POST /rotation-sheet (P2), GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate, GET /health y POST/GET /plots/{plot_id}/field-readings (P2).
 
 #### Scenario: Campo extra en request
 - **WHEN** se envía a POST /api/v1/evaluate un body válido con un campo adicional `foo`
@@ -65,9 +65,9 @@ POST /evaluate MUST aceptar `mode: "lite"` con lat, lon, rotación actual (id de
 La respuesta de una evaluación lite MUST incluir `resolution`: para cada parte de la entrada (lote, suelo, escenarios, parámetros económicos, perfil) su origen, el dataset o archivo usado y los faltantes que quedaron sin resolver. Los valores faltantes MUST NOT completarse con un default silencioso.
 
 #### Scenario: Suelo no informado
-- **GIVEN** un request lite sin datos de suelo y una caché sin suelo para esa celda
+- **GIVEN** un request lite sin datos de suelo y una caché sin SoilGrids para esa celda
 - **WHEN** se resuelve la entrada
-- **THEN** `resolution` marca el suelo como faltante o como ASSUMPTION con id, y la explicación lo lista en faltantes
+- **THEN** `resolution` marca el agua útil como ASSUMPTION A-WAT-14 genérico con un faltante, y la explicación lo lista en faltantes
 
 ### Requirement: Cobertura geográfica
 Una coordenada fuera del área soportada (bounding box de Argentina de `domain-models`, o fuera de las celdas habilitadas en DEMO_MODE) MUST responder OUT_OF_COVERAGE. Una coordenada dentro del área pero sin datos en caché MUST responder DATA_UNAVAILABLE con los datasets faltantes en `details`.
@@ -196,7 +196,7 @@ POST /evaluate MUST cortar el procesamiento que exceda el timeout configurado y 
 - **THEN** la respuesta es 504 con `code` TIMEOUT
 
 ### Requirement: Content type
-POST /evaluate, POST /sensitivity, POST /chat/simulate y POST /plots/{plot_id}/field-readings MUST aceptar solo `application/json`; POST /whatsapp/webhook MUST aceptar solo `application/x-www-form-urlencoded`. Otro content type MUST responder UNSUPPORTED_MEDIA_TYPE.
+POST /evaluate, POST /sensitivity, POST /rotation-sheet, POST /chat/simulate y POST /plots/{plot_id}/field-readings MUST aceptar solo `application/json`; POST /whatsapp/webhook MUST aceptar solo `application/x-www-form-urlencoded`. Otro content type MUST responder UNSUPPORTED_MEDIA_TYPE.
 
 #### Scenario: Evaluate con form
 - **WHEN** se envía a POST /api/v1/evaluate un body form-urlencoded
@@ -219,7 +219,7 @@ POST /sensitivity MUST aceptar el mismo `mode` lite o full que /evaluate más `p
 - **THEN** ambos bodies son idénticos byte a byte
 
 ### Requirement: Filtro por clase de año en la API
-POST /evaluate y POST /sensitivity MUST aceptar `year_class_filter` opcional con valores ALL, DRY o WET (ALL por defecto), MUST copiarlo a `EngineInput` sin filtrar por su cuenta y la respuesta MUST declarar el filtro efectivo y los años usados que informa el motor.
+POST /evaluate y POST /sensitivity MUST aceptar `year_class_filter` opcional con valores ALL, DRY, NORMAL o WET (ALL por defecto), MUST copiarlo a `EngineInput` sin filtrar por su cuenta y la respuesta MUST declarar el filtro efectivo y los años usados que informa el motor.
 
 #### Scenario: Ranking solo con años secos
 - **GIVEN** DEMO_MODE=1
@@ -245,3 +245,56 @@ La API MUST exponer POST y GET /plots/{plot_id}/field-readings (P2) delegando en
 - **GIVEN** una sesión guardada para `demo-casilda`
 - **WHEN** se pide GET /api/v1/plots/demo-casilda/field-readings
 - **THEN** la respuesta es 200 con la sesión y sus limitaciones
+
+### Requirement: Suelo en la resolución lite
+La resolución lite MUST armar cada campo del Suelo con esta prioridad: dato del usuario (USER_INPUT) > caché SoilGrids (OBSERVED `is_modeled=true`, agua útil DERIVED con A-WAT-17) > A-WAT-14 genérico (ASSUMPTION). En los dos últimos casos `resolution` MUST registrar un faltante que diga cómo conseguir el dato del lote. MUST NOT descargar SoilGrids durante la evaluación.
+
+#### Scenario: Usuario manda agua útil
+- **GIVEN** un request lite con agua útil del usuario y caché SoilGrids disponible
+- **WHEN** se resuelve la entrada
+- **THEN** el agua útil es USER_INPUT y `resolution` no registra faltante de agua útil
+
+#### Scenario: Agua útil desde SoilGrids
+- **GIVEN** un request lite sin suelo y caché SoilGrids completa para la celda del lote
+- **WHEN** se resuelve la entrada
+- **THEN** el agua útil viene de SoilGrids con A-WAT-17, `resolution` lo marca CACHE y registra un faltante que aclara que es un modelo global que no reemplaza la carta INTA
+
+### Requirement: Preferencias de presentación
+POST /evaluate MUST aceptar `display_preferences` opcional (WATER_SAFE_FIRST, DOUBLE_CROP_FIRST) y responder `display_order`: partición estable que pone primero las FEASIBLE (y luego RISKY y UNKNOWN, luego NOT_FEASIBLE) y, como segunda clave, las de doble cultivo, conservando el rango del motor dentro de cada grupo. Las preferencias MUST NOT entrar a `EngineInput` ni cambiar puntajes, rangos ni `input_hash`.
+
+#### Scenario: Primero las no riesgosas en agua
+- **GIVEN** DEMO_MODE=1 y un request lite con `display_preferences: ["WATER_SAFE_FIRST"]`
+- **WHEN** se evalúa
+- **THEN** `display_order` lista primero las FEASIBLE en orden de rango, `engine_output` y `X-Input-Hash` son idénticos a los del request sin preferencias
+
+#### Scenario: Primero las de doble cultivo
+- **WHEN** se envía `display_preferences: ["DOUBLE_CROP_FIRST"]`
+- **THEN** `display_order` lista primero las rotaciones con doble cultivo de renta y cada rotación conserva su `rank`
+
+#### Scenario: Preferencia desconocida
+- **WHEN** se envía `display_preferences: ["CHEAPEST_FIRST"]`
+- **THEN** la respuesta es 422 con `code` VALIDATION_ERROR y los valores permitidos
+
+### Requirement: Robustez del ranking por HTTP
+POST /evaluate MUST aceptar `include_robustness` (falso por defecto) y, si es verdadero, MUST incluir `robustness` del caso de uso de actor-profiles, sin cambiar `engine_output` ni `input_hash` y dentro del mismo timeout.
+
+#### Scenario: Robustez pedida
+- **GIVEN** DEMO_MODE=1
+- **WHEN** se envía un request lite con `include_robustness: true`
+- **THEN** la respuesta trae por rotación los conteos de clases de año y de perfiles donde sale primera, y el body es idéntico byte a byte si se repite el request
+
+### Requirement: Ficha de rotación por HTTP
+POST /rotation-sheet (P2) MUST aceptar el mismo `mode` lite o full que /evaluate más `rotation_id` y `format` (json o text), MUST correr el motor y generar la ficha de explanations para esa rotación, y MUST responder en forma canónica con `X-Input-Hash`. Una rotación que no está entre las candidatas MUST responder UNKNOWN_ROTATION.
+
+#### Scenario: Ficha del lote demo
+- **GIVEN** DEMO_MODE=1
+- **WHEN** se envía un request lite con `rotation_id: "R_MAIZE_SOY_COVER"` y `format: "json"`
+- **THEN** la respuesta es 200 con la ficha citada, `input_hash` igual al de /evaluate con el mismo request y header `X-Input-Hash`
+
+#### Scenario: Rotación fuera de las candidatas
+- **WHEN** se envía `rotation_id: "R_SUNFLOWER"`
+- **THEN** la respuesta es 422 con `code` UNKNOWN_ROTATION
+
+#### Scenario: Ficha idempotente
+- **WHEN** se envía dos veces el mismo request de ficha
+- **THEN** ambos bodies son idénticos byte a byte

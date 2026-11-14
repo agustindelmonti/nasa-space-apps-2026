@@ -130,9 +130,26 @@ Para cada rotación el sistema MUST calcular, por mes calendario (1 a 12), los d
 - **THEN** el calendario se calcula igual y se emite un Faltante de baja severidad sobre suelo desnudo observado
 
 ### Requirement: Pesos efectivos de componentes
-El sistema MUST aceptar los pesos w_k efectivos que provee actor-profiles cuando el perfil trae prioridades, MUST validar que sean no negativos y sumen 1 y MUST informar en la salida los pesos usados y si difieren de A-SOIL-01. Los componentes MUST NOT cambiar por las prioridades.
+El sistema MUST aceptar los pesos w_k efectivos que provee actor-profiles cuando el perfil trae prioridades (una por componente: EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL, ROOTS), MUST validar que sean no negativos y sumen 1 y MUST informar en la salida los pesos usados y si difieren de A-SOIL-01. Los componentes MUST NOT cambiar por las prioridades.
 
 #### Scenario: Prioridad de carbono
 - **GIVEN** pesos efectivos con mayor peso de carbono que A-SOIL-01
 - **WHEN** se calcula ΔSuelo
 - **THEN** los componentes son iguales a los calculados con A-SOIL-01, el índice sigue en [-100, +100] y la salida declara los pesos efectivos
+
+### Requirement: Lluvia sobre suelo desnudo
+Por rotación, el sistema MUST sumar la lluvia diaria POWER PRECTOTCORR de cada escenario en los días sin cultivo vivo ni rastrojo persistente del calendario (A-AGR-01, A-SOIL-02) y MUST informar la media ponderada anual y por mes, más mínimo y máximo entre años, en mm, DERIVED con la fuente. MUST NOT modificar ΔSuelo. Un escenario sin lluvia completa MUST excluirse con motivo.
+
+#### Scenario: Soja continua recibe lluvia en invierno desnudo
+- **GIVEN** soja de primera sola y un escenario con 40 mm de lluvia en días sin cultivo ni rastrojo (ejemplo)
+- **WHEN** se calcula la lluvia sobre suelo desnudo de ese escenario
+- **THEN** vale 40 mm, DERIVED, con `derived_from` la lluvia POWER y el calendario de suelo desnudo
+
+#### Scenario: Servicio reduce la lluvia sobre suelo desnudo
+- **GIVEN** la misma rotación con centeno de servicio y los mismos escenarios
+- **WHEN** se calcula la métrica
+- **THEN** la media ponderada anual es menor o igual que la de soja continua
+
+#### Scenario: Índice intacto
+- **WHEN** se agrega o quita la métrica en un test
+- **THEN** ΔSuelo y sus componentes no cambian

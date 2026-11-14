@@ -24,7 +24,7 @@ Ver proposal.md. La ingesta (`nasa-ingestion`) escribe caché parquet validada e
 
    | # | Bloque | Tiempo | Qué se muestra |
    |---|---|---|---|
-   | 1 | Problema | 0:00-0:30 | Soja continua, agua y decisión por actor |
+   | 1 | Problema | 0:00-0:30 | Gancho verbal (Dune, sin imágenes ni logos), soja continua, agua y decisión por actor |
    | 2 | Lote en mapa con capas NASA | 0:30-1:05 | Mapa, NDVI MODIS y fecha, leyenda con resolución |
    | 3 | Agua invisible | 1:05-1:45 | SMAP L4 + IMERG en el mapa, GRACE-FO regional en evidencia, factibilidad del doble cultivo, timeline de vulnerabilidad y calendario de suelo desnudo |
    | 4 | Ranking propietario vs arrendatario | 1:45-2:30 | Selector OWNER → TENANT, indicador de cambio, slider λ |
@@ -34,7 +34,10 @@ Ver proposal.md. La ingesta (`nasa-ingestion`) escribe caché parquet validada e
 
    Se deja un margen de 5 s. Un test simple (pytest) parsea la tabla y verifica orden y total <= 4:00.
 10. **Plan B** en `docs/demo/plan-b.md`: árbol de decisión con disparadores (front público no carga en 10 s; API remota sin health; sin red) y acciones (local con `DEMO_MODE=1 uv run uvicorn ...` + `npm run preview`; video). Video grabado del flujo completo en local con DEMO_MODE, guardado offline en la notebook de presentación y en un pendrive.
-11. **Material de video** en `docs/demo/video.md`: guion, lista de tomas, textos en pantalla, créditos NASA (nombres oficiales de POWER, SMAP L4, GPM IMERG, GRACE-FO, MODIS, GIBS), librerías OSS y declaración de IA.
+11. **Material de video** en `docs/demo/video.md`: guion parametrizado por duración (tabla de tomas con columna de variante: 30 s y 4 min; si las bases lo piden, mapa de hasta 7 slides), lista de tomas, textos en pantalla, créditos NASA (nombres oficiales de POWER, SMAP L4, GPM IMERG, GRACE-FO, MODIS, GIBS, más SoilGrids como dato no NASA), librerías OSS y declaración de IA. La variante de 30 s: problema (5 s), lote con capas NASA y ranking por actor (15 s), agua invisible en una frase (5 s), leyenda y cierre (5 s). FieldDynamics-Lab anotó "video de hasta 30 s o deck de hasta 7 slides; pasarse descalifica del juzgamiento global" (docs/benchmark.md, trampa 14); no está verificado, por eso la primera tarea P0 es confirmarlo en las bases oficiales y la Judging & Awards Guide. Alternativa descartada: un único video de 4 minutos (riesgo de descalificación global si la regla de 30 s es real).
+12. **Gancho y comunicación**: el pitch abre con "En Dune golpean el suelo para llamar al gusano; nosotros lo golpeamos para escucharlo" (conecta con el martillador y con escuchar los datos), solo verbal: sin imágenes, logos ni marcas de terceros. El cierre del domingo comunica como máximo "ganador sede".
+13. **Página NASA y fuentes**: `docs/demo/nasa-page.md` es el texto de la página del proyecto; `docs/demo/sources.md` tabula número → fuente (dataset y archivo del manifiesto, campo del motor con `input_hash`, o id de supuesto). Quality verifica que no falte ninguna fila. Inspirado en el pitch con fuente por cifra de otro equipo (solo la idea).
+14. **Entregables de transparencia**: `AI_USE.md` (qué hizo la IA y qué revisó el equipo) y `PRIOR_WORK.md` (declaración de que el trabajo es del evento) los redacta el ingeniero principal; demo-mode solo los exige en el checklist y los cita en el cierre.
 
 ## Supuestos introducidos
 
@@ -66,5 +69,5 @@ No hay migración. Rollback: volver a la versión anterior de `data/fixtures/dem
 
 ## Open Questions
 
-- Duración exacta del video según bases de NASA Space Apps 2026 (se ajusta en `docs/demo/video.md`, no cambia specs).
+- Duración exacta del video y límite de slides según bases de NASA Space Apps 2026: tarea P0 de confirmación; el spec ya cubre las dos variantes.
 - Quién presenta cada bloque (se completa en el guion).

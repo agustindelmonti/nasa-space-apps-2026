@@ -122,11 +122,15 @@ Un Perfil de actor MUST incluir horizonte H en años (entero 1 a 20), peso de su
 - **THEN** la validación pasa y el campo queda ausente, no con un valor por defecto
 
 ### Requirement: Prioridades del productor y ventanas de maquinaria
-El Perfil de actor MUST admitir, opcionales: pesos de prioridad en [0, 1] para WATER, NITROGEN, EROSION_COVER, OM_CARBON y SUPPLEMENTAL_INCOME (ausente equivale a 0), y ventanas de maquinaria disponibles como meses calendario (1 a 12) por operación SOWING y HARVEST. Ambos MUST ser USER_INPUT y MUST entrar en el `input_hash`.
+El Perfil de actor MUST admitir, opcionales: pesos de prioridad en [0, 1] para EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL y ROOTS (uno por componente de ΔSuelo; ausente equivale a 0), y ventanas de maquinaria como meses calendario (1 a 12) por operación SOWING y HARVEST. Ambos MUST ser USER_INPUT y entrar en el `input_hash`. El perfil MUST NOT admitir prioridades WATER ni SUPPLEMENTAL_INCOME.
 
 #### Scenario: Peso de prioridad fuera de rango
 - **WHEN** se crea un perfil con prioridad NITROGEN = 1.5
 - **THEN** la validación falla indicando el rango 0 a 1
+
+#### Scenario: Prioridad de presentación en el perfil
+- **WHEN** se crea un perfil con prioridad WATER
+- **THEN** la validación falla por campo no declarado
 
 #### Scenario: Mes de maquinaria inválido
 - **WHEN** se declara una ventana de siembra con el mes 13
@@ -159,7 +163,7 @@ Un Escenario climático MUST representar un año histórico real (año de inicio
 - **THEN** la validación falla
 
 ### Requirement: Resultado de evaluación
-El resultado por rotación MUST incluir: id, rango, puntaje y desglose (VAN, α·ΔSuelo, λ·Riesgo, términos de prioridad), factibilidad hídrica, `is_current`, `eligible`, `exclusion_reasons`, `water_adjustments`, `score_delta_vs_current` (USD/ha), rango de margen por clase de año, calendarios mensuales de suelo desnudo y de vulnerabilidad, y listas de Evidencia, Beneficios, Faltantes y Riesgos.
+El resultado por rotación MUST incluir: id, rango, puntaje y desglose (VAN, α·ΔSuelo, λ·Riesgo), factibilidad hídrica (FEASIBLE, RISKY, NOT_FEASIBLE o UNKNOWN), `is_current`, `eligible`, `exclusion_reasons`, `water_adjustments`, `score_delta_vs_current`, rango de margen por clase, años con pérdida, margen del peor año, lluvia sobre suelo desnudo, calendarios de suelo desnudo y de vulnerabilidad, y Evidencia, Beneficios, Faltantes y Riesgos.
 
 #### Scenario: Desglose consistente
 - **GIVEN** un resultado de evaluación
@@ -175,6 +179,10 @@ El resultado por rotación MUST incluir: id, rango, puntaje y desglose (VAN, α�
 - **WHEN** se arma el resultado de una rotación con escenarios de las tres clases anuales
 - **THEN** para DRY, NORMAL y WET informa mínimo, esperado y máximo del margen anual en USD/ha con procedencia DERIVED
 
+#### Scenario: Factibilidad desconocida admitida
+- **WHEN** se arma un resultado con factibilidad UNKNOWN
+- **THEN** la validación pasa y UNKNOWN es un valor distinto de NOT_FEASIBLE en el enum
+
 #### Scenario: Calendarios de 12 meses
 - **WHEN** se arma el resultado
 - **THEN** el calendario de suelo desnudo tiene 12 entradas mensuales y el de vulnerabilidad tiene, por cultivo, 12 entradas por tipo de evento
@@ -187,7 +195,7 @@ Una Evidencia MUST citar dataset, variable, período, valor con unidad y una fra
 - **THEN** la validación falla
 
 ### Requirement: Sobres de entrada y salida del motor
-La entrada del motor MUST agrupar, ya resueltos y sin referencias a red: lote, suelo, rotación actual, candidatas, perfil, parámetros económicos, escenarios, supuestos resueltos usados (id → valor), insumos hídricos y filtro opcional por clase de año. La salida MUST incluir `engine_version`, `input_hash` (SHA-256 del JSON canónico de la entrada) y los resultados ordenados por rango.
+La entrada del motor MUST agrupar, ya resueltos y sin referencias a red: lote, suelo, rotación actual, candidatas, perfil, parámetros económicos, escenarios, supuestos resueltos usados (id → valor), insumos hídricos y filtro opcional por clase de año (ALL, DRY, NORMAL o WET). La salida MUST incluir `engine_version`, `input_hash` (SHA-256 del JSON canónico de la entrada) y los resultados ordenados por rango.
 
 #### Scenario: Hash reproducible
 - **GIVEN** dos entradas semánticamente idénticas con claves en distinto orden

@@ -31,6 +31,8 @@ Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El mot
 11. **SRTM (P1)**: SRTMGL1 (30 m) vía earthaccess; se recorta una ventana de tamaño fijo alrededor del lote (por ejemplo 2 km de lado, parámetro técnico de ingesta documentado en el catálogo, no agronómico) y se calcula pendiente media en % y posición relativa por percentil de la elevación del lote dentro de la ventana (loma, media loma, bajo). Salida: Evidencia de contexto de anegamiento y erosión para explanations y web; MUST NOT entrar al motor. Alternativa descartada: índice topográfico de humedad completo (requiere dirección de flujo y más tiempo).
 12. **ECOSTRESS (P2)**: LST y ET (L2/L3) para fechas con pasada sobre el lote; solo evidencia, con limitación de cobertura irregular. MUST NOT entrar al motor.
 13. **Resumen NDVI mensual**: por mes calendario, mediana de NDVI y fracción de compuestos válidos con NDVI bajo el umbral A-SOIL-10, sobre todo el período disponible; es el insumo de evidencia que viaja en `EngineInput` para soil-impact.
+14. **SoilGrids (P1)**: API REST `https://rest.isric.org/soilgrids/v2.0/properties/query` (sin credenciales) para las propiedades `sand`, `silt`, `clay`, `soc`, `wv0033` y `wv1500` en las capas 0-5, 5-15, 15-30, 30-60 y 60-100 cm, valor medio, con la conversión de unidades publicada por SoilGrids. Se cachea como un dataset más (parquet + sidecar). OBSERVED con `is_modeled=true` (regla de domain-models), resolución 250 m. El agua útil integrada por capa es DERIVED con A-WAT-17. Limitación en el catálogo: "modelo global de 250 m; no reemplaza la carta de suelo INTA ni un análisis del lote". La api lo usa en la resolución lite con prioridad dato del usuario > caché SoilGrids > A-WAT-14. Alternativas descartadas: GeoINTA/SISINTA (sin API estable para la sede; queda como recurso argentino a citar), descarga de rasters completos (volumen innecesario para un punto).
+15. **Comparación POWER vs IMERG (P1)**: por año de campaña con ambas series completas, sumas de cada fuente (`sum_daily`), diferencia relativa respecto de POWER y fuente menor. Es evidencia para el panel ("tomamos la más conservadora") y el insumo de la regla A-WAT-16; la clasificación de años no la usa. Alternativa descartada: calcularla en climate-scenarios (ya emite la advertencia A-CLI-04 por ventana, pero la regla del balance necesita la campaña completa).
 
 ### Armonización de resoluciones (P0 documental)
 
@@ -45,6 +47,7 @@ El enunciado pide armonizar resoluciones a una grilla común. En el MVP no se re
 | MODIS_NDVI | 250 m; 16 días | píxel que contiene el punto | centro de píxel |
 | HLS_NDVI (P2) | 30 m; 2 a 3 días | píxel que contiene el punto | centro de píxel |
 | SRTM (P1) | 30 m; estático | ventana fija alrededor del punto para pendiente y posición | bbox de la ventana |
+| SOILGRIDS (P1) | 250 m; estático por capa | píxel que contiene el punto | centro de píxel y capas |
 | ECOSTRESS (P2) | ~70 m; irregular | píxel que contiene el punto por pasada | centro de píxel y fecha de pasada |
 
 Temporalmente, todo se lleva a paso diario o a ventanas de campaña con agregaciones DERIVED explícitas (media diaria de SMAP, acumulados por ventana, resumen NDVI mensual); GRACE-FO queda mensual. Alternativa descartada: re-grillar todo a 0.1° con interpolación (agrega números que ningún dataset publicó y esconde la diferencia de escala que queremos mostrar).
@@ -59,6 +62,7 @@ Temporalmente, todo se lleva a paso diario o a ventanas de campaña con agregaci
 | GRACE_FO | Mascons JPL RL06.x CRI, TWS anomaly | ~300 km efectivos; mensual | 2002-04+ con hueco 2017-07 a 2018-05 y meses sueltos | Regional: dice si la región está más seca o húmeda que su línea base, no el lote |
 | MODIS_NDVI | MOD13Q1 v061 NDVI | 250 m; 16 días | 2000-02+ | Mezcla lote y bordes; nubes generan huecos |
 | HLS_NDVI (P2) | HLSL30/HLSS30 v2.0 | 30 m; 2 a 3 días combinado | 2013+/2015+ | Muchas nubes en invierno; volumen grande |
+| SOILGRIDS (P1) | SoilGrids 2.0: sand, silt, clay, soc, wv0033, wv1500 por capa | 250 m; estático | producto global (versión a verificar) | Modelo global de aprendizaje automático; no reemplaza la carta de suelo INTA ni un análisis del lote |
 | SRTM (P1) | SRTMGL1 v003 elevación | 30 m; estático | 2000 (misión única) | Elevación de 2000; en llanura plana las diferencias son de pocos metros y el error vertical pesa |
 | ECOSTRESS (P2) | ECO L2 LST / L3 ET | ~70 m; pasadas irregulares | 2018-07+ | Horario de pasada variable y huecos; no es serie diaria |
 
@@ -73,7 +77,8 @@ Temporalmente, todo se lleva a paso diario o a ventanas de campaña con agregaci
 
 ## Supuestos abiertos para AFA
 
-- Ninguno numérico en esta capability: la ingesta no introduce valores agronómicos. Para AFA: qué tan representativa es una celda POWER/SMAP del sur de Santa Fe frente a sus pluviómetros y si pueden compartir registros de lluvia para contrastar (fuera del MVP).
+- A-WAT-17 (profundidad y método para integrar el agua útil desde SoilGrids) es el único supuesto de esta capability.
+- Ninguno otro numérico: la ingesta no introduce valores agronómicos. Para AFA: qué tan representativa es una celda POWER/SMAP del sur de Santa Fe frente a sus pluviómetros y si pueden compartir registros de lluvia para contrastar (fuera del MVP).
 
 ## Open Questions
 

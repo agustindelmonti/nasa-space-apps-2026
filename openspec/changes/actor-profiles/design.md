@@ -6,7 +6,7 @@ Ver proposal.md. Los valores de los perfiles viven en `assumptions.yaml` (editab
 
 ## Goals / Non-Goals
 
-**Goals:** perfiles trazables, sliders seguros, sensibilidad barata (sin recalcular economía ni suelo) y exacta.
+**Goals:** perfiles trazables, sliders seguros, sensibilidad barata (sin recalcular economía ni suelo) y exacta, robustez del ranking sin porcentajes.
 
 **Non-Goals:** encontrar "el α correcto"; perfiles para agrónomo o contratista.
 
@@ -28,8 +28,8 @@ Racional cualitativo (brief): el propietario mira largo plazo y valor del campo 
 | A-ACT-05 | nivel q de la cola del expected shortfall | 1/3 (peor tercil) | convención de terciles de climate-scenarios; pendiente AFA |
 | A-ACT-06 | límites de sliders | H 1..20, α 0..20, λ 0..3, i 0..0.30 | pendiente AFA (H 1..20 e i 0..1 son además límites de domain-models) |
 | A-ACT-07 | multiplicador m de las prioridades sobre los pesos w_k de ΔSuelo | 1 (prioridad 1 duplica el peso antes de renormalizar) | criterio del equipo, pendiente AFA |
-| A-ACT-08 | κ_w: USD/ha por unidad de fracción con ajuste hídrico, término de prioridad de agua | 100 USD/ha | criterio del equipo, pendiente AFA |
-| A-ACT-09 | κ_i: USD/ha por unidad de fracción de campañas con doble cultivo, término de ingreso suplementario | 50 USD/ha | criterio del equipo, pendiente AFA |
+
+A-ACT-08 y A-ACT-09 (κ de los términos de agua e ingreso suplementario) quedan REJECTED en `docs/assumptions.md`: no inventar valores; reemplazados por filtro de presentación.
 
 "Sin tope" se representa como ausencia explícita del capital máximo (campo opcional en PerfilActor, cambio aditivo si domain-models lo hizo obligatorio), nunca como un número grande.
 
@@ -66,17 +66,21 @@ Test en `tests/demo/test_actor_rankings.py` que carga el fixture demo, evalúa l
 
 ### 6. Prioridades del productor (P1)
 
-Pesos p_j ∈ [0, 1] (USER_INPUT, ausente = 0) para WATER, NITROGEN, EROSION_COVER, OM_CARBON y SUPPLEMENTAL_INCOME.
+Pesos p_k ∈ [0, 1] (USER_INPUT, ausente = 0), uno por componente de ΔSuelo:
 
 ```
-map: NITROGEN→{n}, EROSION_COVER→{cov, root}, OM_CARBON→{carb}, weed sin prioridad
-w'_k   = w_k·(1 + m·p(k)) / Σ_j w_j·(1 + m·p(j))         m = A-ACT-07
-T_wat  = − p_WATER · κ_w · F_adj      F_adj = fracción ponderada de (cultivo, escenario) con NOT_SOWN o FORCE_DRY
-T_inc  = + p_SUPP  · κ_i · F_dbl      F_dbl = fracción de campañas del ciclo con doble cultivo de renta
-T_prio = T_wat + T_inc                 κ_w = A-ACT-08, κ_i = A-ACT-09 (USD/ha)
+map 1 a 1: EROSION_COVER→cov, OM_CARBON→carb, NITROGEN→n, WEED_CONTROL→weed, ROOTS→root
+w'_k  = w_k·(1 + m·p_k) / Σ_j w_j·(1 + m·p_j)         m = A-ACT-07, w = A-SOIL-01
+score = VAN + α·ΔSuelo(w') − λ·Riesgo                 (sin términos agregados)
 ```
 
-Propiedades: con todas las prioridades en 0, w' = w y T_prio = 0 (salida idéntica a sin prioridades). ΔSuelo sigue en [-100, 100] porque w' suma 1 y los componentes no cambian. T_prio no depende de α ni λ, así que el puntaje sigue lineal en ambos, la sensibilidad sigue exacta y las propiedades de quality (más λ no favorece a la más riesgosa, más α no penaliza a la de mayor ΔSuelo efectivo) se mantienen. Alternativas descartadas: prioridades que modifican α o λ (mezclan dos sliders con el mismo efecto); términos en unidades distintas de USD/ha (no sumables al puntaje).
+Propiedades: con todas las prioridades en 0, w' = w (salida idéntica a sin prioridades). ΔSuelo sigue en [-100, 100] porque w' suma 1 y los componentes no cambian. El puntaje sigue lineal en α y λ, la sensibilidad sigue exacta y las propiedades de quality se mantienen.
+
+Prioridades de agua e ingreso suplementario: se sacan del perfil y del motor. Pasan a ser preferencias de presentación (`display_preferences` en api: WATER_SAFE_FIRST y DOUBLE_CROP_FIRST) que reordenan la lista mostrada con una partición estable sin cambiar puntajes, rangos ni `input_hash`. Alternativas descartadas: términos monetarios con κ_w y κ_i (A-ACT-08 y A-ACT-09, retirados: exigían inventar USD/ha por fracción sin fuente); prioridades que modifican α o λ (mezclan dos sliders con el mismo efecto); mapear EROSION_COVER a cobertura y raíces a la vez (menos legible que el mapa 1 a 1).
+
+### 6b. Robustez del ranking (P1)
+
+Caso de uso `application.robustness`: corre el motor con el perfil efectivo y `year_class_filter` ∈ {DRY, NORMAL, WET} (3 corridas) y con los 4 perfiles predefinidos sin filtro (4 corridas). Por rotación informa `first_in_year_classes` (lista y conteo sobre las clases con escenarios) y `first_in_profiles` (lista y conteo sobre 4). "Primera" = rango 1 entre elegibles. Solo conteos: sin porcentajes ni etiquetas como "robusta" que requerirían un umbral inventado. Alternativa descartada: probabilidad de quedar primero con remuestreo (aleatorio, no determinista).
 
 ### 7. Ventanas de maquinaria (P1)
 
@@ -92,5 +96,5 @@ El productor declara meses disponibles para SOWING y HARVEST. Se copian al Perfi
 - ¿Qué horizonte y tasa usan socios propietarios vs arrendatarios al decidir?
 - ¿Qué tope de capital de trabajo es realista para un arrendatario típico?
 - ¿El banco mira λ (cola) o probabilidad de margen negativo? Si es lo segundo, se agrega como métrica sin cambiar el puntaje. El Riesgo del motor es el expected shortfall de la cola de peso q de los márgenes (A-ACT-05), no el margen de los años de clase DRY.
-- ¿Qué prioridades usan los socios al elegir rotación y cuánto pesan frente al margen (A-ACT-07 a A-ACT-09)?
+- ¿Qué prioridades de suelo usan los socios al elegir rotación y cuánto pesan frente al margen (A-ACT-07)?
 - ¿En qué meses tienen típicamente maquinaria propia o contratada disponible?

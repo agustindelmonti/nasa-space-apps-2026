@@ -22,7 +22,9 @@ Repo vacío. Ver proposal.md. El resto de las capabilities importa estos modelos
 8. **Bounding box de Argentina** aproximada (lat -55.1 a -21.7, lon -73.6 a -53.6) como constante documentada.
 9. **Procedencia de productos externos**: OBSERVED con `is_modeled=true` para lo que publica un tercero aunque salga de un modelo (SMAP L4, POWER/MERRA-2, SoilGrids, GLDAS, mascons GRACE-FO); DERIVED solo para lo que calcula el sistema. Alternativa descartada: DERIVED para todo producto modelado (borra la diferencia entre "lo publica NASA" y "lo calculamos nosotros").
 10. **Insumos hídricos dentro de `EngineInput`**: series diarias por año (lluvia, ET0, T2M_MIN, T2M_MAX, IMERG opcional), SMAP inicial, TWS GRACE-FO y resumen NDVI mensual. water-feasibility es un submódulo del motor; no se aceptan estados hídricos precalculados.
-11. **Escenario con tres clases** (anual, invierno, verano) que produce climate-scenarios; economics usa la estacional, el filtro por clase de año y el rango de margen usan la anual.
+11. **Escenario con tres clases** (anual, invierno, verano) que produce climate-scenarios; economics usa la estacional, el filtro por clase de año (ALL, DRY, NORMAL, WET; NORMAL se suma para el indicador de robustez) y el rango de margen usan la anual.
+12. **Factibilidad con cuatro estados**: `WaterFeasibility = FEASIBLE | RISKY | NOT_FEASIBLE | UNKNOWN`. UNKNOWN significa "datos insuficientes para decidir" y nunca se confunde con "no apto". Alternativa descartada: reusar RISKY con un motivo (el productor lo lee como un juicio sobre el lote y no como un faltante).
+13. **Prioridades del perfil solo de suelo** (EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL, ROOTS). Las preferencias de agua y de doble cultivo son de presentación y viajan fuera de `EngineInput` (api), así no cambian el `input_hash`. Alternativa descartada: dejarlas en el perfil sin efecto (campos muertos que confunden).
 
 ## Supuestos introducidos
 

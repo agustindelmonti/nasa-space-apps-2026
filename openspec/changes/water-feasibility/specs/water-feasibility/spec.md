@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Evalúa si una rotación es hídricamente factible en el lote (con foco en doble cultivo y cultivo de servicio) mediante un balance hídrico simplificado sobre años históricos reales, y devuelve FEASIBLE, RISKY o NOT_FEASIBLE con su porqué, evidencia NASA, supuestos y riesgo de helada.
+Evalúa si una rotación es hídricamente factible en el lote (con foco en doble cultivo y cultivo de servicio) mediante un balance hídrico simplificado sobre años históricos reales, y devuelve FEASIBLE, RISKY, NOT_FEASIBLE o UNKNOWN (datos insuficientes) con su porqué, evidencia NASA, supuestos y riesgo de helada.
 
 ## ADDED Requirements
 
@@ -30,7 +30,7 @@ Cuando el agotamiento del perfil supere la fracción fácilmente disponible p·a
 - **THEN** Ks es 0, ETa es 0 mm y el día suma déficit igual a ETc
 
 ### Requirement: Lluvia efectiva declarada
-La lluvia efectiva MUST calcularse desde la precipitación diaria con el método y parámetros del supuesto A-WAT-02 y MUST quedar como DERIVED con la fuente de lluvia (POWER PRECTOTCORR por defecto, la misma fuente que la clasificación de escenarios). La fuente usada MUST citarse en la evidencia.
+La lluvia efectiva MUST calcularse desde la precipitación diaria con el método y parámetros de A-WAT-02 y MUST quedar como DERIVED con la fuente de lluvia usada en ese escenario (POWER PRECTOTCORR por defecto; la regla conservadora de A-WAT-16 en P1). La fuente usada por año MUST citarse en la evidencia.
 
 #### Scenario: Fracción fija de ejemplo
 - **GIVEN** A-WAT-02 definido como fracción fija de ejemplo 0.8
@@ -50,7 +50,12 @@ El agua inicial de la campaña MUST derivarse de `sm_rootzone` de SMAP L4 en la 
 - **THEN** el agua inicial usa la fracción del supuesto A-WAT-12, se agrega el motivo `INITIAL_MOISTURE_ASSUMED` y un Faltante que explica cómo conseguir el dato
 
 ### Requirement: Agua útil del Suelo con respaldo explícito
-El sistema MUST usar el agua útil (mm) informada en el Suelo. Si falta, MUST usar el valor por clase textural del supuesto A-WAT-14 y, si también falta la textura, el valor genérico de A-WAT-14; en ambos casos MUST agregar el motivo `SOIL_AWC_ASSUMED` y un Faltante. MUST NOT inventar el dato sin marcarlo.
+El sistema MUST usar el agua útil (mm) del Suelo. Si viene de SoilGrids MUST agregar el motivo `SOIL_AWC_FROM_SOILGRIDS` y un Faltante. Si falta, MUST usar A-WAT-14 por textura o, sin textura, su valor genérico, con `SOIL_AWC_ASSUMED` y un Faltante. MUST NOT inventar el dato sin marcarlo.
+
+#### Scenario: Agua útil desde SoilGrids
+- **GIVEN** un Suelo cuyo agua útil es DERIVED de propiedades SoilGrids OBSERVED con `is_modeled=true`
+- **WHEN** se evalúa la factibilidad
+- **THEN** el balance usa ese valor, el resultado incluye `SOIL_AWC_FROM_SOILGRIDS` y un Faltante que aclara que es un dato modelado global de 250 m que no reemplaza la carta de suelo INTA
 
 #### Scenario: Suelo sin agua útil
 - **GIVEN** un Suelo con textura franco limosa y sin agua útil
@@ -70,7 +75,7 @@ Cada campaña de la rotación MUST evaluarse con el clima diario real de cada es
 - **THEN** 1982 se excluye con motivo `MISSING_WEATHER`, quedan 29 escenarios con peso 1/29 y se agrega el motivo `SCENARIOS_EXCLUDED`
 
 ### Requirement: Estado de factibilidad por campaña
-Cada escenario MUST etiquetarse por cultivo: SEVERE si el índice de estrés supera A-WAT-05, MODERATE si supera A-WAT-04. La campaña MUST ser FEASIBLE si la frecuencia ponderada de escenarios SEVERE es <= A-WAT-06, NOT_FEASIBLE si es > A-WAT-07 y RISKY en otro caso. La rotación MUST tomar el peor estado de sus campañas.
+Cada escenario MUST etiquetarse por cultivo: SEVERE si el índice de estrés supera A-WAT-05, MODERATE si supera A-WAT-04. Con al menos A-CLI-03 escenarios válidos, la campaña MUST ser FEASIBLE si la frecuencia ponderada de SEVERE es <= A-WAT-06, NOT_FEASIBLE si es > A-WAT-07 y RISKY si no. La rotación MUST tomar el peor estado con el orden NOT_FEASIBLE > UNKNOWN > RISKY > FEASIBLE.
 
 #### Scenario: Doble cultivo riesgoso
 - **GIVEN** A-WAT-06 = 0.2 y A-WAT-07 = 0.5 (ejemplos) y soja de segunda SEVERE en 9 de 30 escenarios
@@ -83,7 +88,7 @@ Cada escenario MUST etiquetarse por cultivo: SEVERE si el índice de estrés sup
 
 #### Scenario: Pocos escenarios válidos
 - **WHEN** tras las exclusiones quedan menos escenarios que A-CLI-03
-- **THEN** la campaña MUST NOT ser FEASIBLE: queda RISKY con motivo `INSUFFICIENT_SCENARIOS`
+- **THEN** la campaña queda UNKNOWN con motivo `INSUFFICIENT_SCENARIOS`, nunca FEASIBLE ni NOT_FEASIBLE, y se agrega un Faltante que dice cuántos años válidos hay y cuántos hacen falta
 
 ### Requirement: Secado del perfil antes del cultivo siguiente
 En campañas con doble cultivo o cultivo de servicio, el sistema MUST calcular el agua útil a la siembra del cultivo de verano y su fracción del agua útil total. Si la frecuencia ponderada de escenarios con fracción menor a A-WAT-08 supera A-WAT-06, la campaña MUST ser al menos RISKY con motivo `PROFILE_NOT_RECHARGED_AT_SOWING`.
@@ -115,6 +120,10 @@ Si la anomalía TWS de GRACE-FO de los meses recientes de referencia está por d
 #### Scenario: GRACE-FO no empeora más
 - **WHEN** la campaña ya es RISKY o NOT_FEASIBLE y la anomalía TWS es muy negativa
 - **THEN** el estado no cambia y GRACE-FO aparece solo como evidencia
+
+#### Scenario: GRACE-FO no toca UNKNOWN
+- **WHEN** la campaña es UNKNOWN y la anomalía TWS está bajo A-WAT-10
+- **THEN** el estado sigue UNKNOWN y GRACE-FO aparece solo como evidencia
 
 #### Scenario: GRACE-FO no mejora
 - **WHEN** la campaña es NOT_FEASIBLE y la anomalía TWS es positiva
@@ -172,7 +181,7 @@ La evaluación MUST ser pura y correr dentro del motor, invocada por rotation-en
 - **THEN** la evaluación termina sin errores y con el mismo resultado
 
 ### Requirement: Estado por cultivo y escenario para el motor
-Para cada (cultivo, posición, escenario) el sistema MUST entregar a rotation-engine un estado: NOT_FEASIBLE si el escenario es SEVERE para ese cultivo; RISKY si es MODERATE o si es el cultivo de verano de una campaña doble o con servicio y su agua a la siembra queda bajo A-WAT-08; FEASIBLE en otro caso. GRACE-FO y napa MUST NOT cambiar este estado.
+Para cada (cultivo, posición, escenario) el sistema MUST entregar a rotation-engine un estado: UNKNOWN si el escenario se excluyó por falta de clima; NOT_FEASIBLE si es SEVERE; RISKY si es MODERATE o si es el cultivo de verano de una campaña doble o con servicio y su agua a la siembra queda bajo A-WAT-08; FEASIBLE si no. GRACE-FO y napa MUST NOT cambiar este estado.
 
 #### Scenario: Soja de segunda en un año severo
 - **WHEN** en 2008 la soja de segunda tiene índice de estrés sobre A-WAT-05
@@ -184,7 +193,7 @@ Para cada (cultivo, posición, escenario) el sistema MUST entregar a rotation-en
 
 #### Scenario: Escenario excluido
 - **WHEN** 1982 se excluye por `MISSING_WEATHER`
-- **THEN** no hay estado para ese escenario y rotation-engine lo trata como estado ausente
+- **THEN** el estado para ese escenario es UNKNOWN con el motivo, y rotation-engine no aplica ajuste en ese año
 
 ### Requirement: Calendario mensual de vulnerabilidad
 Por cultivo de la rotación y mes calendario dentro de su ciclo (A-AGR-01), el sistema MUST informar la frecuencia ponderada de escenarios con helada (T2M_MIN <= A-CLI-05 en la ventana A-CLI-06) y con déficit hídrico (índice de estrés del mes > A-WAT-04), y su nivel según A-CLI-07. Los meses fuera del ciclo MUST marcarse NOT_IN_FIELD.
@@ -228,3 +237,31 @@ Por campaña, el sistema MUST informar para cada clase anual (DRY, NORMAL, WET) 
 #### Scenario: Clase sin escenarios válidos
 - **WHEN** todos los años WET quedan excluidos por `MISSING_WEATHER`
 - **THEN** el rango WET se informa vacío con el motivo
+
+### Requirement: Estado UNKNOWN distinto de no factible
+Cuando los datos no alcanzan para decidir, el sistema MUST informar UNKNOWN con motivo y Faltante, y MUST NOT informar NOT_FEASIBLE ni RISKY por falta de datos. UNKNOWN MUST mostrarse como "desconocido" y MUST NOT expresarse como porcentaje de confianza. El motor MUST tratarlo como elegible y sin ajuste.
+
+#### Scenario: Sin clima suficiente no es no apto
+- **GIVEN** una entrada con solo 10 años con lluvia y ET0 completas y A-CLI-03 = 15 (ejemplo)
+- **WHEN** se evalúa la rotación con soja de segunda
+- **THEN** la factibilidad es UNKNOWN con `INSUFFICIENT_SCENARIOS` y un Faltante, y no aparece NOT_FEASIBLE en ningún nivel
+
+#### Scenario: Datos completos no producen UNKNOWN
+- **WHEN** todos los escenarios tienen clima completo y hay al menos A-CLI-03
+- **THEN** ninguna campaña ni escenario es UNKNOWN
+
+### Requirement: Lluvia conservadora entre POWER e IMERG
+En P1, para cada escenario donde POWER e IMERG estén completas en el período de la campaña, el balance MUST usar la serie con menor lluvia acumulada de campaña (regla A-WAT-16) y MUST declarar por año la fuente usada y ambas sumas. Si IMERG falta o está incompleta MUST usarse POWER. La clasificación de años MUST NOT cambiar.
+
+#### Scenario: IMERG más seca en un año
+- **GIVEN** la campaña 2015 con 600 mm según POWER y 420 mm según IMERG (ejemplo), ambas completas
+- **WHEN** se arma el balance de 2015
+- **THEN** usa la serie diaria IMERG, la evidencia declara ambas sumas y A-WAT-16, y la clase de 2015 es la de POWER
+
+#### Scenario: Año sin IMERG
+- **WHEN** el escenario 1990 no tiene IMERG
+- **THEN** el balance usa POWER y la evidencia lo declara
+
+#### Scenario: Regla apagada sin IMERG en la entrada
+- **WHEN** la entrada no trae IMERG
+- **THEN** todos los escenarios usan POWER y el resultado es idéntico al de P0

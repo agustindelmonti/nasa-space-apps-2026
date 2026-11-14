@@ -47,9 +47,13 @@ El NDVI del lote describe la rotación actual, no las alternativas: usarlo como 
 
 Con los mismos intervalos de la cobertura, por mes calendario m (1 a 12): `bare_m` = días del mes sin cultivo vivo y `uncovered_m` = días sin cultivo vivo ni rastrojo persistente (A-SOIL-02), ambos promediados sobre las L campañas del ciclo. La evidencia observada sale del resumen NDVI mensual del lote: fracción de compuestos válidos con NDVI < A-SOIL-10 por mes, solo para la rotación actual. No se agregan supuestos. Alternativa descartada: calendario por campaña de julio a junio (menos legible para el productor que meses calendario).
 
+### 3b2. Lluvia sobre suelo desnudo (P0 la métrica, P1 el visual)
+
+Con los intervalos del calendario de suelo desnudo, para cada escenario s y día d de la campaña: `rain_bare_s = Σ_d P_s,d · 1[d sin cultivo vivo ni rastrojo]`, con P la lluvia diaria POWER PRECTOTCORR que ya viaja en `EngineInput` (la misma fuente de la clasificación de años, no la regla conservadora de water-feasibility, que es para el balance). Se promedia sobre las L campañas del ciclo y se pondera con w_s; también por mes calendario. No se agregan supuestos. Alternativas descartadas: sumarla a ΔSuelo (duplica el componente de cobertura y mete mm en un índice adimensional); usar IMERG (menos años de serie).
+
 ### 3c. Pesos efectivos por prioridades
 
-soil-impact recibe los w_k efectivos ya re-ponderados por actor-profiles (A-ACT-07) y verifica que sumen 1. La re-ponderación no toca los componentes, así que cotas y monotonicidad de componentes se mantienen.
+soil-impact recibe los w_k efectivos ya re-ponderados por actor-profiles (A-ACT-07, una prioridad por componente) y verifica que sumen 1. La re-ponderación no toca los componentes, así que cotas y monotonicidad de componentes se mantienen.
 
 ### 4. Errores
 

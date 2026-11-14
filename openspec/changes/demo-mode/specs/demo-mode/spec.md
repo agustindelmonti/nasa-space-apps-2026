@@ -122,7 +122,7 @@ El repo MUST proveer un comando de pre-demo que verifique y reporte OK/FALLA por
 - **THEN** los ítems remotos se marcan como no disponibles y los locales (API en DEMO_MODE, fixtures, snapshot, video local) se verifican igual
 
 ### Requirement: Guion de demo de 4 minutos
-El repo MUST incluir un guion en `docs/demo/` con bloques y tiempos que sumen como máximo 4 minutos, en este orden: problema; lote en mapa con capas NASA; agua invisible (GRACE-FO, SMAP, IMERG); ranking propietario vs arrendatario; evidencia y faltantes; WhatsApp; cierre honesto y visión PolPilot Agro. Cada bloque MUST indicar qué se muestra, qué se dice y quién lo dice.
+El repo MUST incluir un guion en `docs/demo/` con bloques y tiempos que sumen como máximo 4 minutos, en este orden: problema; lote en mapa con capas NASA; agua invisible (GRACE-FO, SMAP, IMERG); ranking propietario vs arrendatario; evidencia y faltantes; WhatsApp; cierre honesto y visión PolPilot Agro. Cada bloque MUST indicar qué se muestra, qué se dice y quién.
 
 #### Scenario: Tiempos cerrados
 - **WHEN** se suman los tiempos de los bloques del guion
@@ -131,6 +131,10 @@ El repo MUST incluir un guion en `docs/demo/` con bloques y tiempos que sumen co
 #### Scenario: Cierre honesto
 - **WHEN** se lee el bloque de cierre
 - **THEN** menciona "apoya, no reemplaza al agrónomo", "escenarios históricos, no predicción", los supuestos pendientes de AFA, el uso de IA y PolPilot solo como visión
+
+#### Scenario: Gancho verbal de apertura
+- **WHEN** se lee el bloque de problema
+- **THEN** abre con el gancho "En Dune golpean el suelo para llamar al gusano; nosotros lo golpeamos para escucharlo", marcado como solo verbal, y ningún bloque usa imágenes, logos ni marcas de Dune
 
 ### Requirement: Plan B de la demo
 El guion MUST incluir un plan B con disparadores y acciones: si falla la red o el deploy, correr API en DEMO_MODE y front en local; si falla también el equipo local, reproducir el video grabado de la demo. El video de respaldo MUST estar disponible offline en la máquina de presentación.
@@ -141,8 +145,46 @@ El guion MUST incluir un plan B con disparadores y acciones: si falla la red o e
 - **THEN** el guion indica el comando exacto para levantar API y front locales en DEMO_MODE y el tiempo máximo para decidir pasar al video
 
 ### Requirement: Material para el video de YouTube
-El repo MUST incluir en `docs/demo/` un guion del video de YouTube (duración objetivo según bases del desafío), lista de tomas basada en el flujo de la demo, textos en pantalla con las leyendas de comunicación honesta, créditos de datos NASA y librerías, y declaración de uso de IA.
+El repo MUST incluir en `docs/demo/` el guion del video parametrizado por duración, con una variante de 30 s y otra de 4 minutos, más lista de tomas, textos en pantalla con las leyendas, créditos de datos NASA y librerías, y declaración de uso de IA. Si las bases exigen deck, MUST haber una variante de hasta 7 slides.
+
+#### Scenario: Variante de 30 segundos
+- **WHEN** se suman los tiempos de la variante corta del guion del video
+- **THEN** el total es menor o igual a 0:30 e incluye problema, la pantalla del ranking con datos NASA y la leyenda "apoya, no reemplaza al agrónomo"
+
+#### Scenario: Deck acotado
+- **GIVEN** que las bases confirman que el juzgamiento global pide deck
+- **WHEN** se cuenta la variante deck
+- **THEN** tiene a lo sumo 7 slides
 
 #### Scenario: Créditos completos
 - **WHEN** se revisa el material del video
 - **THEN** lista cada dataset NASA usado con su nombre oficial y declara el uso de IA (Claude Code)
+
+### Requirement: Reglas de entrega confirmadas
+Antes de editar el video, el equipo MUST confirmar en las bases oficiales de NASA Space Apps 2026 y en la Judging & Awards Guide la duración máxima del video y el límite de slides, y MUST registrar en `docs/demo/video.md` la regla citada (documento y fecha de consulta) y qué variante se entrega. Sin esa confirmación MUST entregarse la variante de 30 s.
+
+#### Scenario: Regla registrada
+- **WHEN** se revisa `docs/demo/video.md`
+- **THEN** cita el documento oficial y la fecha de consulta, y nombra la variante elegida
+
+### Requirement: Página NASA y pitch con fuente de cada número
+El repo MUST incluir `docs/demo/nasa-page.md` (texto de la página del proyecto) y `docs/demo/sources.md`, una tabla con cada número que se muestra o se dice en la página, el pitch y el video, y su fuente: dataset y archivo cacheado del manifiesto, campo de la salida del motor con su `input_hash`, o id de supuesto.
+
+#### Scenario: Cifra del pitch con fuente
+- **GIVEN** el guion dice "en 9 de 30 años la soja de segunda sufre estrés severo"
+- **WHEN** se busca en `docs/demo/sources.md`
+- **THEN** hay una fila con ese número, el campo del resultado del motor y el `input_hash` del snapshot de demo
+
+### Requirement: Entregables de transparencia en el checklist
+El checklist de pre-demo MUST verificar que existen `AI_USE.md` y `PRIOR_WORK.md` en la raíz y que el README los enlaza, como ítem crítico. Este change MUST NOT redactarlos.
+
+#### Scenario: Entregable faltante
+- **WHEN** falta `AI_USE.md`
+- **THEN** el pre-demo marca FALLA en ese ítem y termina con código distinto de cero
+
+### Requirement: Comunicación del resultado
+El guion de cierre y todo material publicado el domingo MUST comunicar el resultado como máximo como "ganador sede" y MUST NOT anticipar resultados del juzgamiento global.
+
+#### Scenario: Material del domingo
+- **WHEN** se revisa el texto de cierre y la publicación posterior al anuncio local
+- **THEN** usa a lo sumo "ganador sede" y no menciona premios globales como obtenidos

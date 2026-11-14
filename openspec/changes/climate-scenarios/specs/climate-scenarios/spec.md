@@ -111,6 +111,11 @@ Si se provee lluvia IMERG para los años en común (desde 2000), el sistema MUST
 - **WHEN** en el verano 2015 POWER acumula 600 mm e IMERG 420 mm
 - **THEN** la salida incluye una advertencia para 2015 con ambas cifras y la clase de 2015 es la misma que sin IMERG
 
+#### Scenario: Regla conservadora del balance no reclasifica
+- **GIVEN** que water-feasibility usa IMERG para el balance de 2015 por la regla A-WAT-16
+- **WHEN** se clasifican los años
+- **THEN** la clase de 2015 sale solo de POWER y la salida no cita IMERG como fuente de clasificación
+
 #### Scenario: Sin IMERG
 - **WHEN** no se provee IMERG
 - **THEN** la clasificación es idéntica y el resultado indica que el cruce no se realizó
@@ -130,3 +135,19 @@ El sistema MUST armar un EscenarioClimático por año válido en ambas ventanas,
 #### Scenario: Clases independientes
 - **WHEN** un año es DRY en invierno y WET en verano
 - **THEN** su clase anual se calcula con la lluvia de campaña y puede ser cualquiera de las tres
+
+### Requirement: Chequeo de consistencia con rindes MAGyP
+En P1 el sistema MUST ofrecer un reporte que, para el departamento del lote demo, contraste cada año DRY anual con el rinde departamental de soja y maíz de MAGyP (Estimaciones Agrícolas) según A-CLI-11, informando por año si es consistente, inconsistente o sin dato. El reporte MUST citar fuente y fecha y MUST NOT alimentar al motor ni cambiar clases.
+
+#### Scenario: Año seco con caída de rinde
+- **GIVEN** 2008 DRY anual y un rinde departamental de soja 2008/09 en el tercio inferior del período comparado (ejemplo)
+- **WHEN** se arma el reporte
+- **THEN** 2008 figura como consistente, con el rinde citado con fuente MAGyP y fecha de descarga, y A-CLI-11
+
+#### Scenario: Año sin rinde publicado
+- **WHEN** MAGyP no publica rinde departamental para una campaña
+- **THEN** el año figura sin dato y no se completa con otro departamento
+
+#### Scenario: Validación fuera del motor
+- **WHEN** se agrega o quita el archivo de rindes MAGyP
+- **THEN** los escenarios, el `input_hash` y la salida del motor no cambian

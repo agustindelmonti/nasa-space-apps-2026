@@ -121,3 +121,19 @@ Cada término monetario de la salida MUST conservar la procedencia y fecha de re
 - **GIVEN** precio de soja con fecha 2026-11-01 y costos con fecha 2026-06-15
 - **WHEN** se calcula la economía
 - **THEN** la salida incluye una advertencia con ambas fechas
+
+### Requirement: Años con pérdida y margen del peor año
+Para cada rotación con economía completa, el sistema MUST calcular por escenario el margen anual promedio sobre posiciones m_s (con ajustes hídricos y arrendamiento si está), MUST contar los escenarios con m_s < 0 sobre el total N y listarlos por año, y MUST informar el mínimo de m_s con su año como "margen en un año malo". Todo DERIVED y fuera del puntaje.
+
+#### Scenario: Años con pérdida contados
+- **GIVEN** cinco escenarios de ejemplo con m_s de −50, 120, 300, −10 y 400 USD/ha en 2008, 2009, 2010, 2011 y 2012
+- **WHEN** se calculan las métricas de pérdida
+- **THEN** informa 2 de 5 años con pérdida (2008 y 2011) y el margen del peor año −50 USD/ha en 2008
+
+#### Scenario: Sin años con pérdida
+- **WHEN** todos los m_s son mayores o iguales a 0
+- **THEN** el conteo es 0 de N, la lista está vacía y el peor año igual se informa
+
+#### Scenario: Arrendamiento declarado en la métrica
+- **WHEN** los parámetros no traen arrendamiento
+- **THEN** la métrica se calcula sin arrendamiento y lleva `lease_included=false`

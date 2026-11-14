@@ -11,12 +11,21 @@
 - [ ] 2.2 Implementar determinismo en el mismo proceso para los cuatro perfiles con diff de primera ruta; test "Dos corridas iguales" en verde
 - [ ] 2.3 Implementar `fieldshift.tools.cli_eval` y el test entre procesos con `PYTHONHASHSEED` distintos; test "Semillas de hash distintas" en verde
 
+## 2b. Comunicación honesta y entrega (P0)
+
+- [ ] 2.4 Test de UNKNOWN con la entrada demo recortada; escenario "Pocos años con clima" en verde
+- [ ] 2.5 Test de lenguaje prohibido sobre explicaciones, `web/src` y `docs/demo/`; escenarios "Porcentaje de confianza en la web" (con un archivo trampa) y "Leyenda permitida" en verde
+- [ ] 2.6 Test de entregables `AI_USE.md` y `PRIOR_WORK.md` enlazados desde el README; escenario "Falta PRIOR_WORK.md" verificado en una rama de prueba
+- [ ] 2.7 Test de fuente de cada número de `docs/demo/nasa-page.md`, guion del pitch y guion del video contra `docs/demo/sources.md` y el manifiesto; escenarios "Número sin fuente" y "Archivo citado inexistente" en verde
+
 ## 3. Propiedades (P1)
 
 - [ ] 3.1 Escribir estrategias `engine_inputs()` con `derandomize=True`, insumos hídricos sintéticos y prioridades opcionales; verificar que generan entradas válidas (100 ejemplos sin errores de validación)
 - [ ] 3.2 Property tests de λ y α (escenarios "Más λ no favorece a la más riesgosa" y "Más α no penaliza a la que más mejora el suelo") en verde
 - [ ] 3.3 Property tests de permutación (con `input_hash` invariante) y escala monetaria (escenarios "Candidatas reordenadas" y "Precios por k") en verde
-- [ ] 3.4 Property tests con prioridades del productor (escenarios "Prioridades aleatorias" y "Prioridades en cero") en verde
+- [ ] 3.4 Property tests con prioridades de suelo del productor (escenarios "Prioridades aleatorias" y "Prioridades en cero", con desglose de tres términos) en verde
+- [ ] 3.5 Test de preferencias de presentación sin efecto en el motor; escenario "Preferencias combinadas" en verde
+- [ ] 3.6 Test del chequeo MAGyP documentado; escenario "Reporte sin fuente" verificado borrando la cita en una rama de prueba
 
 ## 4. Snapshots, cobertura y tipos (P1)
 

@@ -1,6 +1,6 @@
 # Proposal: economics
 
-**Prioridad:** P0 (el VAN del margen es el término dominante del puntaje y la base del Riesgo).
+**Prioridad:** P0 (el VAN del margen es el término dominante del puntaje y la base del Riesgo; también P0 los años con pérdida y el margen del peor año, que son la lectura de riesgo para banco y arrendatario).
 
 ## Why
 
@@ -14,6 +14,7 @@ La comparación de rotaciones solo es creíble si el margen se calcula con pará
 - Capital de trabajo por mes desde un calendario de egresos e ingresos (supuesto), con pico de necesidad financiera usado como restricción del actor.
 - Error tipado `MissingEconomicParameter` que lista todos los faltantes de una rotación de una vez; rotation-engine lo convierte en rotación no elegible con Faltantes.
 - Base de precio declarada (FOB vs disponible/FAS) para no aplicar la retención dos veces.
+- "Margen en un año malo" y "en cuántos de los N años reales habrías perdido plata": por rotación, margen anual promedio por escenario, conteo de años con margen < 0 sobre N y margen del peor año con su año, sin entrar al puntaje.
 
 ## Capabilities
 

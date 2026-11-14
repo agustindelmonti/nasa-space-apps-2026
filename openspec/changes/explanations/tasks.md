@@ -15,6 +15,10 @@
 
 - [ ] 2.5 Plantillas de incertidumbre (rango de margen y rango hídrico por clase) y de riesgo como cola de márgenes; tests "Rango de margen citado", "Rango hídrico citado", "Clase vacía" y "Riesgo con su definición" en verde
 - [ ] 2.6 Plantillas de calendario de suelo desnudo (con evidencia NDVI) y de vulnerabilidad (helada y déficit; calor y lluvia extrema cuando vengan en la salida); tests "Invierno desnudo en soja continua", "Vulnerabilidad por mes" y "Calendario sin meses vulnerables" en verde
+- [ ] 2.7 Tarjeta fija de 5 secciones con rótulos constantes y leyenda de cierre, y frase de factibilidad desconocida; tests "Cinco secciones presentes", "Tarjeta cierra con la leyenda" y "Factibilidad desconocida" en verde
+- [ ] 2.8 Plantillas de años con pérdida, peor año y lluvia sobre suelo desnudo; tests "Pérdida en años reales", "Sin años con pérdida" y "Servicio contra soja continua" en verde
+
+- [ ] 2.9 Crear `data/forbidden_phrases.yaml` con la lista mínima (incluidas "% de confianza", "predice" y "garantiza") y el test de lenguaje sobre todas las plantillas y fixtures; tests "Expresión prohibida en plantilla" y "Porcentaje de confianza prohibido" en verde
 
 ## 3. Formatos de salida (P0)
 
@@ -28,11 +32,13 @@
 - [ ] 4.2 Resolver huecos de resolución desde el catálogo de `nasa-ingestion`; test "Resolución desde el catálogo" en verde
 - [ ] 4.3 Remisión al glosario en la primera mención de cada término; test "Término técnico con remisión" en verde
 
-## 5. Propietario vs arrendatario y lenguaje (P1)
+## 5. Propietario vs arrendatario, miradas y robustez (P1)
 
 - [ ] 5.1 Sección comparativa OWNER vs TENANT con validación de lote; tests "Ranking que cambia por horizonte" y "Salidas de lotes distintos" en verde
-- [ ] 5.2 Test de lenguaje no prescriptivo con lista de expresiones prohibidas sobre todas las plantillas y fixtures; test "Expresión prohibida en plantilla" en verde
+- [ ] 5.2 Tres miradas deterministas en el estructurado y el texto web; tests "Miradas completas" y "Mirada sin contenido" en verde
+- [ ] 5.3 Plantillas de robustez, de lluvia POWER vs IMERG y de orden de presentación; tests "Robustez citada", "Discrepancia contada" y "Primero las no riesgosas en agua" en verde
 
-## 6. Pulido (P2)
+## 6. Ficha y pulido (P2)
 
 - [ ] 6.1 Revisión de redacción rioplatense con alguien del equipo no técnico; bump de `templates_version` y snapshots regenerados sin otros diffs (`uv run pytest -k explanations`)
+- [ ] 6.2 Implementar `export_sheet` con JSON canónico y texto con marcado mínimo; tests "Ficha completa y trazable" y "Ficha con factibilidad desconocida" en verde

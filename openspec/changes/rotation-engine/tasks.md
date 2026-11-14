@@ -7,9 +7,9 @@
 
 ## 2. Evaluación (P0)
 
-- [ ] 2.1 Invocar water-feasibility como submódulo, traducir su estado por escenario a ajustes y armar la factibilidad informada; tests "Soja de segunda infactible en años secos", "Servicio nunca factible", "Estado hídrico ausente", "Rotación sin ajustes" y "Una sola definición de umbrales" en verde
+- [ ] 2.1 Invocar water-feasibility como submódulo, traducir su estado por escenario a ajustes y armar la factibilidad informada; tests "Soja de segunda infactible en años secos", "Servicio nunca factible", "Estado hídrico desconocido en un escenario", "Rotación sin ajustes", "Factibilidad desconocida no descarta" y "Una sola definición de umbrales" en verde
 - [ ] 2.2 Implementar Riesgo (ES con escenario de borde fraccionado y AF); tests "Cola de un tercio exacta", "Escenario de borde fraccionado" y "Sin variabilidad" en verde
-- [ ] 2.3 Implementar puntaje y desglose; test "Desglose del puntaje" en verde
+- [ ] 2.3 Implementar puntaje exacto VAN + α·ΔSuelo − λ·Riesgo y desglose de tres términos; test "Desglose del puntaje" en verde
 
 ## 3. Filtrado y ranking (P0)
 
@@ -18,6 +18,7 @@
 - [ ] 3.3 Implementar garantía de al menos 3 opciones y advertencia LOW_ELIGIBLE_COUNT; test "Restricciones muy duras" en verde
 
 - [ ] 3.4 Implementar `score_delta_vs_current`, rango de margen por clase y copia de calendarios; tests "Diferencia calculada por el motor", "Actual sin puntaje", "Rango con tres clases", "Puntaje intacto" y "Calendarios presentes" en verde
+- [ ] 3.5 Copiar años con pérdida y margen del peor año (economics) y lluvia sobre suelo desnudo (soil-impact) al resultado; tests "Conteo de años con pérdida", "Puntaje intacto por métricas de pérdida" y "Métrica presente para todas" en verde (P0)
 
 ## 4. Empaquetado (P0)
 
@@ -26,6 +27,6 @@
 
 ## 5. Restricciones y filtros adicionales (P1)
 
-- [ ] 5.1 Implementar filtro por clase de año con re-ponderación, control de A-CLI-03 sobre el conjunto completo y advertencia; tests "Solo años secos", "Sin filtro" y "Filtro sin escenarios" en verde
+- [ ] 5.1 Implementar filtro por clase de año (ALL, DRY, NORMAL, WET) con re-ponderación, control de A-CLI-03 sobre el conjunto completo y advertencia; tests "Solo años secos", "Sin filtro" y "Filtro sin escenarios" en verde
 - [ ] 5.2 Implementar MACHINERY_WINDOW_CONFLICT desde ventanas del perfil y A-AGR-01; test "Siembra fuera de la ventana de maquinaria" en verde
-- [ ] 5.3 Aplicar términos de prioridad de actor-profiles en el puntaje y el desglose; test "Desglose del puntaje" sigue en verde y test de actor-profiles "Prioridades nulas no cambian nada" en verde
+- [ ] 5.3 Pasar a soil-impact los pesos efectivos de actor-profiles; tests "Prioridades solo cambian ΔSuelo" y de actor-profiles "Prioridades nulas no cambian nada" en verde

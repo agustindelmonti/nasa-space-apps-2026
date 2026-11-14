@@ -5,7 +5,7 @@
 - [ ] 1.1 Modelos `Session`, `InboundMessage`, `OutboundMessage` y enum de estados; test que rechaza estado desconocido en verde
 - [ ] 1.2 Tabla de transiciones con saludo, ubicación (pin, texto, DEMO, intentos inválidos) y cobertura; tests "Primer mensaje", "Pin de WhatsApp", "Texto con coma decimal", "Texto ambiguo", "Tres intentos inválidos" y "Ubicación fuera de Argentina" en verde
 - [ ] 1.3 Menús de rotación y actor con `Evaluator` falso; tests "Opción válida", "Opción fuera de rango", "Elegir arrendatario" y "Transición reproducible" en verde
-- [ ] 1.4 Resultado, detalle, cambiar actor, glosario y comandos globales; tests "Resultado con menú final", "Detalle de la primera rotación", "De arrendatario a propietario", "Definición de NDVI", "Reiniciar a mitad del flujo" y "Audio recibido" en verde
+- [ ] 1.4 Resultado, detalle, cambiar actor, glosario y comandos globales; tests "Resultado con menú final", "Detalle de la primera rotación", "Detalle partido conserva la leyenda", "De arrendatario a propietario", "Definición de NDVI", "Reiniciar a mitad del flujo" y "Audio recibido" en verde
 
 ## 2. Simulador (P0)
 
@@ -24,6 +24,7 @@
 - [ ] 4.1 `SessionStore` en memoria con TTL, tope LRU, lock por clave y deduplicación por `MessageSid`; tests "Sesión vencida" (reloj inyectado) y "Webhook repetido" en verde
 - [ ] 4.2 Logging estructurado con número hasheado y filtro de secretos; tests "Número hasheado" y "Secreto en log" en verde
 - [ ] 4.3 Agregar variables al `.env.example` y verificar con un test que cada variable leída por `Settings` figura en `.env.example` sin valor
+- [ ] 4.4 Opción "ordenar la lista" con `display_preferences` y resumen según `display_order`; test "Primero las no riesgosas en agua" en verde
 
 ## 5. Capa LLM opcional (P2)
 

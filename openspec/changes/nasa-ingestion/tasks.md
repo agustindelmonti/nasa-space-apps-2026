@@ -45,3 +45,10 @@
 
 - [ ] 7.1 Implementar adaptador HLS NDVI con Fmask bajo el mismo contrato; verificar con test sobre un recorte de muestra
 - [ ] 7.2 Implementar adaptador ECOSTRESS LST/ET solo como evidencia; verificar con tests "Pasada con nubes" y "ECOSTRESS fuera del motor" sobre un recorte de muestra
+
+## 8. SoilGrids y comparación de lluvia (P1)
+
+- [ ] 8.1 Implementar adaptador SoilGrids REST (textura, carbono orgánico, wv0033, wv1500 por capa) con caché y Source OBSERVED `is_modeled=true`; verificar con tests "Suelo SoilGrids del lote demo" y "SoilGrids sin dato" sobre un JSON de muestra en `tests/fixtures/soilgrids/`
+- [ ] 8.2 Cargar A-WAT-17 e implementar el agua útil integrada por capa; verificar con tests "Agua útil por capas" y "Capa faltante"
+- [ ] 8.3 Implementar la comparación POWER vs IMERG por año de campaña; verificar con tests "Comparación de un año" y "Año anterior a IMERG"
+- [ ] 8.4 Agregar SoilGrids a los fixtures del lote demo y al catálogo de metadatos; verificar lectura offline con `DEMO_MODE=1` y test "Consulta de limitaciones" con la entrada SOILGRIDS

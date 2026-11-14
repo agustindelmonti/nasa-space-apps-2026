@@ -22,6 +22,10 @@
 
 ## 5. Prioridades y maquinaria (P1)
 
-- [ ] 5.1 Agregar A-ACT-07..09 a `assumptions.yaml` e implementar pesos efectivos y términos de prioridad; tests "Prioridades nulas no cambian nada", "Prioridad de nitrógeno" y "Prioridad de agua" en verde
+- [ ] 5.1 Agregar A-ACT-07 a `assumptions.yaml` (sin A-ACT-08 ni A-ACT-09, retirados) e implementar pesos efectivos con mapa 1 a 1 sobre ΔSuelo; tests "Prioridades nulas no cambian nada", "Prioridad de nitrógeno" y "Prioridad de agua rechazada en el perfil" en verde
 - [ ] 5.2 Property test con hypothesis que corre las propiedades de λ y α de quality con prioridades aleatorias; test "Monotonicidad preservada" en verde
 - [ ] 5.3 Copiar ventanas de maquinaria al perfil efectivo y verificar con rotation-engine; tests "Ventanas en el perfil efectivo" y "Elegibilidad estable en la sensibilidad" en verde
+
+## 6. Robustez del ranking (P1)
+
+- [ ] 6.1 Implementar `application.robustness` (3 corridas por clase con el perfil efectivo y 4 por perfil predefinido) con conteos y listas; tests "Conteo de robustez", "Clase sin años" y "Robustez reproducible" en verde

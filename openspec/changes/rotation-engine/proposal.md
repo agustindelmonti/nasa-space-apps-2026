@@ -1,6 +1,6 @@
 # Proposal: rotation-engine
 
-**Prioridad:** P0 (es el corazón de la demo del sábado: sin ranking no hay nada que mostrar). P1: filtro por clase de año, ventanas de maquinaria y términos de prioridad del productor.
+**Prioridad:** P0 (es el corazón de la demo del sábado: sin ranking no hay nada que mostrar). P1: filtro por clase de año (incluido NORMAL para la robustez), ventanas de maquinaria y pesos de prioridades del productor sobre ΔSuelo.
 
 ## Why
 
@@ -10,10 +10,10 @@ El desafío pide comparar al menos 3 rotaciones, incluida la actual, según las 
 
 - Generación de candidatas desde el catálogo cerrado (R_SOY_MONO, R_MAIZE_SOY, R_WHEAT_SOY2_MAIZE, R_MAIZE_SOY_COVER, R_SOY_COVER) más la rotación actual, con deduplicación por equivalencia cíclica.
 - Filtrado por restricciones del actor (doble cultivo, cultivo de servicio, capital de trabajo y, en P1, ventanas de maquinaria) y por datos faltantes, con motivo codificado por cada descarte; las descartadas se devuelven marcadas, no se esconden.
-- Evaluación por escenario climático histórico con el estado hídrico que calcula water-feasibility como submódulo del motor (no se precalcula afuera): NOT_FEASIBLE significa "no se siembra ese año" y RISKY significa "rinde de año seco"; exclusión solo si un cultivo nunca es factible.
-- E[Margen] ponderado, Riesgo como expected shortfall de cola q del margen anual por posición, escalado por el factor de anualidad; puntaje `VAN + α·ΔSuelo − λ·Riesgo` más términos de prioridad del productor (P1, cero si no hay prioridades).
-- Salida por rotación con `score_delta_vs_current`, rango de margen por clase anual (mínimo, esperado, máximo), calendario de suelo desnudo (soil-impact) y calendario de vulnerabilidad (water-feasibility).
-- Filtro opcional por clase de año (solo DRY, solo WET, todos) que re-pondera escenarios de forma determinista y se declara en la salida (P1).
+- Evaluación por escenario climático histórico con el estado hídrico que calcula water-feasibility como submódulo del motor (no se precalcula afuera): NOT_FEASIBLE significa "no se siembra ese año" y RISKY significa "rinde de año seco"; exclusión solo si un cultivo nunca es factible. UNKNOWN (datos insuficientes) nunca excluye: la rotación sigue elegible, sin ajuste en los escenarios sin dato, con Faltante, y se ordena como RISKY en la presentación.
+- E[Margen] ponderado, Riesgo como expected shortfall de cola q del margen anual por posición, escalado por el factor de anualidad; puntaje exactamente `VAN + α·ΔSuelo − λ·Riesgo`. Las prioridades del productor solo re-ponderan los w_k de ΔSuelo (P1); no hay términos agregados.
+- Salida por rotación con `score_delta_vs_current`, rango de margen por clase anual (mínimo, esperado, máximo), años con pérdida y margen del peor año (economics, P0), lluvia sobre suelo desnudo (soil-impact, P0), calendario de suelo desnudo y calendario de vulnerabilidad (water-feasibility).
+- Filtro opcional por clase de año (todos, solo DRY, solo NORMAL, solo WET) que re-pondera escenarios de forma determinista y se declara en la salida (P1); lo usa también el indicador de robustez de actor-profiles.
 - Ranking estable con los desempates de xcut.md; siempre al menos 3 opciones incluida la actual.
 - Salida `EngineOutput` con `input_hash` y `engine_version`; sin I/O, reloj, random ni LLM.
 

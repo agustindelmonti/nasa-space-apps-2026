@@ -34,10 +34,10 @@ Marcadores pytest: `network` (excluido en CI con `-m "not network"`), `slow`.
 
 ### 3. Estrategias de hypothesis
 
-- `engine_inputs()`: elige 1 a 6 candidatas del catálogo, 3 a 40 escenarios con pesos uniformes y clases anual y por estación, parámetros económicos positivos acotados, insumos hídricos sintéticos por escenario (series diarias cortas de lluvia, ET0 y temperaturas; el estado hídrico ya no se genera porque lo calcula el motor), perfil dentro de A-ACT-06 con prioridades opcionales. Todo generado en floats "amigables" (múltiplos de 0.01) para reducir ruido.
+- `engine_inputs()`: elige 1 a 6 candidatas del catálogo, 3 a 40 escenarios con pesos uniformes y clases anual y por estación, parámetros económicos positivos acotados, insumos hídricos sintéticos por escenario (series diarias cortas de lluvia, ET0 y temperaturas; el estado hídrico ya no se genera porque lo calcula el motor), perfil dentro de A-ACT-06 con prioridades de suelo opcionales (EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL, ROOTS). Todo generado en floats "amigables" (múltiplos de 0.01) para reducir ruido.
 - `settings(max_examples=200, deadline=None, derandomize=True)`: `derandomize` hace reproducibles las corridas en CI.
 - Propiedades sobre puntajes sin redondear (expuestos en el desglose con precisión completa en memoria); la de α excluye casos con diferencias < 0.01 USD/ha porque el desempate por Riesgo puede reordenar empates de redondeo.
-- Escala monetaria: se escalan todos los campos monetarios, incluidos el capital máximo del actor y los κ de prioridades (A-ACT-08, A-ACT-09); si no se escalara, el filtro de capital cambiaría la elegibilidad y la propiedad sería falsa por construcción. "Precios" en el pedido original se interpreta como todos los valores monetarios.
+- Escala monetaria: se escalan todos los campos monetarios, incluido el capital máximo del actor; si no se escalara, el filtro de capital cambiaría la elegibilidad y la propiedad sería falsa por construcción. Ya no hay κ de prioridades (A-ACT-08 y A-ACT-09 retirados). "Precios" en el pedido original se interpreta como todos los valores monetarios.
 
 ### 4. Snapshots y versión
 
@@ -53,6 +53,15 @@ Recorre `src/fieldshift/engine/**/*.py` con `ast.parse` y revisa `Import` / `Imp
 - Se usa lista de prohibidos + lista de permitidos: un módulo no listado falla con mensaje "agregar a una de las listas", para forzar la decisión explícita.
 
 Alternativa descartada: import-linter. Útil para capas, pero no detecta llamadas a `now()` y agrega configuración; el test AST es ~60 líneas.
+
+### 5b. Tests de comunicación y entrega (P0)
+
+- `tests/language/test_forbidden.py`: carga `data/forbidden_phrases.yaml` (explanations) y recorre textos generados de las fixtures, `web/src/**/*.{ts,tsx,json}` y `docs/demo/*.md`; match por frase exacta sin distinguir mayúsculas, con lista blanca de leyendas fijas.
+- `tests/delivery/test_transparency.py`: `AI_USE.md` y `PRIOR_WORK.md` existen, no vacíos y enlazados desde el README. El contenido es responsabilidad del ingeniero principal.
+- `tests/delivery/test_sources.py`: extrae números de `docs/demo/nasa-page.md`, `docs/demo/script.md` y `docs/demo/video.md` con `parse_ar_numbers`, excluye tiempos `m:ss`, numeración de bloques y años del calendario listados, y exige fila en `docs/demo/sources.md` cuyo archivo exista en `data/fixtures/demo/manifest.json` o cuyo id esté en el registro de supuestos.
+- `tests/engine/test_unknown.py`: entrada demo recortada para forzar menos de A-CLI-03 escenarios; verifica UNKNOWN, elegibilidad y textos.
+
+Alternativa descartada: revisar a mano el pitch y la web el domingo (es justo cuando no hay tiempo).
 
 ### 6. CI (GitHub Actions)
 

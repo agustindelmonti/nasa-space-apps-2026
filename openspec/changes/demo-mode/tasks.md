@@ -27,6 +27,14 @@
 - [ ] 5.2 Escribir `docs/demo/plan-b.md` con disparadores, comandos exactos de ejecución local en DEMO_MODE y umbral para pasar al video; verificar corriendo los comandos tal cual en una máquina limpia sin red
 - [ ] 5.3 Ensayar la demo dos veces con cronómetro y ajustar tiempos; verificar registro de duración <= 4:00 en el guion
 
+## 5b. Reglas de entrega, fuentes y transparencia (P0)
+
+- [ ] 5.4 Confirmar reglas de video en las bases oficiales (duración máxima del video, límite de slides del deck) y en la Judging & Awards Guide; verificar que `docs/demo/video.md` cita documento, fecha de consulta y variante elegida (escenario "Regla registrada")
+- [ ] 5.5 Escribir la variante de 30 s del guion del video junto a la de 4 minutos, y la variante deck de hasta 7 slides si las bases lo piden; verificar escenarios "Variante de 30 segundos" y "Deck acotado" con el test que suma tiempos y cuenta slides
+- [ ] 5.6 Agregar al bloque 1 del guion el gancho verbal de Dune (sin imágenes ni logos) y al cierre la regla "como máximo ganador sede"; verificar escenarios "Gancho verbal de apertura" y "Material del domingo" por revisión del guion
+- [ ] 5.7 Escribir `docs/demo/nasa-page.md` y `docs/demo/sources.md` con la fuente de cada número; verificar con el test de quality "Número sin fuente" en verde
+- [ ] 5.8 Agregar al pre-demo el ítem crítico de `AI_USE.md` y `PRIOR_WORK.md` (creados por el ingeniero principal) enlazados desde el README; verificar escenario "Entregable faltante" con un entorno de prueba sin el archivo
+
 ## 6. Regeneración y capas estáticas (P1)
 
 - [ ] 6.1 Script de regeneración en un comando con validación, reemplazo atómico y reporte de diff; verificar tests "Sin credenciales" y "Diff reportado" con fuentes mockeadas

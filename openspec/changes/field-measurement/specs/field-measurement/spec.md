@@ -7,7 +7,7 @@ Registra lecturas de impacto tomadas con el acelerómetro del celular (martillad
 ## ADDED Requirements
 
 ### Requirement: Registro de sesión de lecturas
-El sistema MUST aceptar en `POST /api/v1/plots/{id}/field-readings` una sesión con: id de sesión, fecha, dispositivo (modelo y rango del sensor si se conoce), frecuencia de muestreo (Hz), altura de caída (cm) y una lista de puntos, cada uno con ubicación (lat/lon) y golpes (pico de desaceleración con unidad declarada, m/s² o g, y duración del pulso en ms).
+El sistema MUST aceptar en `POST /api/v1/plots/{id}/field-readings` una sesión con: id, fecha, dispositivo (modelo y rango del sensor si se conoce), frecuencia de muestreo (Hz), masa del carro (kg), altura de caída (mm) y puntos con ubicación (lat/lon) y golpes (pico de desaceleración en m/s² o g y duración del pulso en ms).
 
 #### Scenario: Sesión válida
 - **GIVEN** el lote `demo-casilda` y una sesión con 4 puntos de 6 golpes cada uno
@@ -30,12 +30,17 @@ Reenviar una sesión con el mismo id y el mismo contenido MUST NOT duplicarla y 
 - **THEN** la respuesta es `SESSION_CONFLICT` y la sesión original no cambia
 
 ### Requirement: Validación de lecturas
-Cada golpe MUST tener pico > 0 y duración > 0. La frecuencia de muestreo MUST ser >= el mínimo A-FLD-02 y la altura de caída MUST coincidir con la estándar de A-FLD-02. Cada punto MUST estar dentro del bounding box de Argentina y, si el lote tiene polígono, dentro de él. Una sesión inválida MUST rechazarse con errores por campo.
+Cada golpe MUST tener pico > 0 y duración > 0. La frecuencia de muestreo MUST ser >= el mínimo de A-FLD-02 y la altura de caída MUST ser la estándar de v0 de A-FLD-02 (150 mm de ejemplo, la menor del accesorio, porque el acelerómetro del celular satura). Cada punto MUST estar en el bounding box de Argentina y en el polígono del lote si existe.
 
 #### Scenario: Muestreo insuficiente
 - **GIVEN** A-FLD-02 con frecuencia mínima de ejemplo 100 Hz
 - **WHEN** la sesión declara 50 Hz
 - **THEN** la sesión se rechaza con `SAMPLING_RATE_TOO_LOW` indicando el mínimo
+
+#### Scenario: Altura distinta de la estándar de v0
+- **GIVEN** A-FLD-02 con alturas de ejemplo 150, 300 y 450 mm y estándar de v0 150 mm
+- **WHEN** la sesión declara 300 mm
+- **THEN** la sesión se rechaza indicando que v0 solo admite 150 mm porque el acelerómetro del celular satura en alturas mayores
 
 #### Scenario: Punto fuera del lote
 - **WHEN** un punto cae fuera del polígono del lote
@@ -119,3 +124,16 @@ Las lecturas de campo MUST NOT modificar el puntaje, el ranking ni la factibilid
 - **GIVEN** una evaluación del lote de demo
 - **WHEN** se registra una sesión de lecturas y se vuelve a evaluar con la misma entrada
 - **THEN** el `input_hash` y la salida del motor son idénticos
+
+### Requirement: Demo con caja de tierra suelta y compactada
+El repo MUST incluir una sesión de ejemplo de demo con dos cajas de tierra (suelta y compactada a mano), dos puntos por caja, tomada con el accesorio v0 de A-FLD-02. Normalizada en una sola sesión, los puntos de la caja compactada MUST tener índice relativo mayor que los de la suelta, con categorías ordenadas.
+
+#### Scenario: Suelta contra compactada
+- **GIVEN** la sesión de demo con 4 puntos OK, 2 en la caja suelta y 2 en la compactada, A-FLD-04 = 3 (ejemplo)
+- **WHEN** se normaliza la sesión
+- **THEN** los dos índices de la caja compactada son mayores que los dos de la suelta, ninguno de la compactada queda `LOWER` y ninguno de la suelta queda `HIGHER`
+
+#### Scenario: Cajas con orden invertido
+- **GIVEN** una sesión de demo donde la caja compactada no da índices mayores
+- **WHEN** corre el test de la demo
+- **THEN** el test falla y pide repetir la toma revisando altura, masa y técnica, sin ajustar los números

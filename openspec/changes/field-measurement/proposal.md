@@ -8,7 +8,9 @@ El desafío pide explicar en qué difiere el dato satelital de la medición de c
 
 ## What Changes
 
-- Se define un caso de uso y endpoint para registrar sesiones de lecturas de impacto por punto del lote (picos de desaceleración y duración del pulso por golpe, altura de caída, dispositivo).
+- Se fija el accesorio del martillador v0 según el master doc: masa de ~2 kg en un carro sobre riel o tubo guía, alturas de 150, 300 y 450 mm, y v0 usa 150 mm porque el acelerómetro del celular satura en alturas mayores (A-FLD-02, corrige el valor previo de 30 cm).
+- Se define un caso de uso y endpoint para registrar sesiones de lecturas de impacto por punto del lote (picos de desaceleración y duración del pulso por golpe, masa y altura de caída en mm, dispositivo).
+- Se define un escenario de demo: una caja de tierra suelta y una compactada producen índices relativos distintos y ordenados (compactada mayor).
 - Se define la validación de lecturas (rangos, frecuencia de muestreo, saturación del sensor, golpes mínimos, punto dentro del lote).
 - Se define una normalización relativa no calibrada dentro de una misma sesión y dispositivo (índice relativo y categoría por posición).
 - Se define la procedencia: lecturas OBSERVED con dataset FIELD_HAMMER; índice DERIVED; interpretación como supuesto A-FLD-NN.
@@ -32,6 +34,7 @@ El desafío pide explicar en qué difiere el dato satelital de la medición de c
 ## Fuera de alcance
 
 - Calibración contra un impactómetro Clegg, penetrómetro o densidad aparente.
+- Versión v1 con ESP32 y acelerómetro ADXL375 (±200 g) calibrada contra penetrómetro: queda como trabajo futuro documentado.
 - Usar las lecturas en el puntaje del motor o para modificar el Suelo automáticamente.
 - Comparar lecturas entre lotes, días o dispositivos distintos.
 - Corregir SMAP con datos de campo o calcular correlaciones estadísticas campo-satélite.

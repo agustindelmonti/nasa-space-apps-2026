@@ -7,7 +7,7 @@ Presentar en una web responsive el análisis de rotaciones de un lote: mapa con 
 ## ADDED Requirements
 
 ### Requirement: El front solo presenta
-La web MUST obtener todo puntaje, rango, desglose, factibilidad, ΔSuelo, riesgo, evidencia y texto explicativo desde la API `/api/v1`. La web MUST NOT calcular, reordenar por su cuenta ni redondear de forma distinta a la API ningún resultado del motor; solo formatea unidades para mostrar.
+La web MUST obtener todo puntaje, rango, desglose, factibilidad, ΔSuelo, riesgo, evidencia, orden de presentación y texto explicativo desde la API `/api/v1`. La web MUST NOT calcular, reordenar por su cuenta (solo usa `rank` o `display_order` de la API) ni redondear distinto ningún resultado; solo formatea unidades.
 
 #### Scenario: Ranking tal como llega de la API
 - **GIVEN** una respuesta mockeada de `POST /api/v1/evaluate` con rangos 1, 2, 3 asignados a R_MAIZE_SOY, R_SOY_MONO, R_WHEAT_SOY2_MAIZE
@@ -58,7 +58,7 @@ Si los tiles de GIBS fallan (error de red o timeout configurable), la web MUST m
 - **THEN** se ve la imagen estática del lote con el rótulo "imagen cacheada" y su fecha, y la página no muestra errores no manejados
 
 ### Requirement: Tabla comparativa de rotaciones
-La web MUST mostrar una tabla con al menos 3 rotaciones evaluadas, incluida la actual, con rango, nombre, puntaje total en USD/ha y su desglose (VAN, α·ΔSuelo, λ·Riesgo, términos de prioridad), diferencia contra la actual (`score_delta_vs_current`), factibilidad hídrica, ΔSuelo y Riesgo. La rotación con `is_current` MUST quedar destacada con rótulo textual "actual", no solo por color.
+La web MUST mostrar una tabla con al menos 3 rotaciones, incluida la actual, con rango, nombre, puntaje en USD/ha y su desglose (VAN, α·ΔSuelo, λ·Riesgo), `score_delta_vs_current`, factibilidad hídrica, ΔSuelo, Riesgo, margen del peor año, años con pérdida sobre N y lluvia sobre suelo desnudo. La actual MUST destacarse con el rótulo "actual", no solo por color.
 
 #### Scenario: Rotación actual destacada
 - **GIVEN** una evaluación donde R_SOY_MONO tiene `is_current=true`
@@ -70,7 +70,11 @@ La web MUST mostrar una tabla con al menos 3 rotaciones evaluadas, incluida la a
 - **THEN** la web muestra un aviso de evaluación incompleta en lugar de una tabla parcial sin explicación
 
 ### Requirement: Factibilidad hídrica con texto
-La factibilidad MUST mostrarse con ícono, color y texto (Factible, Riesgosa, No factible) y su porqué tal como lo envía la API. Una rotación NOT_FEASIBLE MUST seguir visible en la tabla con su motivo.
+La factibilidad MUST mostrarse con ícono, color y texto (Factible, Riesgosa, No factible, Desconocida) y su porqué tal como lo envía la API. UNKNOWN MUST mostrarse "Desconocida" con su faltante, nunca como "No factible". Una rotación NOT_FEASIBLE MUST seguir visible con su motivo. La web MUST NOT mostrar porcentajes de confianza.
+
+#### Scenario: Factibilidad desconocida
+- **WHEN** la API marca una rotación como UNKNOWN con un faltante
+- **THEN** la fila muestra "Desconocida", el faltante es accesible desde la fila y en el DOM no aparece "No factible" ni el texto "% de confianza" para esa rotación
 
 #### Scenario: Rotación no factible
 - **WHEN** la API marca R_WHEAT_SOY2_MAIZE como NOT_FEASIBLE con un motivo
@@ -129,7 +133,11 @@ Al pasar el mouse, enfocar con teclado o tocar un badge, la web MUST mostrar: pa
 - **THEN** se muestra el assumption_id, su fuente o "pendiente AFA" y su estado de validación
 
 ### Requirement: Panel de evidencia, faltantes y riesgos
-Al seleccionar una rotación la web MUST mostrar su evidencia (dataset, variable, período, valor e interpretación), beneficios, faltantes de información (qué falta, por qué importa, cómo conseguirlo) y riesgos con severidad, tal como los envía la API.
+Al seleccionar una rotación la web MUST mostrar su tarjeta fija de 5 secciones en el orden de explanations (por qué se sugiere, evidencia, beneficios frente a la actual, faltantes, riesgos a revisar en el lote), tal como la envía la API, cerrada con la leyenda "Esta herramienta apoya, no reemplaza, al agrónomo.".
+
+#### Scenario: Tarjeta de 5 secciones
+- **WHEN** el usuario selecciona cualquier rotación
+- **THEN** ve las cinco secciones en orden, ninguna omitida, y la leyenda al pie de la tarjeta
 
 #### Scenario: Faltantes visibles
 - **GIVEN** una evaluación donde falta la profundidad de napa
@@ -232,13 +240,60 @@ Para cada rotación la web MUST mostrar el rango de margen por clase de año (m�
 - **WHEN** se abre el panel de la rotación
 - **THEN** se ven tres barras rotuladas Seco, Normal y Húmedo con mínimo, esperado y máximo tal como los envía la API
 
-### Requirement: Filtro por clase de año y prioridades
-La web MUST ofrecer un filtro de clase de año (Todos, Solo secos, Solo húmedos) y controles de prioridades del productor que se envían a `POST /evaluate`, y MUST mostrar el filtro efectivo y los años usados que declara la respuesta.
+### Requirement: Filtro por clase de año, prioridades y preferencias
+La web MUST ofrecer un filtro de clase de año (Todos, Solo secos, Solo húmedos), sliders de prioridades de suelo (cobertura y erosión, carbono, N, malezas, raíces) y preferencias de presentación (primero las no riesgosas en agua, primero las de doble cultivo), todo enviado a `POST /evaluate`, y MUST mostrar el filtro efectivo, los años usados y el orden `display_order` que declara la respuesta.
 
 #### Scenario: Solo años secos
 - **WHEN** el usuario elige "Solo secos"
 - **THEN** se envía `year_class_filter: "DRY"` a `/evaluate` y la tabla muestra el rótulo del filtro y la cantidad de años usados según la respuesta
 
-#### Scenario: Prioridad de agua
-- **WHEN** el usuario sube la prioridad de agua
-- **THEN** se envía un único pedido con la prioridad y la tabla muestra el término de prioridad que devuelve la API
+#### Scenario: Preferencia de agua
+- **WHEN** el usuario activa "primero las no riesgosas en agua"
+- **THEN** se envía un único pedido con `display_preferences: ["WATER_SAFE_FIRST"]`, la tabla sigue el `display_order` de la respuesta, cada fila conserva su rango y los puntajes no cambian
+
+#### Scenario: Prioridad de carbono
+- **WHEN** el usuario sube la prioridad de carbono
+- **THEN** se envía un único pedido con la prioridad y la tabla muestra el ΔSuelo y los pesos efectivos que devuelve la API, sin columnas de términos extra
+
+### Requirement: Margen en un año malo y años con pérdida
+Para cada rotación la web MUST mostrar, tal como los envía la API, "en X de N años reales habrías perdido plata" con la lista de años y "margen en un año malo" con el año, con badge DERIVED y la aclaración de margen bruto.
+
+#### Scenario: Años con pérdida visibles
+- **GIVEN** una respuesta con 4 de 30 años con pérdida y peor año 2008 (ejemplo)
+- **WHEN** se renderiza la tabla y el panel
+- **THEN** se ve "4 de 30 años" y el margen de 2008 con los valores de la API, y el tooltip lista los años
+
+### Requirement: Lluvia sobre suelo desnudo
+La web MUST mostrar por rotación los mm de lluvia sobre suelo desnudo que envía la API (P0, valor en tabla y panel) y, en P1, pintarlos por mes sobre el calendario de suelo desnudo, sin calcular nada.
+
+#### Scenario: Métrica en la tabla
+- **GIVEN** una respuesta con lluvia sobre suelo desnudo por rotación
+- **WHEN** se renderiza la tabla
+- **THEN** cada fila muestra los mm de la API con badge DERIVED y tooltip con la fuente de lluvia
+
+#### Scenario: Lluvia sobre el calendario
+- **WHEN** se abre el calendario de una rotación (P1)
+- **THEN** cada mes muestra los mm de lluvia sobre suelo desnudo de la API junto a los días sin cobertura
+
+### Requirement: Comparación de lluvia POWER vs IMERG
+En P1 el panel de evidencia MUST mostrar por año la lluvia POWER y la IMERG que envía la API, marcar los años con discrepancia y la fuente que usó el balance, con la frase "para el balance de agua tomamos la más conservadora (la menor)".
+
+#### Scenario: Año con discrepancia
+- **GIVEN** una respuesta con 2015 POWER 600 mm e IMERG 420 mm (ejemplo) y balance con IMERG
+- **WHEN** se abre el panel de evidencia
+- **THEN** se ven ambas cifras, la marca de discrepancia y que el balance usó IMERG
+
+### Requirement: Robustez y tres miradas
+En P1 la web MUST mostrar por rotación la robustez que envía la API como texto ("primera en 2 de 3 tipos de año y para 3 de 4 actores"), sin porcentajes, y MUST permitir ver la explicación agrupada en las tres miradas (clima, suelo y agua, economía).
+
+#### Scenario: Robustez como conteo
+- **GIVEN** una respuesta con robustez 2 de 3 clases y 3 de 4 perfiles
+- **WHEN** se abre el panel
+- **THEN** se ve el texto con conteos y no aparece ningún porcentaje
+
+### Requirement: Botón de ficha
+En P2 el panel de una rotación MUST ofrecer "Descargar ficha" que llama a `POST /api/v1/rotation-sheet` con el mismo request de la evaluación mostrada y descarga el JSON o abre el texto para imprimir.
+
+#### Scenario: Descargar ficha
+- **WHEN** el usuario pide la ficha de la rotación seleccionada
+- **THEN** se envía un único pedido a `/rotation-sheet` con su `rotation_id` y el archivo descargado trae el mismo `input_hash` que la evaluación mostrada

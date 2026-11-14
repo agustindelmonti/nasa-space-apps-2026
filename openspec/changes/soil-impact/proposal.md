@@ -1,6 +1,6 @@
 # Proposal: soil-impact
 
-**Prioridad:** P0 (el término α·ΔSuelo de la función objetivo no existe sin este índice; sin él, OWNER y COOP rankean igual que TENANT). P0 también el calendario mensual de suelo desnudo (pedido explícito del enunciado); P1 la re-ponderación de componentes por prioridades del productor.
+**Prioridad:** P0 (el término α·ΔSuelo de la función objetivo no existe sin este índice; sin él, OWNER y COOP rankean igual que TENANT). P0 también el calendario mensual de suelo desnudo (pedido explícito del enunciado) y la métrica de mm de lluvia caídos sobre suelo desnudo por rotación; P1 su visual sobre el calendario y la re-ponderación de componentes por prioridades del productor.
 
 ## Why
 
@@ -14,7 +14,8 @@ El desafío pide explorar rotaciones que fortalezcan la salud del suelo, pero "m
 - Monotonicidad documentada y testeada: agregar un cultivo de servicio no reduce la cobertura ni los componentes de carbono, malezas y raíces.
 - NDVI histórico (MODIS/HLS), como resumen mensual del lote en `EngineInput`, se usa como evidencia de cobertura observada de la rotación actual y como chequeo de consistencia del modelo, no como entrada del índice.
 - Calendario mensual de días con suelo desnudo por rotación (sin cultivo vivo, y sin cultivo ni rastrojo persistente), con la fracción mensual observada de NDVI bajo umbral del lote como evidencia OBSERVED de la rotación actual.
-- Los pesos w_k pueden llegar re-ponderados por las prioridades del productor (regla en actor-profiles); el índice sigue acotado y monótono.
+- Lluvia caída sobre suelo desnudo por rotación (proxy de erosión): mm de lluvia diaria POWER de cada escenario en los días sin cultivo vivo ni rastrojo persistente, anual ponderada y por mes, como DERIVED fuera de ΔSuelo.
+- Los pesos w_k pueden llegar re-ponderados por las prioridades del productor (una por componente, regla en actor-profiles); el índice sigue acotado y monótono.
 - Salida con procedencia DERIVED, desglose por componente y por campaña, consumida por rotation-engine y explanations.
 
 ## Capabilities
@@ -28,7 +29,7 @@ El desafío pide explorar rotaciones que fortalezcan la salud del suelo, pero "m
 ## Impact
 
 - Módulo puro dentro de `fieldshift.engine` (sin I/O). Depende de `domain-models` (Rotación, Cultivo, Suelo, PValue) y del registro de supuestos.
-- Requiere que `EngineInput` transporte los valores resueltos de los supuestos `A-SOIL-*` (cambio aditivo sobre domain-models, coordinar con su dueño).
+- Requiere que `EngineInput` transporte los valores resueltos de los supuestos `A-SOIL-*` (cambio aditivo sobre domain-models, coordinar con su dueño). Usa la lluvia diaria por escenario que ya viaja en `EngineInput` para la lluvia sobre suelo desnudo.
 - Consumidores: `rotation-engine` (término α·ΔSuelo, desempate y calendario en el resultado), `explanations` y `web-demo` (calendario de suelo desnudo). `nasa-ingestion` provee el resumen NDVI mensual ya resuelto.
 
 ## Fuera de alcance

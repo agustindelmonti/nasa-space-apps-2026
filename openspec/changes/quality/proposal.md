@@ -1,6 +1,6 @@
 # Proposal: quality
 
-**Prioridad:** P0 para determinismo, test de imports y CI mínimo (ruff + pytest); P1 para property tests, snapshots, cobertura y mypy estricto; P2 para endurecer el CI (matriz, caché).
+**Prioridad:** P0 para determinismo, test de imports, CI mínimo (ruff + pytest), test de UNKNOWN distinto de no factible, lenguaje prohibido (incluido "% de confianza") en todas las salidas, entregables `AI_USE.md` y `PRIOR_WORK.md` y fuente de cada número del pitch y la página NASA; P1 para property tests, snapshots, cobertura, mypy estricto, preferencias de presentación sin efecto en el motor y chequeo documentado de años secos contra MAGyP; P2 para endurecer el CI (matriz, caché).
 
 ## Why
 
@@ -14,6 +14,10 @@ La promesa central ante el jurado y AFA es "misma entrada, misma salida, todo tr
 - Cobertura mínima del paquete engine (90 %) y de domain.
 - ruff (lint + format) en todo el repo y mypy estricto en engine y domain.
 - Test estático de imports: engine no importa módulos de red, tiempo, random, sistema ni capas superiores.
+- Test de que datos insuficientes producen factibilidad UNKNOWN y nunca NOT_FEASIBLE.
+- Test de lenguaje sobre explicaciones, textos de la web y material del pitch con la lista prohibida de explanations ("% de confianza", "predice", "garantiza", entre otras).
+- Verificación de entregables de transparencia: `AI_USE.md` y `PRIOR_WORK.md` en la raíz (los crea el ingeniero principal; quality solo exige su presencia y el enlace desde el README) y tabla número → dataset → archivo para cada cifra del pitch y de la página NASA.
+- Test de que las preferencias de presentación no cambian salida del motor ni `input_hash`, y de que el chequeo MAGyP está documentado con fuentes (P1).
 - Workflow de GitHub Actions que corre todo lo anterior sin red ni secretos.
 
 ## Capabilities

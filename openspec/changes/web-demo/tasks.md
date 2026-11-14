@@ -16,14 +16,15 @@
 
 ## 3. Ranking por actor (P0)
 
-- [ ] 3.1 Tabla comparativa (rango, nombre, puntaje, desglose, factibilidad con texto, ΔSuelo, riesgo) con fila actual rotulada; verificar Playwright "Ranking tal como llega de la API", "Rotación actual destacada", "Rotación no factible" y "Menos de 3 resultados"
+- [ ] 3.1 Tabla comparativa (rango, nombre, puntaje, desglose de tres términos, factibilidad con cuatro textos, ΔSuelo, riesgo) con fila actual rotulada; verificar Playwright "Ranking tal como llega de la API", "Rotación actual destacada", "Rotación no factible", "Factibilidad desconocida" y "Menos de 3 resultados"
 - [ ] 3.2 Selector de actor desde `GET /actors/profiles` que dispara `POST /evaluate`; verificar Playwright "Propietario vs arrendatario"
 - [ ] 3.3 Vista de tarjetas en celular para la tabla; verificar Playwright "Celular sin scroll horizontal"
+- [ ] 3.4 Columnas de peor año, años con pérdida y lluvia sobre suelo desnudo; verificar Playwright "Años con pérdida visibles" y "Métrica en la tabla"
 
 ## 4. Evidencia y procedencia (P0)
 
 - [ ] 4.1 Componentes de valor con procedencia, badge y tooltip accesible (hover, foco, tap) resolviendo supuestos con `GET /assumptions`; verificar Playwright "Supuesto marcado", "Tooltip de dato SMAP" y "Tooltip de supuesto"
-- [ ] 4.2 Panel de rotación seleccionada con evidencia, beneficios, faltantes y riesgos; verificar Playwright "Faltantes visibles"
+- [ ] 4.2 Panel de rotación seleccionada con la tarjeta fija de 5 secciones y leyenda al pie; verificar Playwright "Tarjeta de 5 secciones" y "Faltantes visibles"
 - [ ] 4.3 Leyendas fijas "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción"; verificar Playwright "Leyendas siempre presentes"
 
 - [ ] 4.4 Componente `<MonthStrip>` para el calendario de suelo desnudo con fila de NDVI observado; verificar Playwright "Calendario de la actual con NDVI" y "Comparar con una alternativa"
@@ -38,7 +39,8 @@
 - [ ] 6.1 Sliders H, α, λ con rangos de la API, debounce y descarte de respuestas viejas; verificar Playwright "Cambio de λ" y "Respuestas fuera de orden"
 - [ ] 6.2 Indicador de cambio de posición y animación FLIP con `prefers-reduced-motion`; verificar vitest del diff de ranking y Playwright "Subida de posición" y "Movimiento reducido"
 
-- [ ] 6.3 Filtro por clase de año y controles de prioridades enviados a `/evaluate`, más filas de calor y lluvia extrema en el timeline cuando vengan en la respuesta; verificar Playwright "Solo años secos" y "Prioridad de agua"
+- [ ] 6.3 Filtro por clase de año, sliders de prioridades de suelo y toggles de preferencias enviados a `/evaluate` (tabla según `display_order`), más filas de calor y lluvia extrema en el timeline cuando vengan en la respuesta; verificar Playwright "Solo años secos", "Preferencia de agua" y "Prioridad de carbono"
+- [ ] 6.4 Lluvia sobre suelo desnudo en el calendario, tabla POWER vs IMERG en evidencia, robustez como texto y vista por tres miradas; verificar Playwright "Lluvia sobre el calendario", "Año con discrepancia" y "Robustez como conteo"
 
 ## 7. Glosario y fallback (P1)
 
@@ -57,3 +59,4 @@
 
 - [ ] 9.1 Modo presentación (tipografía grande, ocultar controles secundarios) para 1280x720; verificar Playwright "Proyector" con capturas
 - [ ] 9.2 Capa de anomalía GRACE-FO si GIBS la publica (según 2.1); verificar tile HTTP 200 y leyenda con limitación de ~300 km
+- [ ] 9.3 Botón "Descargar ficha" contra `/rotation-sheet`; verificar Playwright "Descargar ficha"

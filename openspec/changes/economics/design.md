@@ -58,6 +58,16 @@ peak_p = max_m need_m;   peak(r) = max_p peak_p
 
 Se usa el máximo sobre posiciones (la campaña más exigente define si el actor la puede financiar). Alternativa descartada: comparar contra el egreso de un solo mes; un actor con poco capital se financia por acumulado, no por mes suelto.
 
+### 3b. Años con pérdida y peor año
+
+```
+m_s        = (1/L) · Σ_p M_p,s                  (margen anual promedio del escenario s)
+loss_years = { año(s) : m_s < 0 }               conteo |loss_years| de N escenarios usados
+worst      = min_s m_s  con su año              (empate: año menor)
+```
+
+El corte en 0 no es un supuesto agronómico: es la definición de "perder plata" en margen bruto. El rotulado "margen bruto" se mantiene (sin costos fijos). Alternativas descartadas: percentil bajo de m_s (agrega un parámetro y es más difícil de decir que "el peor año"); probabilidad de pérdida en % (se lee como pronóstico).
+
 ### 4. Errores y faltantes
 
 - `MissingEconomicParameter(missing: tuple[(crop_id, param_name), ...])`: se recolecta recorriendo todos los cultivos de la rotación antes de fallar (orden estable: cultivo por id, parámetro por nombre).

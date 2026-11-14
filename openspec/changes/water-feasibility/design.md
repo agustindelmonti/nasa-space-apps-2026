@@ -21,10 +21,13 @@ Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por esce
 7. **GRACE-FO solo escala FEASIBLE a RISKY.** Resolución ~300 km frente a un lote de 100 ha: sirve para decir "la región viene con reservas bajas", no para decidir. "Meses recientes de referencia" y umbral (por ejemplo percentil de la propia serie o cm de anomalía) en A-WAT-10.
 8. **Napa solo como atenuante textual.** Sin datos de napa confiables por lote ni tiempo para un modelo de ascenso capilar; sumar agua inventada sería peor que no sumarla. Se puede revisar con AFA.
 9. **Helada aquí y no en otro change**: usa los mismos escenarios y series POWER y produce un Riesgo de tipo helada para `rotation-engine` y `explanations`. No toca el estado hídrico para no mezclar conceptos.
-10. **Motivos codificados** (`SEVERE_STRESS_FREQUENT`, `MODERATE_STRESS`, `PROFILE_NOT_RECHARGED_AT_SOWING`, `GRACE_REGIONAL_DEFICIT`, `SHALLOW_WATER_TABLE_MITIGATES`, `INITIAL_MOISTURE_ASSUMED`, `SOIL_AWC_ASSUMED`, `SCENARIOS_EXCLUDED`, `INSUFFICIENT_SCENARIOS`, `MISSING_WEATHER`) con parámetros numéricos; las plantillas de `explanations` los traducen a texto.
+10. **Motivos codificados** (`SEVERE_STRESS_FREQUENT`, `MODERATE_STRESS`, `PROFILE_NOT_RECHARGED_AT_SOWING`, `GRACE_REGIONAL_DEFICIT`, `SHALLOW_WATER_TABLE_MITIGATES`, `INITIAL_MOISTURE_ASSUMED`, `SOIL_AWC_ASSUMED`, `SOIL_AWC_FROM_SOILGRIDS`, `SCENARIOS_EXCLUDED`, `INSUFFICIENT_SCENARIOS`, `MISSING_WEATHER`, `CONSERVATIVE_RAIN_SOURCE`) con parámetros numéricos; las plantillas de `explanations` los traducen a texto.
 11. **Agregado en domain-models (acordado)**: `EngineInput` trae series diarias por año (lluvia, ET0, T2M_MIN, T2M_MAX, IMERG opcional), humedad inicial SMAP y anomalía TWS. El módulo corre dentro del motor; no se aceptan estados precalculados.
 12. **Estado por (cultivo, posición, escenario) para el motor**: NOT_FEASIBLE si el escenario es SEVERE para ese cultivo; RISKY si es MODERATE o si es el cultivo de verano de una campaña doble o con servicio y el agua a su siembra queda bajo A-WAT-08; FEASIBLE en otro caso. GRACE-FO y napa no tocan el estado por escenario. El estado agregado de la rotación (peor campaña, con GRACE-FO) es la factibilidad informada en el resultado. Alternativa descartada: pasar solo el estado agregado (rotation-engine no podría ajustar año por año).
 13. **Calendario mensual de vulnerabilidad**: por cultivo, mes calendario y evento (helada, déficit, calor en floración, lluvia extrema), frecuencia ponderada de escenarios con el evento dentro del ciclo del cultivo y nivel según A-CLI-07. El percentil de lluvia extrema se calcula por rango más cercano sobre los días con lluvia de la propia serie IMERG del lote (determinista). Alternativa descartada: un change `climate-risk` separado (duplica insumos y escenarios).
+14. **Estado UNKNOWN (decisión)**: datos insuficientes no son "no apto". Por escenario, un año excluido por `MISSING_WEATHER` da UNKNOWN; por campaña, menos de A-CLI-03 escenarios válidos da UNKNOWN (antes era RISKY con `INSUFFICIENT_SCENARIOS`). Orden para "peor campaña": NOT_FEASIBLE > UNKNOWN > RISKY > FEASIBLE (si una campaña es no factible con datos suficientes, eso manda; si no, la falta de datos manda sobre el riesgo). Tratamiento en el motor: elegible, sin ajuste en escenarios UNKNOWN, puntaje normal, Faltante obligatorio; en la presentación se ordena junto a RISKY. Nunca se muestra un porcentaje de confianza. Alternativas descartadas: RISKY con motivo (se lee como juicio sobre el lote), NOT_FEASIBLE (castiga la falta de datos), excluir la rotación (esconde opciones).
+15. **Lluvia conservadora POWER vs IMERG (P1, A-WAT-16)**: por escenario, si ambas series diarias están completas en la campaña, el balance usa la de menor acumulado (la más exigente para el agua). La comparación año por año la arma nasa-ingestion como evidencia; la clasificación de años sigue solo con POWER para no mezclar fuentes en los terciles. Alternativas descartadas: promedio de ambas (mezcla de fuentes poco trazable), IMERG siempre (menos años, desde 2000), mezclar por día (combina errores de dos productos sin criterio).
+16. **Agua útil desde SoilGrids**: la api resuelve el Suelo con prioridad dato del usuario > caché SoilGrids (agua útil DERIVED con A-WAT-17) > A-WAT-14. Este módulo solo marca el motivo y el Faltante según la procedencia que recibe.
 
 ## Supuestos introducidos
 
@@ -45,6 +48,7 @@ Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por esce
 | A-WAT-13 | θ de capacidad de campo y marchitez por clase textural | tabla por textura | FAO-56 Tabla 19, pendiente AFA |
 | A-WAT-14 | Agua útil del perfil por clase textural y valor genérico | tabla por textura | pendiente AFA (INTA cartas de suelo) |
 | A-WAT-15 | Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP) | n/a | criterio del equipo, pendiente AFA |
+| A-WAT-16 | Regla de lluvia conservadora: por escenario, la serie (POWER o IMERG) con menor lluvia de campaña cuando ambas están completas | n/a (regla) | criterio del equipo, pendiente AFA |
 | A-CLI-05 | Umbral de T2M_MIN para helada | 0 °C a 2 m | criterio del equipo, pendiente AFA |
 | A-CLI-06 | Ventanas sensibles a helada por cultivo | trigo: espigazón-floración; soja y maíz: emergencia | pendiente AFA |
 | A-CLI-07 | Frecuencias para severidad LOW, MEDIUM, HIGH del riesgo de helada y de cada evento del calendario de vulnerabilidad | 0.1 y 0.3 | criterio del equipo |
@@ -70,6 +74,7 @@ Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por esce
 - Umbral de helada y ventanas críticas que usan.
 - Umbral de temperatura y ventana de floración que consideran críticos para el maíz y la soja.
 - Si les sirve evaluar cada campaña desde la humedad actual (A-WAT-15) o prefieren encadenar años.
+- Si la regla de tomar la lluvia más baja entre POWER e IMERG (A-WAT-16) les parece razonable frente a sus pluviómetros.
 
 ## Open Questions
 

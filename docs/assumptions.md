@@ -9,7 +9,7 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-AGR-01 | Calendario de cultivos: fecha representativa de siembra y de cosecha por cultivo del catálogo | soja de segunda: siembra mediados de diciembre (ejemplo) | fecha (día del año) | pendiente AFA | domain-models | alta |
 | A-CLI-01 | Límites de las ventanas de invierno y verano de la campaña | invierno 1/5 a 31/10; verano 1/11 a 31/3 | fecha | pendiente AFA | climate-scenarios | alta |
 | A-CLI-02 | Máximo de días faltantes de lluvia por ventana para incluir un año | 0 | días | criterio del equipo, pendiente AFA | climate-scenarios | baja |
-| A-CLI-03 | Mínimo de años válidos para clasificar una ventana (y para que water-feasibility pueda dar FEASIBLE) | 15 | años | convención de climatologías cortas, pendiente AFA | climate-scenarios | media |
+| A-CLI-03 | Mínimo de años válidos para clasificar una ventana (por debajo, water-feasibility informa UNKNOWN y nunca FEASIBLE ni NOT_FEASIBLE) | 15 | años | convención de climatologías cortas, pendiente AFA | climate-scenarios | media |
 | A-CLI-04 | Diferencia relativa POWER vs IMERG que dispara advertencia | 25 | % | criterio del equipo | climate-scenarios | baja |
 | A-CLI-05 | Umbral de T2M_MIN para helada | 0 | °C a 2 m | criterio del equipo, pendiente AFA | water-feasibility | alta |
 | A-CLI-06 | Ventanas sensibles a helada por cultivo | trigo: espigazón a floración; soja y maíz: emergencia | fechas por cultivo | pendiente AFA | water-feasibility | alta |
@@ -17,6 +17,7 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-CLI-08 | Umbral de T2M_MAX para estrés térmico en floración | 35 | °C a 2 m | pendiente AFA | water-feasibility | media |
 | A-CLI-09 | Ventanas de floración por cultivo de renta | maíz temprano: enero (ejemplo) | fechas por cultivo | pendiente AFA | water-feasibility | media |
 | A-CLI-10 | Percentil de lluvia diaria IMERG que define lluvia extrema | p95 de los días con lluvia | percentil | criterio del equipo, pendiente AFA | water-feasibility | baja |
+| A-CLI-11 | Criterio del chequeo de consistencia de años secos contra rindes departamentales MAGyP (no entra al motor) | año DRY anual consistente si el rinde departamental de soja o maíz de esa campaña cae en el tercio inferior del período comparado (ejemplo) | criterio | criterio del equipo, pendiente AFA | climate-scenarios | baja |
 | A-WAT-01 | Kc por cultivo y etapa (ini, mid, end), duración de etapas y Kc de barbecho | soja Kc mid 1.15 (FAO-56) | adim. y días | FAO-56 Tablas 11 y 12, pendiente AFA | water-feasibility | alta |
 | A-WAT-02 | Método de lluvia efectiva | fracción fija 0.8 | fracción | criterio del equipo, pendiente AFA | water-feasibility | alta |
 | A-WAT-03 | Fracción de agotamiento p por cultivo | 0.5 | fracción | FAO-56 Tabla 22, pendiente AFA | water-feasibility | media |
@@ -32,6 +33,8 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-WAT-13 | θ de capacidad de campo y marchitez por clase textural | tabla por textura | m³/m³ | FAO-56 Tabla 19, pendiente AFA | water-feasibility | media |
 | A-WAT-14 | Agua útil del perfil por clase textural y valor genérico | tabla por textura | mm | pendiente AFA (cartas de suelo INTA) | water-feasibility | alta |
 | A-WAT-15 | Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP) | n/a | n/a | criterio del equipo, pendiente AFA | water-feasibility | media |
+| A-WAT-16 | Regla de lluvia conservadora para el balance: por escenario se usa la serie diaria (POWER o IMERG) con menor lluvia de campaña cuando ambas están completas; la clasificación de años sigue solo con POWER | n/a (regla) | n/a | criterio del equipo, pendiente AFA | water-feasibility | media |
+| A-WAT-17 | Integración del agua útil desde SoilGrids: profundidad y método por capa (θ a 33 kPa menos θ a 1500 kPa por espesor de capa, capas 0-5, 5-15, 15-30, 30-60 y 60-100 cm) | 0 a 100 cm (ejemplo) | cm, mm | criterio del equipo; documentación de SoilGrids, pendiente AFA | nasa-ingestion | media |
 | A-SOIL-01 | Pesos w_k de los 5 componentes de ΔSuelo (cobertura, carbono, N, malezas, raíces) | 0.25 / 0.25 / 0.15 / 0.20 / 0.15 | adim. | pendiente AFA | soil-impact | alta |
 | A-SOIL-02 | Persistencia de cobertura del rastrojo post cosecha por cultivo | pendiente | días | pendiente AFA; literatura de rastrojos en siembra directa | soil-impact | alta |
 | A-SOIL-03 | Referencia y escala de fracción cubierta | pendiente | fracción | pendiente AFA | soil-impact | media |
@@ -53,11 +56,9 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-ACT-04 | Perfil BANK | H 3, i 0.10, α 0.5, λ 1.5, capital 600 USD/ha | ídem | pendiente AFA | actor-profiles | alta |
 | A-ACT-05 | Nivel q de la cola del expected shortfall de márgenes (Riesgo) | 1/3 | fracción de peso | convención de terciles, pendiente AFA | actor-profiles | alta |
 | A-ACT-06 | Límites de sliders | H 1..20, α 0..20, λ 0..3, i 0..0.30 | varias | pendiente AFA | actor-profiles | baja |
-| A-ACT-07 | Multiplicador m de las prioridades sobre los pesos w_k de ΔSuelo | 1 | adim. | criterio del equipo, pendiente AFA | actor-profiles | media |
-| A-ACT-08 | κ_w del término de prioridad de agua | 100 | USD/ha por unidad de fracción | criterio del equipo, pendiente AFA | actor-profiles | media |
-| A-ACT-09 | κ_i del término de ingreso suplementario | 50 | USD/ha por unidad de fracción | criterio del equipo, pendiente AFA | actor-profiles | media |
+| A-ACT-07 | Multiplicador m de las prioridades del productor sobre los pesos w_k de ΔSuelo (única vía por la que las prioridades tocan el puntaje) | 1 | adim. | criterio del equipo, pendiente AFA | actor-profiles | media |
 | A-FLD-01 | Golpes mínimos válidos por punto y descarte del primero como asentamiento | 4 válidos, descartar el primero | golpes | criterio del equipo | field-measurement | baja |
-| A-FLD-02 | Frecuencia de muestreo mínima y altura de caída estándar | 100 Hz; 30 cm | Hz, cm | criterio del equipo | field-measurement | baja |
+| A-FLD-02 | Configuración del martillador v0: frecuencia de muestreo mínima, masa del carro sobre riel o tubo, alturas del accesorio y altura estándar de v0 (la más baja, porque el acelerómetro del celular satura) | 100 Hz; ~2 kg; 150, 300 y 450 mm; v0 150 mm | Hz, kg, mm | criterio del equipo (master doc) | field-measurement | baja |
 | A-FLD-03 | Coeficiente de variación máximo del pico en un punto | 0.3 | adim. | criterio del equipo | field-measurement | baja |
 | A-FLD-04 | Puntos OK mínimos para normalizar una sesión | 3 | puntos | criterio del equipo | field-measurement | baja |
 | A-FLD-05 | Interpretación del índice relativo como dureza superficial relativa, proxy no calibrado de compactación | n/a | n/a | pendiente AFA | field-measurement | media |
@@ -69,7 +70,14 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-DEMO-05 | Cosecha (modo y valor), comercialización y flete de ejemplo | cosecha 8 % del ingreso; flete 20 USD/t | fracción, USD/t | márgenes brutos publicados, pendiente AFA | demo-mode | media |
 | A-DEMO-06 | Rindes de ejemplo por cultivo y clase de año (DRY, NORMAL, WET) | soja NORMAL 3.5 t/ha | t/ha | estimaciones MAGyP o BCR, pendiente AFA | demo-mode | alta |
 
-Total: 62 supuestos (AGR 1, CLI 10, WAT 15, SOIL 11, ECO 4, ACT 9, FLD 6, DEMO 6).
+Total: 63 supuestos activos (AGR 1, CLI 11, WAT 17, SOIL 11, ECO 4, ACT 7, FLD 6, DEMO 6) y 2 retirados.
+
+## Supuestos retirados
+
+| Id | Descripción original | Estado | Motivo |
+|---|---|---|---|
+| A-ACT-08 | κ_w del término de prioridad de agua (USD/ha por unidad de fracción) | REJECTED | No inventar valores; reemplazado por filtro. La prioridad de agua ahora solo ordena la presentación (primero las rotaciones que no son RISKY en agua) y no toca el puntaje del motor. |
+| A-ACT-09 | κ_i del término de ingreso suplementario (USD/ha por unidad de fracción) | REJECTED | No inventar valores; reemplazado por filtro. La prioridad de ingreso suplementario ahora solo ordena la presentación (primero las de doble cultivo) y no toca el puntaje del motor. |
 
 ## Cambios de ids en la reconciliación
 

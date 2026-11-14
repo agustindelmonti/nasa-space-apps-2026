@@ -1,6 +1,6 @@
 # Proposal: whatsapp-channel
 
-**Prioridad:** P0 (máquina de estados, simulador web vía POST /chat/simulate, adaptador Twilio Sandbox con firma); P1 (TTL de sesión, glosario y cambio de actor en el chat, logging con número hasheado); P2 (capa LLM opcional de reformulación con guardas).
+**Prioridad:** P0 (máquina de estados, simulador web vía POST /chat/simulate, adaptador Twilio Sandbox con firma, detalle como tarjeta fija de 5 secciones con leyenda); P1 (TTL de sesión, glosario, cambio de actor y orden de presentación en el chat, logging con número hasheado); P2 (capa LLM opcional de reformulación con guardas).
 
 ## Why
 
@@ -9,6 +9,8 @@ El productor de zona núcleo vive en WhatsApp: mandar un pin y elegir de un men�
 ## What Changes
 
 - Se agrega un motor conversacional determinista (máquina de estados): saludo, ubicación (pin de WhatsApp o texto lat,lon), rotación actual (menú numerado del catálogo), actor (menú), resultado resumido y opciones (ver detalle, cambiar actor, glosario, reiniciar).
+- "Ver detalle" envía la tarjeta fija de 5 secciones de explanations (por qué se sugiere, evidencia, beneficios frente a la actual, faltantes, riesgos a revisar en el lote) cerrada con la leyenda "apoya, no reemplaza al agrónomo".
+- Opción "ordenar la lista" (P1): primero las no riesgosas en agua o primero las de doble cultivo, usando el `display_order` de la api sin cambiar el ranking.
 - Se agrega estado de sesión por número en memoria con TTL.
 - Se agrega un adaptador de canal desacoplado: Twilio Sandbox detrás de una interfaz; el motor de rotaciones no conoce el canal.
 - Se valida la firma de Twilio en POST /whatsapp/webhook.

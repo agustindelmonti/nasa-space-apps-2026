@@ -81,27 +81,43 @@ La sensibilidad MUST ser determinista y pura como el motor: misma entrada y gril
 - **THEN** las salidas canónicas son idénticas byte a byte
 
 ### Requirement: Pesos de prioridades del productor
-Un perfil MUST admitir pesos opcionales en [0, 1] para WATER, NITROGEN, EROSION_COVER, OM_CARBON y SUPPLEMENTAL_INCOME. NITROGEN, EROSION_COVER y OM_CARBON MUST re-ponderar w_k de ΔSuelo con A-ACT-07 y renormalizar; WATER y SUPPLEMENTAL_INCOME MUST agregar los términos documentados con A-ACT-08 y A-ACT-09. Con todo en 0 la salida MUST ser idéntica a sin prioridades.
+Un perfil MUST admitir pesos opcionales en [0, 1] para EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL y ROOTS, uno por componente de ΔSuelo (cobertura, carbono, N, malezas, raíces). Las prioridades MUST solo re-ponderar los w_k de A-SOIL-01 con A-ACT-07 y renormalizar. El puntaje MUST seguir siendo VAN + α·ΔSuelo − λ·Riesgo sin términos agregados. Con todo en 0 la salida MUST ser idéntica a sin prioridades.
 
 #### Scenario: Prioridades nulas no cambian nada
 - **GIVEN** la entrada demo con OWNER
 - **WHEN** se evalúa con todas las prioridades en 0 y sin prioridades
-- **THEN** puntajes, ranking y desglose son idénticos y los términos de prioridad valen 0
+- **THEN** puntajes, ranking, desglose y pesos efectivos son idénticos y los pesos efectivos coinciden con A-SOIL-01
 
 #### Scenario: Prioridad de nitrógeno
 - **GIVEN** A-SOIL-01 de ejemplo con peso de N 0.15, A-ACT-07 = 1 y prioridad NITROGEN = 1
 - **WHEN** se calculan los pesos efectivos
 - **THEN** el peso de N es 0.30 / 1.15 antes de redondear, los pesos suman 1 y el resto baja en la misma proporción
 
-#### Scenario: Prioridad de agua
-- **GIVEN** prioridad WATER = 1, A-ACT-08 = 100 USD/ha (ejemplo) y una rotación con ajuste hídrico en una fracción ponderada 0.3
-- **WHEN** se calcula el término de agua
-- **THEN** vale −30 USD/ha y figura en el desglose con procedencia DERIVED citando A-ACT-08
+#### Scenario: Prioridad de agua rechazada en el perfil
+- **WHEN** se crea un perfil con una prioridad WATER o SUPPLEMENTAL_INCOME
+- **THEN** la validación falla por campo no declarado, porque esas preferencias son de presentación y viajan fuera de `EngineInput`
 
 #### Scenario: Monotonicidad preservada
 - **GIVEN** cualquier juego de prioridades válido
 - **WHEN** se corren las propiedades de λ y α de quality
-- **THEN** ambas siguen valiendo, porque los términos de prioridad no dependen de α ni λ
+- **THEN** ambas siguen valiendo, porque las prioridades solo cambian los pesos de ΔSuelo y no agregan términos que dependan de α ni λ
+
+### Requirement: Indicador de robustez del ranking
+El sistema MUST ofrecer un caso de uso determinista que, para una entrada base, informe por rotación en cuántas clases de año (DRY, NORMAL y WET, vía `year_class_filter`) sale primera entre las elegibles con el perfil efectivo, y en cuántos de los 4 perfiles predefinidos sale primera sin filtro. Una clase sin escenarios MUST excluirse del denominador. MUST NOT emitir porcentajes ni etiquetas de confianza.
+
+#### Scenario: Conteo de robustez
+- **GIVEN** la entrada demo donde R_MAIZE_SOY_COVER sale primera con filtro DRY y NORMAL pero no con WET, y primera para OWNER, COOP y BANK pero no para TENANT
+- **WHEN** se calcula la robustez
+- **THEN** R_MAIZE_SOY_COVER informa 2 de 3 clases y 3 de 4 perfiles, con la lista de clases y perfiles donde gana
+
+#### Scenario: Clase sin años
+- **GIVEN** una entrada sin escenarios WET
+- **WHEN** se calcula la robustez
+- **THEN** el denominador de clases es 2 y la salida declara que WET no tuvo escenarios
+
+#### Scenario: Robustez reproducible
+- **WHEN** se calcula dos veces la robustez con la misma entrada
+- **THEN** las salidas canónicas son idénticas byte a byte y el puntaje de la entrada base no cambia
 
 ### Requirement: Ventanas de maquinaria del productor
 El perfil MUST admitir ventanas de maquinaria opcionales (meses 1 a 12 por operación SOWING y HARVEST) como USER_INPUT, MUST copiarlas al perfil efectivo de `EngineInput` y rotation-engine MUST aplicarlas como restricción. Sin ventanas MUST NOT haber restricción de maquinaria.

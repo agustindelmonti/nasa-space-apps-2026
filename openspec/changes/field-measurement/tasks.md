@@ -2,8 +2,8 @@
 
 ## 1. Modelos y supuestos (P2)
 
-- [ ] 1.1 Usar `FIELD_HAMMER` del enum de datasets de `domain-models` y definir modelos frozen `FieldSession`, `FieldPoint`, `Impact`, `PointSummary`; verificar con tests de validación (escenarios "Muestreo insuficiente" y "Punto fuera del lote")
-- [ ] 1.2 Cargar A-FLD-01 a A-FLD-06 en `assumptions.yaml` (PENDING_AFA); verificar con test que la aplicación los resuelve
+- [ ] 1.1 Usar `FIELD_HAMMER` del enum de datasets de `domain-models` y definir modelos frozen `FieldSession`, `FieldPoint`, `Impact`, `PointSummary`; verificar con tests de validación (escenarios "Muestreo insuficiente", "Altura distinta de la estándar de v0" y "Punto fuera del lote")
+- [ ] 1.2 Cargar A-FLD-01 a A-FLD-06 en `assumptions.yaml` (PENDING_AFA), con A-FLD-02 corregido a masa ~2 kg, alturas 150, 300 y 450 mm y estándar v0 150 mm; verificar con test que la aplicación los resuelve y que A-FLD-02 ya no dice 30 cm
 
 ## 2. Procesamiento (P2)
 
@@ -19,3 +19,7 @@
 ## 4. Captura web (P2)
 
 - [ ] 4.1 Pantalla de captura con DeviceMotion (permiso iOS, medición de frecuencia efectiva, detección de impactos) y fixture de sesión de ejemplo para la demo offline; verificar en un celular real contra el deploy HTTPS y con un test de componente que procesa una señal grabada
+
+## 5. Demo de cajas (P2)
+
+- [ ] 5.1 Armar el accesorio v0 (carro de ~2 kg, riel o tubo, tope a 150 mm), grabar la sesión con caja suelta y compactada (2 puntos por caja) y guardarla como fixture; verificar con tests "Suelta contra compactada" y "Cajas con orden invertido"

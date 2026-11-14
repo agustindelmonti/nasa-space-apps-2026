@@ -24,6 +24,13 @@ Ver proposal.md. El motor (`rotation-engine`) entrega un `EngineOutput` con resu
 10. **Versión de plantillas** (`templates_version`, semver manual) en la salida estructurada; los snapshot tests fallan si cambia el texto sin bump.
 11. **Incertidumbre**: plantilla fija "en años secos el margen fue de X a Y; en años húmedos, de Z a W" citando el rango de margen por clase del resultado, y lo mismo con el agua a la siembra del rango hídrico de water-feasibility. El Riesgo se explica como "en el peor q de los años históricos ganaste en promedio tanto menos que en un año medio" (expected shortfall de márgenes, A-ACT-05); nunca como "el margen de los años DRY". Alternativa descartada: mostrar solo el esperado con un desvío estándar (no se entiende y esconde la cola).
 12. **Calendarios**: suelo desnudo mes a mes con frases por tramo ("de junio a septiembre el lote queda sin cultivo vivo") y la fracción observada de NDVI bajo umbral como evidencia OBSERVED de la actual; vulnerabilidad como lista de meses con nivel MEDIUM o HIGH por cultivo y evento. Sin cálculos: todos los números vienen del resultado.
+13. **Tarjeta fija de 5 secciones**: el orden y los rótulos ("por qué se sugiere", "evidencia", "beneficios frente a la actual", "faltantes de información", "riesgos a revisar en el lote") son constantes de plantilla, iguales en web y WhatsApp, y la tarjeta cierra siempre con la leyenda. Responde el enunciado ítem por ítem para que el jurado pueda tildar.
+14. **Factibilidad UNKNOWN**: frase fija "la factibilidad hídrica es desconocida porque falta: ..." seguida del Faltante. La lista prohibida (decisión 15) impide "no apta" cuando el estado es UNKNOWN y cualquier "% de confianza".
+15. **Lista prohibida versionada** (`data/forbidden_phrases.yaml`): "te recomendamos", "tenés que", "garantiza", "garantizado", "predice", "predicción de", "va a llover", "% de confianza", "confianza del", "seguro que". La usan el test de lenguaje, la guarda del LLM de whatsapp-channel y el test de quality sobre la web y el pitch. "No es una predicción" está permitido como leyenda fija (la lista matchea frases exactas, no la palabra suelta).
+16. **Pérdidas y suelo desnudo**: plantillas "en X de los N años reales habrías perdido plata" y "en el peor año (AAAA) el margen fue de M USD/ha", y "en promedio caen R mm de lluvia sobre suelo desnudo, sobre todo en ...". Todos los números citados desde el resultado.
+17. **Tres miradas (P1)**: agrupación de plantilla, no agentes: `lenses.climate`, `lenses.soil_water`, `lenses.economics`, cada una con referencias a los ítems de las cinco secciones y citas propias. Alternativa descartada: "consejo de agentes" con LLM (no determinista, agrega números).
+18. **Ficha exportable (P2)**: `export_sheet(output, resolved_input, rotation_id) -> RotationSheet` reutiliza las mismas citas; formatos JSON canónico y texto con marcado mínimo (el navegador imprime a PDF). Alternativa descartada: generar PDF en el servidor (dependencia pesada y no determinista por metadatos de fecha).
+19. **Orden de presentación**: el generador recibe opcionalmente `display_order` (lista de ids) de la aplicación y lo usa solo para listar; cada ítem cita su `rank`.
 
 ## Risks / Trade-offs
 
@@ -34,5 +41,5 @@ Ver proposal.md. El motor (`rotation-engine`) entrega un `EngineOutput` con resu
 
 ## Open Questions
 
-- Lista exacta de expresiones prohibidas y frases fijas: la redacta el equipo con revisión de un agrónomo de AFA si está disponible (no cambia la estructura).
+- Frases fijas finales y ampliaciones de la lista prohibida: las redacta el equipo con revisión de un agrónomo de AFA si está disponible (el mínimo ya está fijado en el spec).
 - Cuántas rotaciones mostrar en el resumen WhatsApp (por defecto top 3 más la actual), configurable.

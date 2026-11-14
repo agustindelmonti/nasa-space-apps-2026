@@ -19,5 +19,11 @@
 
 ## 4. Cruce IMERG e integración (P1)
 
-- [ ] 4.1 Implementar cruce POWER vs IMERG que solo agrega advertencias según A-CLI-04; verificar con tests "Discrepancia advertida" y "Sin IMERG"
+- [ ] 4.1 Implementar cruce POWER vs IMERG que solo agrega advertencias según A-CLI-04; verificar con tests "Discrepancia advertida", "Sin IMERG" y "Regla conservadora del balance no reclasifica"
 - [ ] 4.2 Integrar en la aplicación: desde la caché del lote de demo construir los escenarios de invierno y verano para `EngineInput`; verificar con test de integración en `DEMO_MODE=1` que los pesos suman 1 y la salida cita la fuente
+
+## 5. Validación con rindes MAGyP (P1)
+
+- [ ] 5.1 Descargar Estimaciones Agrícolas de MAGyP para el departamento del lote demo a `data/validation/magyp/` con URL y fecha, y cargar A-CLI-11; verificar con un test que el archivo tiene fuente y fecha
+- [ ] 5.2 Implementar el reporte de consistencia de años DRY; verificar con tests "Año seco con caída de rinde", "Año sin rinde publicado" y "Validación fuera del motor"
+- [ ] 5.3 Documentar el resultado en `docs/validation.md` (años consistentes, inconsistentes y sin dato, con fuente); verificar con el test de quality que exige el documento y sus citas

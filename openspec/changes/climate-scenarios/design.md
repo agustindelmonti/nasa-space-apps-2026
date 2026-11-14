@@ -21,6 +21,8 @@ Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos pro
 7. **Tolerancia de faltantes como supuesto** (A-CLI-02) con valor de ejemplo 0 días: preferimos excluir años antes que completar lluvia inventada. Si deja muy pocos años, el equipo puede subirla con justificación.
 8. **API interna**: `classify_years(series: RainSeries, window: WindowDef, cfg: ClassificationConfig) -> ClassificationResult`, todo modelos frozen. Sin acceso a `assumptions.yaml`: la aplicación resuelve los valores de A-CLI-01..04 y los pasa en `cfg` con su procedencia.
 9. **Escenario combinado y clase anual**: los años válidos en ambas ventanas forman el conjunto que entra a `EngineInput`; la clase anual usa terciles de la lluvia de campaña sobre ese conjunto. Pesos 1/N del conjunto combinado. economics usa la clase estacional de cada cultivo; el filtro por clase de año y el rango de margen usan la anual. Alternativa descartada: derivar la clase anual de las dos estacionales (no hay regla natural para DRY + WET).
+10. **Chequeo con rindes MAGyP (P1)**: archivo de Estimaciones Agrícolas de MAGyP (dato abierto, CSV por departamento, campaña y cultivo) guardado en `data/validation/magyp/` con URL y fecha de descarga. Una función pura arma el reporte por año DRY anual con el criterio A-CLI-11 (rinde en el tercio inferior del período comparado, ejemplo), y la conclusión se documenta en `docs/validation.md`. No entra a `EngineInput` porque los rindes departamentales mezclan manejo, tecnología y superficie; sirve para mostrar que la clasificación por lluvia captura años malos reales. Alternativas descartadas: usar los rindes MAGyP como rindes por clase del motor (mezcla escalas y años; los rindes son parámetros con fuente de economics), correlaciones o regresiones (requieren baseline y se leen como validación estadística fuerte).
+11. **Clasificación solo con POWER aunque el balance use otra lluvia**: la regla conservadora de water-feasibility (A-WAT-16) elige por año la serie más baja para el balance; los terciles siguen con una única fuente para no mezclar fuentes dentro de una clasificación.
 
 ## Supuestos introducidos
 
@@ -30,6 +32,7 @@ Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos pro
 | A-CLI-02 | Máximo de días faltantes de lluvia por ventana para incluir el año | 0 días | criterio del equipo, pendiente AFA |
 | A-CLI-03 | Mínimo de años válidos para clasificar una ventana | 15 años | criterio del equipo (convención de climatologías cortas), pendiente AFA |
 | A-CLI-04 | Diferencia relativa POWER vs IMERG que dispara advertencia | 25 % | criterio del equipo |
+| A-CLI-11 | Criterio del chequeo de consistencia contra rindes departamentales MAGyP | año DRY anual consistente si el rinde de soja o maíz cae en el tercio inferior del período (ejemplo) | criterio del equipo, pendiente AFA |
 
 ## Risks / Trade-offs
 
@@ -41,6 +44,7 @@ Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos pro
 
 - ¿Las ventanas de invierno y verano del ejemplo reflejan las campañas del sur de Santa Fe? ¿Conviene una ventana de barbecho invernal distinta para el cultivo de servicio?
 - ¿Qué cantidad mínima de años consideran representativa?
+- ¿Qué departamento y qué criterio de caída de rinde usarían para validar los años secos (A-CLI-11)?
 
 ## Open Questions
 

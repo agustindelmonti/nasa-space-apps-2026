@@ -20,12 +20,16 @@ Las explicaciones MUST generarse con plantillas deterministas a partir de la sal
 - **THEN** la generación termina sin intentar ninguna conexión
 
 ### Requirement: Explicación por rotación
-Para cada rotación evaluada, la explicación MUST incluir cinco secciones en este orden: por qué, evidencia, beneficios, faltantes de información y riesgos. Una sección sin contenido en la salida del motor MUST mostrarse con una frase fija que diga que no hay elementos registrados, nunca omitirse.
+Para cada rotación, la explicación MUST ser una tarjeta fija con cinco secciones en este orden: por qué se sugiere, evidencia, beneficios frente a la actual, faltantes de información y riesgos a revisar en el lote. Una sección vacía MUST mostrarse con una frase fija, nunca omitirse. Cada tarjeta MUST cerrar con la leyenda "Esta herramienta apoya, no reemplaza, al agrónomo." en todos los formatos.
 
 #### Scenario: Cinco secciones presentes
 - **GIVEN** una salida del motor con 4 rotaciones evaluadas
 - **WHEN** se genera la explicación estructurada
 - **THEN** cada rotación tiene las secciones `why`, `evidence`, `benefits`, `missing_info` y `risks` en ese orden
+
+#### Scenario: Tarjeta cierra con la leyenda
+- **WHEN** se genera la tarjeta de cualquier rotación en formato estructurado, web o WhatsApp
+- **THEN** las cinco secciones aparecen en orden y la última línea de la tarjeta es la leyenda "Esta herramienta apoya, no reemplaza, al agrónomo."
 
 #### Scenario: Faltantes vacíos
 - **GIVEN** una rotación cuya lista de faltantes está vacía en la salida del motor
@@ -44,6 +48,11 @@ La sección "por qué" MUST indicar la posición de la rotación en el ranking, 
 - **GIVEN** una rotación con factibilidad NOT_FEASIBLE
 - **WHEN** se genera la sección por qué
 - **THEN** el texto dice explícitamente que en los escenarios históricos evaluados no hay agua suficiente para esa rotación, independientemente de su puntaje
+
+#### Scenario: Factibilidad desconocida
+- **GIVEN** una rotación con factibilidad UNKNOWN y un Faltante de años con clima completo
+- **WHEN** se genera la sección por qué
+- **THEN** el texto dice que la factibilidad hídrica es "desconocida" por falta de datos, nombra el faltante y no usa "no apta", "no factible" ni un porcentaje
 
 #### Scenario: Diferencia contra la actual citada
 - **GIVEN** una rotación con `score_delta_vs_current` = 65 USD/ha en la salida del motor
@@ -135,12 +144,17 @@ Todo texto web y todo resultado WhatsApp MUST incluir, sin modificaciones, las l
 - **THEN** ambas leyendas aparecen completas en el último mensaje
 
 ### Requirement: Lenguaje no prescriptivo
-Los textos MUST describir resultados de escenarios y MUST NOT ordenar, garantizar ni predecir. Un test MUST rechazar una lista cerrada de expresiones prohibidas (por ejemplo "te recomendamos", "tenés que", "garantiza", "va a llover").
+Los textos MUST describir resultados de escenarios y MUST NOT ordenar, garantizar, predecir ni expresar confianza en porcentaje. Un test MUST rechazar una lista cerrada y versionada de expresiones prohibidas que incluye al menos "te recomendamos", "tenés que", "garantiza", "predice", "va a llover", "% de confianza" y "confianza del".
 
 #### Scenario: Expresión prohibida en plantilla
 - **GIVEN** una plantilla que contiene "tenés que sembrar"
 - **WHEN** corre el test de lenguaje
 - **THEN** el test falla nombrando la plantilla y la expresión
+
+#### Scenario: Porcentaje de confianza prohibido
+- **GIVEN** una plantilla que escribe "85 % de confianza" o "el modelo predice"
+- **WHEN** corre el test de lenguaje
+- **THEN** el test falla nombrando la expresión
 
 ### Requirement: Español rioplatense
 Los textos MUST estar en español rioplatense con voseo ("si sos", "mirá", "tenés"), sin tecnicismos sin explicar: cada término del glosario usado en un texto MUST enlazar o remitir a su entrada.
@@ -266,3 +280,69 @@ La explicación MUST describir el calendario de suelo desnudo de cada rotación 
 #### Scenario: Calendario sin meses vulnerables
 - **WHEN** ningún mes supera el nivel LOW
 - **THEN** el texto usa una frase fija de "sin meses con vulnerabilidad media o alta registrada"
+
+### Requirement: Años con pérdida y margen en un año malo
+Para cada rotación con economía completa, la explicación MUST decir en cuántos de los N años reales del registro el margen anual fue negativo, cuáles fueron, y el margen del peor año con su año, citando los campos del resultado del motor. MUST aclarar que es margen bruto y si incluye arrendamiento.
+
+#### Scenario: Pérdida en años reales
+- **GIVEN** un resultado con 4 de 30 años con pérdida y peor año 2008 con −120 USD/ha (ejemplo)
+- **WHEN** se genera el texto web
+- **THEN** el texto dice "en 4 de los 30 años reales habrías perdido plata" y "en el peor año (2008) el margen fue de −120 USD/ha", con citas a los campos del resultado
+
+#### Scenario: Sin años con pérdida
+- **WHEN** el resultado informa 0 años con pérdida
+- **THEN** el texto usa una frase fija con el 0 citado y el margen del peor año citado
+
+### Requirement: Lluvia sobre suelo desnudo explicada
+La explicación MUST informar, por rotación, los mm de lluvia caídos en promedio sobre suelo desnudo y los meses que más aportan, citados desde el resultado, como proxy de riesgo de erosión, y MUST compararlos de forma cualitativa con la rotación actual.
+
+#### Scenario: Servicio contra soja continua
+- **GIVEN** resultados de soja continua y de soja con centeno con su lluvia sobre suelo desnudo
+- **WHEN** se genera el texto web de la rotación con centeno
+- **THEN** el texto cita los mm de ambas desde el resultado y dice que con el servicio cae menos lluvia sobre suelo desnudo, sin calcular la diferencia
+
+### Requirement: Tres miradas deterministas
+En P1 la explicación de cada rotación MUST agrupar su contenido, sin cambiar las cinco secciones, en tres miradas fijas por plantilla: clima (escenarios, helada, calor, lluvia extrema, POWER vs IMERG), suelo y agua (factibilidad, agua a la siembra, ΔSuelo, suelo desnudo) y economía (VAN, Riesgo, años con pérdida, capital). MUST NOT usar LLM ni números nuevos.
+
+#### Scenario: Miradas completas
+- **WHEN** se genera la explicación estructurada de una rotación
+- **THEN** trae `lenses` con `climate`, `soil_water` y `economics` en ese orden, cada una con sus citas, y las cinco secciones siguen presentes
+
+#### Scenario: Mirada sin contenido
+- **WHEN** una rotación no tiene riesgos climáticos de nivel MEDIUM o HIGH
+- **THEN** la mirada de clima usa una frase fija y no se omite
+
+### Requirement: Robustez del ranking explicada
+En P1, cuando la aplicación provea la robustez, la explicación MUST decir en cuántas clases de año y en cuántos de los 4 perfiles predefinidos la rotación sale primera, citando los conteos, y MUST NOT traducirlos a porcentaje ni a probabilidad.
+
+#### Scenario: Robustez citada
+- **GIVEN** una rotación primera en 2 de 3 clases y 3 de 4 perfiles (ejemplo)
+- **WHEN** se genera el texto web
+- **THEN** el texto dice "sale primera en 2 de 3 tipos de año y para 3 de 4 actores" con citas y sin porcentajes
+
+### Requirement: Lluvia POWER vs IMERG en la evidencia
+En P1, cuando la entrada traiga la comparación de lluvia por año, la evidencia MUST mostrar los años con discrepancia (A-CLI-04) con ambas sumas citadas y la frase fija "para el balance de agua tomamos la más conservadora (la menor)" con la marca A-WAT-16, y MUST aclarar que los tipos de año se clasifican solo con POWER.
+
+#### Scenario: Discrepancia contada
+- **GIVEN** la campaña 2015 con 600 mm POWER y 420 mm IMERG (ejemplo)
+- **WHEN** se genera la evidencia
+- **THEN** el texto cita ambas cifras, dice que el balance usó IMERG por ser la menor y marca A-WAT-16
+
+### Requirement: Orden de presentación sin tocar el ranking
+Cuando la aplicación provea un orden de presentación por preferencias del productor, los resúmenes MUST listar las rotaciones en ese orden mostrando siempre el rango del motor de cada una, y MUST decir en una frase fija qué preferencia se aplicó. El texto MUST NOT afirmar que el orden mostrado es el ranking.
+
+#### Scenario: Primero las no riesgosas en agua
+- **GIVEN** un orden de presentación que pone primero las rotaciones FEASIBLE
+- **WHEN** se genera el resumen WhatsApp
+- **THEN** las rotaciones aparecen en ese orden, cada una con "puesto N del ranking" citado, y una línea dice "mostramos primero las que no son riesgosas en agua"
+
+### Requirement: Ficha exportable por rotación
+En P2 el sistema MUST generar por rotación una ficha para banco o certificadora con: lote, rotación, actor y horizonte, Riesgo, años con pérdida y peor año, factibilidad hídrica con motivos, ΔSuelo con componentes, lluvia sobre suelo desnudo, supuestos con estado, `input_hash`, `engine_version` y las leyendas, todo citado con procedencia, en JSON canónico y texto con marcado mínimo.
+
+#### Scenario: Ficha completa y trazable
+- **WHEN** se genera la ficha de R_MAIZE_SOY_COVER del lote demo
+- **THEN** cada número tiene cita con procedencia, la ficha trae `input_hash` y `engine_version`, y el test de trazabilidad pasa sobre su texto
+
+#### Scenario: Ficha con factibilidad desconocida
+- **WHEN** la rotación tiene factibilidad UNKNOWN
+- **THEN** la ficha dice "desconocida" con el faltante y no la presenta como no apta

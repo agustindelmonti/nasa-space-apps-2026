@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Obtiene, valida y cachea por punto los datasets NASA que usa la herramienta (POWER, SMAP L4, GPM IMERG, GRACE/GRACE-FO, MODIS/HLS NDVI), con procedencia completa, huecos explícitos y metadatos de resolución y limitación, para que la aplicación arme entradas del motor sin red y sin datos inventados.
+Obtiene, valida y cachea por punto los datasets NASA que usa la herramienta (POWER, SMAP L4, GPM IMERG, GRACE/GRACE-FO, MODIS/HLS NDVI, SRTM) y las propiedades de suelo de SoilGrids, con procedencia completa, huecos explícitos y metadatos de resolución y limitación, para que la aplicación arme entradas del motor sin red y sin datos inventados.
 
 ## ADDED Requirements
 
@@ -90,7 +90,7 @@ El sistema MUST exponer, por dataset, un registro con nombre, producto y versió
 
 #### Scenario: Consulta de limitaciones
 - **WHEN** la web pide el catálogo de datasets
-- **THEN** recibe una entrada por dataset (NASA_POWER, SMAP_L4, GPM_IMERG, GRACE_FO, MODIS_NDVI y HLS_NDVI si está habilitado) con resolución y limitación no vacías
+- **THEN** recibe una entrada por dataset (NASA_POWER, SMAP_L4, GPM_IMERG, GRACE_FO, MODIS_NDVI, y SOILGRIDS, SRTM y HLS_NDVI si están habilitados) con resolución y limitación no vacías
 
 ### Requirement: Procedencia completa por registro
 Cada valor ingestado MUST llevar una Source completa según `domain-models`: dataset, variable, período, resolución espacial y temporal, `is_modeled`, versión del producto y coordenadas de la celda o píxel efectivamente usado. Un valor sin Source completa MUST NOT salir de la capa de datos.
@@ -211,3 +211,39 @@ El sistema MUST derivar de la serie NDVI del píxel del lote un resumen por mes 
 #### Scenario: Mes sin compuestos válidos
 - **WHEN** todos los compuestos de julio fueron rechazados por QA
 - **THEN** el resumen de julio queda faltante con el conteo de rechazados y no se completa con meses vecinos
+
+### Requirement: Propiedades de suelo desde SoilGrids
+En P1 el sistema MUST obtener de la API REST de SoilGrids, para el píxel de 250 m del lote y por capa estándar, textura (arena, limo, arcilla), carbono orgánico y contenido volumétrico de agua a 33 kPa y 1500 kPa, como OBSERVED con `dataset=SOILGRIDS` e `is_modeled=true`, cacheados como los demás datasets. La limitación MUST decir que es un modelo global que no reemplaza la carta de suelo INTA.
+
+#### Scenario: Suelo SoilGrids del lote demo
+- **GIVEN** el punto del lote `demo-casilda`
+- **WHEN** se ingesta SoilGrids
+- **THEN** cada propiedad por capa tiene Source con `dataset=SOILGRIDS`, `is_modeled=true`, resolución 250 m, capa en cm y la limitación frente a la carta INTA
+
+#### Scenario: SoilGrids sin dato
+- **WHEN** la API de SoilGrids no devuelve valor para una capa
+- **THEN** esa capa queda faltante con motivo `NO_DATA` y no se completa con capas vecinas
+
+### Requirement: Agua útil integrada desde SoilGrids
+El sistema MUST derivar el agua útil del perfil (mm) sumando por capa (θ a 33 kPa − θ a 1500 kPa) × espesor hasta la profundidad de A-WAT-17, como DERIVED con `derived_from` las capas SoilGrids y A-WAT-17. Si falta alguna capa dentro de esa profundidad, MUST NOT emitir el valor y MUST registrar el faltante.
+
+#### Scenario: Agua útil por capas
+- **GIVEN** capas SoilGrids completas de 0 a 100 cm y A-WAT-17 con profundidad de ejemplo 100 cm
+- **WHEN** se integra el agua útil
+- **THEN** el valor es DERIVED en mm, cita las cinco capas usadas y A-WAT-17
+
+#### Scenario: Capa faltante
+- **WHEN** falta la capa de 30 a 60 cm
+- **THEN** no se emite agua útil y el faltante nombra la capa
+
+### Requirement: Comparación de lluvia POWER vs IMERG por campaña
+En P1 el sistema MUST derivar, por año de campaña con ambas series completas en el período, la lluvia acumulada POWER PRECTOTCORR y GPM IMERG, su diferencia relativa y cuál es menor, como DERIVED con ambas Source, para el panel de evidencia y para la regla conservadora de water-feasibility. Un año con alguna serie incompleta MUST marcarse sin comparación.
+
+#### Scenario: Comparación de un año
+- **GIVEN** la campaña 2015 con 600 mm según POWER y 420 mm según IMERG (ejemplo), ambas completas
+- **WHEN** se arma la comparación
+- **THEN** informa ambas sumas, la diferencia relativa y que IMERG es la menor, todo DERIVED citando ambas fuentes
+
+#### Scenario: Año anterior a IMERG
+- **WHEN** la campaña 1990 no tiene IMERG
+- **THEN** la comparación de 1990 queda marcada `NO_IMERG` y no se inventa valor

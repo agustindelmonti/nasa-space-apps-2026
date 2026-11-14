@@ -7,7 +7,7 @@ Permite a un productor consultar por WhatsApp (o por un simulador web equivalent
 ## ADDED Requirements
 
 ### Requirement: Máquina de estados determinista
-El flujo conversacional MUST ser una máquina de estados con estados GREETING, AWAIT_LOCATION, AWAIT_ROTATION, AWAIT_ACTOR, SHOW_RESULT, SHOW_DETAIL y SHOW_GLOSSARY. Dado el mismo estado de sesión, el mismo mensaje entrante y el mismo resultado de evaluación, MUST producir el mismo estado siguiente y los mismos mensajes salientes.
+El flujo conversacional MUST ser una máquina de estados con estados GREETING, AWAIT_LOCATION, AWAIT_ROTATION, AWAIT_ACTOR, SHOW_RESULT, SHOW_DETAIL, SHOW_GLOSSARY y AWAIT_ORDER (P1). Dado el mismo estado de sesión, el mismo mensaje entrante y el mismo resultado de evaluación, MUST producir el mismo estado siguiente y los mismos mensajes salientes.
 
 #### Scenario: Transición reproducible
 - **GIVEN** una sesión en AWAIT_ACTOR con ubicación y rotación ya elegidas
@@ -69,19 +69,32 @@ En AWAIT_ACTOR el sistema MUST mostrar un menú numerado con propietario, arrend
 - **THEN** se evalúa con actor TENANT y se envía el resultado resumido
 
 ### Requirement: Resultado resumido y opciones
-En SHOW_RESULT el sistema MUST enviar el texto WhatsApp de `explanations` (particionado si excede el límite) seguido del menú: 1 ver detalle, 2 cambiar actor, 3 glosario, 4 reiniciar.
+En SHOW_RESULT el sistema MUST enviar el texto WhatsApp de `explanations` (particionado si excede el límite) seguido del menú: 1 ver detalle, 2 cambiar actor, 3 glosario, 4 reiniciar, 5 ordenar la lista (P1).
 
 #### Scenario: Resultado con menú final
 - **WHEN** termina una evaluación exitosa
-- **THEN** el último mensaje enviado termina con el menú de 4 opciones y todos los mensajes respetan el límite de caracteres
+- **THEN** el último mensaje enviado termina con el menú de opciones y todos los mensajes respetan el límite de caracteres
 
 ### Requirement: Ver detalle
-Desde SHOW_RESULT, la opción "ver detalle" MUST pedir el número de rotación del ranking y MUST enviar las cinco secciones de esa rotación en formato WhatsApp, volviendo luego al menú de resultado.
+Desde SHOW_RESULT, "ver detalle" MUST pedir el número de rotación del ranking y MUST enviar la tarjeta fija de explanations en formato WhatsApp: las cinco secciones en orden, ninguna omitida, cerrada con la leyenda "Esta herramienta apoya, no reemplaza, al agrónomo.", y luego el menú de resultado.
 
 #### Scenario: Detalle de la primera rotación
 - **GIVEN** una sesión en SHOW_DETAIL esperando rotación
 - **WHEN** el usuario responde "1"
-- **THEN** recibe por qué, evidencia, beneficios, faltantes y riesgos de la rotación en el puesto 1 y luego el menú de resultado
+- **THEN** recibe por qué se sugiere, evidencia, beneficios frente a la actual, faltantes y riesgos a revisar de la rotación en el puesto 1, la leyenda al cierre de la tarjeta y luego el menú de resultado
+
+#### Scenario: Detalle partido conserva la leyenda
+- **GIVEN** una tarjeta que supera el límite de un mensaje
+- **WHEN** se envía el detalle
+- **THEN** se parte en mensajes numerados y la leyenda queda completa en el último mensaje de la tarjeta
+
+### Requirement: Ordenar la lista
+En P1 la opción "ordenar la lista" MUST pasar a AWAIT_ORDER y ofrecer un menú: 1 primero las no riesgosas en agua, 2 primero las de doble cultivo, 3 orden del ranking. Al elegir, MUST reevaluar con las `display_preferences` correspondientes y reenviar el resumen en el `display_order` de la api, mostrando el puesto del ranking de cada rotación.
+
+#### Scenario: Primero las no riesgosas en agua
+- **GIVEN** un resultado para OWNER
+- **WHEN** el usuario elige "5" y luego "1"
+- **THEN** recibe el resumen con las rotaciones FEASIBLE primero, cada una con su puesto del ranking, y una línea que dice qué orden se aplicó
 
 ### Requirement: Cambiar actor
 La opción "cambiar actor" MUST volver a AWAIT_ACTOR conservando ubicación y rotación actual, y al elegir otro actor MUST reevaluar y mostrar el nuevo resultado.

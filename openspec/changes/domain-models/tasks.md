@@ -24,9 +24,9 @@
 - [ ] 4.2 Agregar a `EngineInput` supuestos resueltos, insumos hídricos por escenario, SMAP inicial, TWS, resumen NDVI y filtro por clase de año; tests "Estado hídrico precalculado rechazado", "Insumo opcional ausente" y "Supuestos resueltos en la entrada" en verde
 - [ ] 4.3 Canonicalizar `input_hash` ordenando candidatas por id y escenarios por año; test "Orden de listas irrelevante para el hash" en verde
 - [ ] 4.4 Agregar clases anual, de invierno y de verano a EscenarioClimático y A-AGR-01 al catálogo; tests "Clases por estación y anual" y "Calendario desde un único supuesto" en verde
-- [ ] 4.5 Ampliar el resultado por rotación (elegibilidad, motivos, ajustes hídricos, `score_delta_vs_current`, rango de margen por clase, calendarios mensuales, términos de prioridad); tests "Diferencia contra la actual", "Rango de margen por clase" y "Calendarios de 12 meses" en verde
+- [ ] 4.5 Ampliar el resultado por rotación (elegibilidad, motivos, ajustes hídricos, `score_delta_vs_current`, rango de margen por clase, calendarios mensuales, años con pérdida, margen del peor año, lluvia sobre suelo desnudo, factibilidad UNKNOWN y filtro con NORMAL; sin términos de prioridad en el desglose); tests "Diferencia contra la actual", "Rango de margen por clase", "Factibilidad desconocida admitida" y "Calendarios de 12 meses" en verde
 
 ## 5. Agregados de perfil y economía (P1)
 
-- [ ] 5.1 PerfilActor con capital opcional, pesos de prioridad y ventanas de maquinaria; tests "Sin tope de capital", "Peso de prioridad fuera de rango" y "Mes de maquinaria inválido" en verde
+- [ ] 5.1 PerfilActor con capital opcional, pesos de prioridad de suelo (EROSION_COVER, OM_CARBON, NITROGEN, WEED_CONTROL, ROOTS) y ventanas de maquinaria; tests "Sin tope de capital", "Peso de prioridad fuera de rango", "Prioridad de presentación en el perfil" y "Mes de maquinaria inválido" en verde
 - [ ] 5.2 ParámetrosEconómicos con base de precio, modo de cosecha, flete por t y arrendamiento opcional; tests "Precio sin base" y "Arrendamiento con dos unidades" en verde

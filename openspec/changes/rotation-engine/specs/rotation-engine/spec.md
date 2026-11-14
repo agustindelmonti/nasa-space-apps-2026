@@ -51,7 +51,7 @@ Si economics o soil-impact fallan para una candidata por parámetros o supuestos
 - **THEN** R_WHEAT_SOY2_MAIZE queda no elegible con MISSING_PARAMETERS y un Faltante que nombra WHEAT y price, y las demás candidatas se rankean normalmente
 
 ### Requirement: Efecto del estado hídrico
-Para cada (cultivo, posición, escenario) el motor MUST calcular el estado con water-feasibility como submódulo, desde los insumos de `EngineInput`, y traducirlo así: NOT_FEASIBLE → el cultivo no se siembra ese año (NOT_SOWN); RISKY → usa el rinde de la clase DRY (FORCE_DRY); FEASIBLE → sin ajuste. Si un cultivo es NOT_FEASIBLE en todos los escenarios, la rotación MUST quedar no elegible con motivo WATER_NEVER_FEASIBLE.
+Para cada (cultivo, posición, escenario) el motor MUST calcular el estado con water-feasibility como submódulo y traducirlo: NOT_FEASIBLE → NOT_SOWN; RISKY → FORCE_DRY (rinde de clase DRY); FEASIBLE y UNKNOWN → sin ajuste. Si la factibilidad agregada no es UNKNOWN y un cultivo es NOT_FEASIBLE en todos los escenarios con estado conocido, la rotación MUST quedar no elegible con WATER_NEVER_FEASIBLE.
 
 #### Scenario: Soja de segunda infactible en años secos
 - **GIVEN** soja de segunda NOT_FEASIBLE en los escenarios DRY y FEASIBLE en el resto
@@ -63,17 +63,22 @@ Para cada (cultivo, posición, escenario) el motor MUST calcular el estado con w
 - **WHEN** se evalúa R_SOY_COVER
 - **THEN** queda no elegible con WATER_NEVER_FEASIBLE y factibilidad NOT_FEASIBLE
 
-#### Scenario: Estado hídrico ausente
-- **WHEN** water-feasibility no entrega estado para un cultivo en un escenario (por ejemplo, año excluido por `MISSING_WEATHER`)
-- **THEN** no se aplica ajuste en ese escenario, la factibilidad de la rotación es al menos RISKY y se emite un Faltante de evaluación hídrica
+#### Scenario: Estado hídrico desconocido en un escenario
+- **WHEN** water-feasibility entrega UNKNOWN para un cultivo en un escenario (por ejemplo, año excluido por `MISSING_WEATHER`)
+- **THEN** no se aplica ajuste en ese escenario, la rotación sigue elegible y se emite un Faltante de evaluación hídrica que nombra el año
 
 ### Requirement: Factibilidad de la rotación
-La factibilidad informada MUST ser el estado agregado de water-feasibility para la rotación, salvo que MUST ser NOT_FEASIBLE si aplica WATER_NEVER_FEASIBLE y al menos RISKY si falta el estado de algún (cultivo, escenario). La salida MUST informar, por cultivo, la fracción ponderada de escenarios con cada ajuste.
+La factibilidad informada MUST ser el estado agregado de water-feasibility (FEASIBLE, RISKY, NOT_FEASIBLE o UNKNOWN), salvo NOT_FEASIBLE si aplica WATER_NEVER_FEASIBLE. UNKNOWN MUST NOT volver no elegible a la rotación ni cambiar su puntaje; MUST ir con un Faltante. La salida MUST informar, por cultivo, la fracción ponderada de escenarios con cada ajuste.
 
 #### Scenario: Rotación sin ajustes
 - **GIVEN** todos los cultivos FEASIBLE en todos los escenarios y sin déficit regional de GRACE-FO
 - **WHEN** se evalúa la rotación
 - **THEN** la factibilidad es FEASIBLE y las fracciones de ajuste son 0
+
+#### Scenario: Factibilidad desconocida no descarta
+- **GIVEN** water-feasibility devuelve UNKNOWN para la rotación por `INSUFFICIENT_SCENARIOS`
+- **WHEN** el motor arma el resultado
+- **THEN** la factibilidad es UNKNOWN, la rotación sigue `eligible=true` con su puntaje, no aparece WATER_NEVER_FEASIBLE y hay un Faltante que dice qué dato falta
 
 #### Scenario: Una sola definición de umbrales
 - **GIVEN** water-feasibility devuelve RISKY para la rotación por `SEVERE_STRESS_FREQUENT`
@@ -98,12 +103,17 @@ Para cada posición p del ciclo, el motor MUST ordenar los márgenes por escenar
 - **THEN** el Riesgo es 0
 
 ### Requirement: Función objetivo
-El puntaje de cada candidata con datos completos MUST ser score = VAN + α·ΔSuelo − λ·Riesgo + T_prio, con VAN de economics, ΔSuelo de soil-impact, T_prio de actor-profiles (0 sin prioridades) y α, λ, i, H del perfil. El desglose MUST informar los términos en USD/ha y su suma MUST igualar el puntaje redondeado a 2 decimales.
+El puntaje de cada candidata con datos completos MUST ser exactamente score = VAN + α·ΔSuelo − λ·Riesgo, con VAN de economics, ΔSuelo de soil-impact (con los pesos efectivos de actor-profiles si hay prioridades) y α, λ, i, H del perfil. MUST NOT haber otros términos. El desglose MUST informar los tres términos en USD/ha y su suma MUST igualar el puntaje redondeado a 2 decimales.
 
 #### Scenario: Desglose del puntaje
 - **GIVEN** VAN 1000 USD/ha, ΔSuelo 20, Riesgo 150 USD/ha, α 2 USD/ha por punto y λ 0.5
 - **WHEN** se calcula el puntaje
-- **THEN** el puntaje es 1000 + 40 − 75 = 965 USD/ha y el desglose muestra 1000, 40, −75 y términos de prioridad 0
+- **THEN** el puntaje es 1000 + 40 − 75 = 965 USD/ha y el desglose muestra exactamente los tres términos 1000, 40 y −75
+
+#### Scenario: Prioridades solo cambian ΔSuelo
+- **GIVEN** la misma candidata con y sin prioridad OM_CARBON = 1
+- **WHEN** se calcula el puntaje
+- **THEN** solo cambian ΔSuelo y el término α·ΔSuelo; VAN y Riesgo son idénticos y el desglose no tiene términos extra
 
 ### Requirement: Ranking estable y determinista
 Las candidatas elegibles MUST ordenarse por puntaje redondeado a 2 decimales descendente, luego menor Riesgo, luego mayor ΔSuelo, luego id lexicográfico. Las no elegibles MUST ir después, con el mismo criterio si tienen puntaje y por id las que no. El rango MUST ser 1..N sin huecos.
@@ -172,7 +182,7 @@ Cada resultado MUST incluir el calendario mensual de suelo desnudo de soil-impac
 - **THEN** cada resultado trae 12 meses de suelo desnudo, el calendario de vulnerabilidad por cultivo y el rango hídrico por clase
 
 ### Requirement: Filtro por clase de año
-Si `EngineInput` trae `year_class_filter` DRY o WET, el motor MUST usar solo los escenarios de esa clase anual, re-ponderados w'_s = w_s / Σ w seleccionados, para economía, Riesgo y frecuencias hídricas, controlar A-CLI-03 sobre el conjunto completo y declarar en la salida el filtro, los años usados y la advertencia YEAR_CLASS_FILTER_APPLIED.
+Si `EngineInput` trae `year_class_filter` DRY, NORMAL o WET, el motor MUST usar solo los escenarios de esa clase anual, re-ponderados w'_s = w_s / Σ w seleccionados, para economía, Riesgo y frecuencias hídricas, controlar A-CLI-03 sobre el conjunto completo y declarar en la salida el filtro, los años usados y la advertencia YEAR_CLASS_FILTER_APPLIED.
 
 #### Scenario: Solo años secos
 - **GIVEN** 30 escenarios con 10 DRY anuales y filtro DRY
@@ -186,3 +196,22 @@ Si `EngineInput` trae `year_class_filter` DRY o WET, el motor MUST usar solo los
 #### Scenario: Filtro sin escenarios
 - **WHEN** el filtro es WET y no hay escenarios WET
 - **THEN** la evaluación falla con el error tipado `EMPTY_YEAR_CLASS` sin resultados parciales
+
+### Requirement: Años con pérdida y margen en un año malo
+Cada resultado con economía completa MUST copiar de economics, sin recalcular y con procedencia DERIVED: la cantidad de escenarios con margen anual promedio menor a 0 sobre el total N de escenarios usados (con los años), y el margen del peor año del registro con su año. Con filtro por clase, MUST calcularse sobre los escenarios filtrados. Estos valores MUST NOT entrar al puntaje.
+
+#### Scenario: Conteo de años con pérdida
+- **GIVEN** 30 escenarios donde 4 años tienen margen anual promedio negativo (ejemplo)
+- **WHEN** se arma el resultado
+- **THEN** informa 4 de 30 años con pérdida, la lista de esos años y el margen del peor año con su año
+
+#### Scenario: Puntaje intacto por métricas de pérdida
+- **WHEN** se agregan o quitan estas métricas de la salida en un test
+- **THEN** el puntaje y el ranking no cambian
+
+### Requirement: Lluvia sobre suelo desnudo en el resultado
+Cada resultado MUST incluir la lluvia caída sobre suelo desnudo que calcula soil-impact (anual ponderada y por mes, en mm, DERIVED), copiada sin recalcular. Este valor MUST NOT entrar al puntaje ni a ΔSuelo.
+
+#### Scenario: Métrica presente para todas
+- **WHEN** se evalúa la entrada del lote demo
+- **THEN** cada resultado trae la lluvia sobre suelo desnudo anual y por mes con su fuente de lluvia

@@ -17,6 +17,7 @@
 
 - [ ] 3.1 Implementar margen esperado, matriz (posición, año) y VAN en forma cerrada; tests "Pesos uniformes", "Matriz completa", "Ciclo parcial con H=1", "Tasa cero" en verde
 - [ ] 3.2 Property test con hypothesis: forma cerrada AF·Ē igual a la suma explícita por fases (tolerancia 1e-9) e invariancia al rotar campañas; en verde
+- [ ] 3.3 Implementar m_s, años con pérdida y margen del peor año (P0); tests "Años con pérdida contados", "Sin años con pérdida" y "Arrendamiento declarado en la métrica" en verde
 
 ## 4. Capital de trabajo y fechas (P1)
 

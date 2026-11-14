@@ -18,6 +18,7 @@
 - [ ] 3.3 Property test de monotonicidad al agregar servicio (escenario "Centeno sobre soja continua") y test documentado del caso N negativo; en verde
 - [ ] 3.4 Implementar calendario mensual de suelo desnudo (sin cultivo vivo y sin cobertura) desde A-AGR-01 y A-SOIL-02; tests "Soja continua con invierno desnudo" y "Servicio cubre el invierno" en verde
 - [ ] 3.5 Adjuntar al calendario la fracción mensual observada de NDVI bajo A-SOIL-10 para la actual; tests "Evidencia NDVI de la actual" y "Sin resumen NDVI" en verde
+- [ ] 3.6 Implementar lluvia sobre suelo desnudo por escenario, anual ponderada y por mes (P0); tests "Soja continua recibe lluvia en invierno desnudo", "Servicio reduce la lluvia sobre suelo desnudo" e "Índice intacto" en verde
 
 ## 4. NDVI como evidencia (P1)
 
