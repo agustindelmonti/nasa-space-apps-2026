@@ -24,6 +24,10 @@ Fase de especificación con [OpenSpec](https://github.com/Fission-AI/OpenSpec). 
 
 Este repositorio se desarrolla con asistencia de **Claude Code** (Anthropic) para especificación e implementación, bajo revisión del equipo. El motor de decisión es 100 % determinista y no usa modelos de lenguaje.
 
+## Herramientas de diseño
+
+Usamos [Impeccable](https://github.com/pbakaus/impeccable) (Apache 2.0, vendorizado en `.claude/skills/impeccable`, commit 1995764) como skill de diseño para Claude Code. El contexto de producto está en `PRODUCT.md` y el sistema visual en `DESIGN.md`. Para activar el detector de anti-patrones en tu sesión local: `.claude/skills/impeccable/scripts/impeccable hooks on`. Chequeo manual: `.claude/skills/impeccable/scripts/impeccable detect web/src`.
+
 ## Licencia
 
 MIT. Ver `LICENSE`. Librerías de terceros y sus licencias se listarán aquí.
