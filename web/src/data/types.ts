@@ -26,8 +26,22 @@ export interface RotationStrips {
   strips: Record<string, (Crop | null)[]>;
 }
 
-/** What the page needs besides the evaluation (future: /plots/{id}/context, /rotations/catalog, /actors/profiles, /assumptions). */
+/** Where a piece of data came from: the real API or the example fixtures (offline demo). */
+export type Origin = "api" | "fixture";
+
+/** Slider ranges delivered by `GET /actors/profiles` (A-ACT-06). */
+export interface SliderLimits {
+  horizon_years: [number, number];
+  alpha: [number, number];
+  lambda: [number, number];
+  discount_rate?: [number, number];
+}
+
+/** What the page needs besides the evaluation. Profiles, slider limits and catalog come from
+ *  `/actors/profiles` and `/rotations/catalog` when the API answers; the rest is still a fixture. */
 export interface PlotContext {
+  origin: Origin;
+  slider_limits: SliderLimits;
   plot: Plot;
   rotations: Rotation[];
   profiles: ActorProfile[];
@@ -36,7 +50,32 @@ export interface PlotContext {
   strips: RotationStrips;
 }
 
+export type YearClassFilter = "ALL" | "DRY" | "NORMAL" | "WET";
+export type DisplayPreference = "WATER_SAFE_FIRST" | "DOUBLE_CROP_FIRST";
+
+/** Profile overrides sent as-is to `/evaluate` (`overrides` in the lite body). */
+export interface ProfileOverrides {
+  horizon_years?: number;
+  alpha?: number;
+  risk_aversion?: number;
+}
+
 export interface EvaluateRequest {
   plotId: string;
   profileId: ProfileId;
+  overrides?: ProfileOverrides;
+  yearClassFilter?: YearClassFilter;
+  displayPreferences?: DisplayPreference[];
+  currentRotationId?: string;
+}
+
+/** One evaluation as the page consumes it: the engine output plus what the API adds around it. */
+export interface Evaluation {
+  origin: Origin;
+  output: EngineOutput;
+  /** rotation_id -> display name, from the API response (not from a fixed context). */
+  rotationNames: Record<string, string>;
+  /** Order computed by the API from the display preferences (equals rank order without them). */
+  displayOrder: string[];
+  inputHash: string;
 }

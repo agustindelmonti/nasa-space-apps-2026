@@ -22,3 +22,18 @@ export function rankDiff(previous: RankMap | null, current: readonly Ranked[]): 
 
 /** Rows in the order the engine ranked them (by `rank`, never by score). */
 export const byRank = <T extends Ranked>(results: readonly T[]): T[] => [...results].sort((a, b) => a.rank - b.rank);
+
+/** Rows in a given id order (the API's `display_order`); ids it does not list go last, by rank. */
+export function orderRows<T extends Ranked>(results: readonly T[], order: readonly string[]): T[] {
+  const byId = new Map(results.map((r) => [r.rotation_id, r]));
+  const listed = order.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
+  const seen = new Set(listed.map((r) => r.rotation_id));
+  return [...listed, ...byRank(results.filter((r) => !seen.has(r.rotation_id)))];
+}
+
+/** Which order the table shows: the API's `display_order` when a preference is active, else `rank`. */
+export const tableOrder = (results: readonly Ranked[], displayOrder: readonly string[], preferencesActive: boolean): string[] =>
+  preferencesActive && displayOrder.length ? orderRows(results, displayOrder).map((r) => r.rotation_id) : byRank(results).map((r) => r.rotation_id);
+
+/** Shown position (1-based) of each row, in the shape `rankDiff` reads. */
+export const positions = (order: readonly string[]): Ranked[] => order.map((rotation_id, i) => ({ rotation_id, rank: i + 1 }));

@@ -10,9 +10,12 @@ import "./styles/tokens.css";
 import "./styles/app.css";
 import { App } from "./App";
 import { FixtureDataSource } from "./data/FixtureDataSource";
+import { ApiDataSource } from "./data/ApiDataSource";
 
-// Swap for the API-backed DataSource when /api/v1 exists; components do not change.
-const source = new FixtureDataSource(120);
+// With VITE_API_URL the page talks to the real engine and falls back to the fixtures if the
+// API does not answer; without it, it is the offline demo. Components do not change.
+const apiUrl = import.meta.env.VITE_API_URL?.trim();
+const source = apiUrl ? new ApiDataSource(apiUrl, new FixtureDataSource()) : new FixtureDataSource(120);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

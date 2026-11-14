@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { byRank, rankDiff, toRankMap } from "./rankDiff";
+import { byRank, orderRows, positions, rankDiff, tableOrder, toRankMap } from "./rankDiff";
 import { formatNumber, formatSigned } from "./format";
 
 describe("rankDiff", () => {
@@ -26,6 +26,18 @@ describe("rankDiff", () => {
 
   it("orders rows by the engine rank only", () => {
     expect(byRank([...owner].reverse()).map((r) => r.rotation_id)).toEqual(owner.map((r) => r.rotation_id));
+  });
+
+  it("uses display_order only when a preference is active", () => {
+    const display = ["R_SOY_MONO", "R_MAIZE_SOY"]; // R_MAIZE_SOY_COVER missing: goes last
+    expect(tableOrder(owner, display, false)).toEqual(["R_MAIZE_SOY", "R_MAIZE_SOY_COVER", "R_SOY_MONO"]);
+    expect(tableOrder(owner, display, true)).toEqual(["R_SOY_MONO", "R_MAIZE_SOY", "R_MAIZE_SOY_COVER"]);
+    expect(orderRows(owner, display).map((r) => r.rotation_id)).toEqual(["R_SOY_MONO", "R_MAIZE_SOY", "R_MAIZE_SOY_COVER"]);
+  });
+
+  it("measures moves on the shown position", () => {
+    const before = toRankMap(positions(["A", "B", "C"]));
+    expect(rankDiff(before, positions(["C", "A", "B"]))).toEqual({ C: 2, A: -1, B: -1 });
   });
 });
 
