@@ -4,7 +4,7 @@
 
 - [ ] 1.1 Crear `web/` con Vite + React + TypeScript, ESLint y vitest; verificar `npm run build` y `npm test` en verde
 - [x] 1.2 Agregar Playwright con viewports 1920x1080, 1280x720 y 390x844 y un test de humo que carga la página; verificar `npx playwright test` en verde
-- [ ] 1.3 Generar tipos TS desde el JSON Schema de `EngineInput`/`EngineOutput` (`schemas/`) y crear cliente `/api/v1` con errores tipados `{code, message, details}`; verificar con vitest contra un fixture de respuesta de `demo-mode`
+- [x] 1.3 Generar tipos TS desde el JSON Schema de `EngineInput`/`EngineOutput` (`schemas/`) y crear cliente `/api/v1` con errores tipados `{code, message, details}`; verificar con vitest contra un fixture de respuesta de `demo-mode`
 - [ ] 1.4 Configurar `VITE_API_BASE_URL`, `.env.example` y chequeo de `GET /health` con indicadores "Modo demo" y "API caída"; verificar tests Playwright de los escenarios "API en modo demo" y "API caída"
 
 ## 2. Mapa y capas GIBS (P0)
@@ -17,7 +17,7 @@
 ## 3. Ranking por actor (P0)
 
 - [ ] 3.1 Tabla comparativa (rango, nombre, puntaje, desglose de tres términos, factibilidad con cuatro textos, ΔSuelo, riesgo) con fila actual rotulada; verificar Playwright "Ranking tal como llega de la API", "Rotación actual destacada", "Rotación no factible", "Factibilidad desconocida" y "Menos de 3 resultados"
-- [ ] 3.2 Selector de actor desde `GET /actors/profiles` que dispara `POST /evaluate`; verificar Playwright "Propietario vs arrendatario"
+- [x] 3.2 Selector de actor desde `GET /actors/profiles` que dispara `POST /evaluate`; verificar Playwright "Propietario vs arrendatario"
 - [ ] 3.3 Vista de tarjetas en celular para la tabla; verificar Playwright "Celular sin scroll horizontal"
 - [ ] 3.4 Columnas de peor año, años con pérdida y lluvia sobre suelo desnudo; verificar Playwright "Años con pérdida visibles" y "Métrica en la tabla"
 
@@ -36,7 +36,7 @@
 
 ## 6. Sliders y cambio de ranking (P1)
 
-- [ ] 6.1 Sliders H, α, λ con rangos de la API, debounce y descarte de respuestas viejas; verificar Playwright "Cambio de λ" y "Respuestas fuera de orden"
+- [x] 6.1 Sliders H, α, λ con rangos de la API, debounce y descarte de respuestas viejas; verificar Playwright "Cambio de λ" y "Respuestas fuera de orden"
 - [x] 6.2 Indicador de cambio de posición y animación FLIP con `prefers-reduced-motion`; verificar vitest del diff de ranking y Playwright "Subida de posición" y "Movimiento reducido"
 
 - [ ] 6.3 Filtro por clase de año, sliders de prioridades de suelo y toggles de preferencias enviados a `/evaluate` (tabla según `display_order`), más filas de calor y lluvia extrema en el timeline cuando vengan en la respuesta; verificar Playwright "Solo años secos", "Preferencia de agua" y "Prioridad de carbono"
