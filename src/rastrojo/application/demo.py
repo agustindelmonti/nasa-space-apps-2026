@@ -346,6 +346,32 @@ def load_grace_recent(lat: float, lon: float) -> PValue | None:
     )
 
 
+IMERG_DIR = CLIMATE_SNAPSHOT.parent / "GPM_IMERG"
+
+
+def _load_imerg(lat: float, lon: float) -> dict[date, float] | None:
+    """Lluvia diaria GPM IMERG Final del punto, bajada con `scripts/fetch_demo_imerg.py`."""
+    import json
+
+    path = IMERG_DIR / f"precip_{lat:.4f}_{lon:.4f}.json"
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text(encoding="utf-8"))["values"]
+    return {date(int(k[:4]), int(k[4:6]), int(k[6:])): float(v) for k, v in raw.items()}
+
+
+def _imerg_source(days: dict[date, float]) -> Source:
+    return Source(
+        dataset=Dataset.GPM_IMERG,
+        variable="precipitation",
+        period=Period(start=min(days), end=max(days)),
+        spatial_resolution="0,1° (~10 km)",
+        temporal_resolution="diaria (IMERG Final v07)",
+        is_modeled=True,
+        location_note="celda de 0,1° que contiene el lote; estimación satelital calibrada con pluviómetros",
+    )
+
+
 def _gwetroot_source(lat: float, lon: float) -> Source:
     from rastrojo.data.power import METEO_RESOLUTION, TEMPORAL_RESOLUTION
 
@@ -373,6 +399,8 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
         t2m_max=power.source("T2M_MAX"),
     )
     gwet = _load_gwetroot(power.lat, power.lon)
+    imerg = _load_imerg(power.lat, power.lon)
+    imerg_src = _imerg_source(imerg) if imerg else None
     if gwet is not None:
         sources = sources.model_copy(update={"gwetroot": _gwetroot_source(power.lat, power.lon)})
     weather: list[ScenarioWeather] = []
@@ -393,6 +421,7 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
             continue
         days = [start + timedelta(days=k) for k in range(WEATHER_DAYS)]
         gw = tuple(gwet[d] for d in days) if gwet and all(d in gwet for d in days) else None
+        im = tuple(imerg[d] for d in days) if imerg and all(d in imerg for d in days) else None
         weather.append(
             ScenarioWeather(
                 campaign_start_year=sc.campaign_start_year,
@@ -402,9 +431,13 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
                 t2m_min_c=tuple(round(float(x), 2) for x in tmin),
                 t2m_max_c=tuple(round(float(x), 2) for x in tmax),
                 gwetroot=gw,
-                sources=sources
-                if gw is not None
-                else sources.model_copy(update={"gwetroot": None}),
+                imerg_rain_mm=im,
+                sources=sources.model_copy(
+                    update={
+                        "gwetroot": sources.gwetroot if gw is not None else None,
+                        "imerg_rain": imerg_src if im is not None else None,
+                    }
+                ),
             )
         )
     kept = {w.campaign_start_year for w in weather}
