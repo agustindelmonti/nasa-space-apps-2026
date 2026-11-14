@@ -160,6 +160,43 @@ header.top {
 .params { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; font-size: 0.9rem; color: var(--color-text-soft); }
 .params b { color: var(--color-text); font-family: var(--font-mono); font-weight: 500; }
 
+/* Profile sliders (H, α, λ) */
+.sliders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 20px; border-top: 1px solid var(--color-rule); padding-top: 12px; }
+.sliders-head { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; }
+.slider { display: grid; gap: 4px; min-width: 0; align-content: start; }
+.slider-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; font-size: 0.9rem; color: var(--color-text); cursor: pointer; }
+.slider-name { font-weight: 700; }
+.sym { font-family: var(--font-mono); color: var(--color-text-soft); font-weight: 500; }
+.slider.is-set .fig { color: var(--color-straw); }
+.slider input[type="range"] { width: 100%; margin: 4px 0 0; accent-color: var(--color-straw); min-height: 28px; cursor: pointer; }
+.slider input[type="range"]:disabled { cursor: not-allowed; opacity: 0.5; }
+.slider-scale { display: flex; justify-content: space-between; font: 400 0.72rem/1 var(--font-mono); color: var(--color-text-faint); }
+.slider-help { font-size: 0.82rem; line-height: 1.35; color: var(--color-text-soft); }
+.sliders > .slider-help { grid-column: 1 / -1; }
+.btn-sm { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; min-height: 36px; font-size: 0.86rem; }
+@media (max-width: 1240px) and (min-width: 1041px), (max-width: 560px) {
+  .sliders { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Year class and presentation preferences */
+.options { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 20px; background: var(--color-panel); border: 1px solid var(--color-rule); padding: 14px; }
+.opt { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.seg-sm button { min-height: 40px; font-size: 0.86rem; padding: 8px 6px; }
+.seg button:disabled, .toggles button:disabled { cursor: not-allowed; opacity: 0.5; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.toggles button {
+  font: 400 0.86rem/1.2 var(--font-body); text-align: left;
+  color: var(--color-text-soft); background: var(--color-panel);
+  border: 1px solid var(--color-rule); border-radius: var(--rounded-sm);
+  padding: 8px 10px; min-height: 40px; cursor: pointer;
+  transition: background var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+}
+.toggles button:hover:not([aria-pressed="true"]):not(:disabled) { background: var(--color-panel-2); color: var(--color-text); }
+.toggles button[aria-pressed="true"] { color: var(--color-graphite); background: var(--color-straw); border-color: var(--color-straw); }
+@media (max-width: 1240px) and (min-width: 1041px), (max-width: 640px) {
+  .options { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* Ranking */
 .rank { background: var(--color-panel); border: 1px solid var(--color-rule); position: relative; }
 .loadbar { position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--color-straw); transform-origin: left; transform: scaleX(0); opacity: 0; }
@@ -199,6 +236,9 @@ header.top {
 .score { text-align: right; display: grid; gap: 2px; justify-items: end; }
 .score .fig { font-size: 1.25rem; }
 .move { font: 500 0.78rem/1 var(--font-mono); color: var(--color-straw); min-height: 1em; }
+.out { font: 500 0.78rem/1.2 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-soft); border: 1px solid var(--color-rule); border-radius: var(--rounded-sm); padding: 5px 8px; white-space: nowrap; }
+.why { flex-basis: 100%; color: var(--color-text); }
+.row.ineligible .rot-name { color: var(--color-text-soft); }
 .move[data-move] { animation: move-mark 2.5s linear forwards; }
 @keyframes move-mark { 0%, 88% { opacity: 1; } 100% { opacity: 0; } }
 .facts { grid-column: 2 / 4; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; font-size: 0.88rem; color: var(--color-text-soft); }

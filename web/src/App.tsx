@@ -1,60 +1,109 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DataSource } from "./data/DataSource";
-import type { EngineOutput, PlotContext, ProfileId } from "./data/types";
-import { rankDiff, toRankMap, type RankMap } from "./lib/rankDiff";
+import { isIgnorable, type DataSource } from "./data/DataSource";
+import type { DisplayPreference, Evaluation, PlotContext, ProfileId, ProfileOverrides, YearClassFilter } from "./data/types";
+import { positions, rankDiff, tableOrder, toRankMap, type RankMap } from "./lib/rankDiff";
 import { AssumptionsContext } from "./components/AssumptionsContext";
 import { LotMap } from "./components/LotMap";
 import { WaterPanel } from "./components/WaterPanel";
 import { ActorSelector } from "./components/ActorSelector";
+import { ProfileSliders } from "./components/ProfileSliders";
+import { EvaluationOptions } from "./components/EvaluationOptions";
 import { RankingTable } from "./components/RankingTable";
 import { EvidencePanel } from "./components/EvidencePanel";
 
 const PLOT_ID = "demo-casilda";
+/** Slider moves are sent once the hand stops for this long. */
+const SLIDER_DEBOUNCE_MS = 250;
 let entryPlayed = false; // the strip fill plays once per session
+
+interface Shown {
+  evaluation: Evaluation;
+  order: string[];
+}
 
 export function App({ source }: { source: DataSource }) {
   const [ctx, setCtx] = useState<PlotContext | null>(null);
   const [profileId, setProfileId] = useState<ProfileId>("OWNER");
-  const [output, setOutput] = useState<EngineOutput | null>(null);
+  const [draft, setDraft] = useState<ProfileOverrides>({});
+  const [overrides, setOverrides] = useState<ProfileOverrides>({});
+  const [yearClass, setYearClass] = useState<YearClassFilter>("ALL");
+  const [prefs, setPrefs] = useState<DisplayPreference[]>([]);
+  const [shown, setShown] = useState<Shown | null>(null);
   const [moves, setMoves] = useState<Record<string, number>>({});
   const [evaluationKey, setEvaluationKey] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
   const [animateEntry] = useState(() => !entryPlayed);
-  const lastRanks = useRef<RankMap | null>(null);
-  const requestSeq = useRef(0);
+  const lastPositions = useRef<RankMap | null>(null);
+  const debounce = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     entryPlayed = true;
-    source.getContext(PLOT_ID).then(setCtx, (e: Error) => setError(e.message));
+    const ctrl = new AbortController();
+    source.getContext(PLOT_ID, ctrl.signal).then(setCtx, (e: Error) => !isIgnorable(e) && setError(e.message));
+    return () => ctrl.abort();
   }, [source]);
 
-  const evaluate = useCallback(
-    (id: ProfileId) => {
-      const seq = ++requestSeq.current;
-      setLoading(true);
-      setError(null);
-      source
-        .evaluate({ plotId: PLOT_ID, profileId: id })
-        .then((out) => {
-          if (seq !== requestSeq.current) return; // a newer request superseded this one
-          setMoves(rankDiff(lastRanks.current, out.results));
-          lastRanks.current = toRankMap(out.results);
-          setEvaluationKey((k) => k + 1);
-          setOutput(out);
-          setSelectedId((sel) => sel ?? out.results.find((r) => r.rank === 1)?.rotation_id ?? null);
-        })
-        .catch((e: Error) => seq === requestSeq.current && setError(e.message))
-        .finally(() => seq === requestSeq.current && setLoading(false));
-    },
-    [source],
-  );
+  // One request per change of actor, committed overrides, year class or preferences. Only the
+  // latest one may land: the effect cleanup aborts the previous one and the source discards
+  // any response that still arrives late.
+  useEffect(() => {
+    if (!ctx) return;
+    const ctrl = new AbortController();
+    setLoading(true);
+    setError(null);
+    source
+      .evaluate({ plotId: PLOT_ID, profileId, overrides, yearClassFilter: yearClass, displayPreferences: prefs }, ctrl.signal)
+      .then((evaluation) => {
+        if (ctrl.signal.aborted) return;
+        const order = tableOrder(evaluation.output.results, evaluation.displayOrder, prefs.length > 0);
+        const now = positions(order);
+        setMoves(rankDiff(lastPositions.current, now));
+        lastPositions.current = toRankMap(now);
+        setEvaluationKey((k) => k + 1);
+        setShown({ evaluation, order });
+        setSelectedId((sel) =>
+          sel && evaluation.output.results.some((r) => r.rotation_id === sel) ? sel : (order[0] ?? null),
+        );
+        setLoading(false);
+      })
+      .catch((e: Error) => {
+        if (isIgnorable(e) || ctrl.signal.aborted) return;
+        setError(e.message);
+        setLoading(false);
+      });
+    return () => ctrl.abort();
+  }, [source, ctx, profileId, overrides, yearClass, prefs, retry]);
 
-  useEffect(() => evaluate(profileId), [evaluate, profileId]);
+  useEffect(() => () => clearTimeout(debounce.current), []);
 
-  const selected = output?.results.find((r) => r.rotation_id === selectedId) ?? null;
-  const names = Object.fromEntries((ctx?.rotations ?? []).map((r) => [r.rotation_id, r.name]));
+  const changeActor = useCallback((id: ProfileId) => {
+    clearTimeout(debounce.current);
+    setDraft({});
+    setOverrides({});
+    setProfileId(id);
+  }, []);
+
+  const changeSliders = useCallback((next: ProfileOverrides) => {
+    setDraft(next);
+    clearTimeout(debounce.current);
+    debounce.current = setTimeout(() => setOverrides(next), SLIDER_DEBOUNCE_MS);
+  }, []);
+
+  const resetSliders = useCallback(() => {
+    clearTimeout(debounce.current);
+    setDraft({});
+    setOverrides({});
+  }, []);
+
+  const evaluation = shown?.evaluation ?? null;
+  const exampleData = ctx?.origin === "fixture" || evaluation?.origin === "fixture";
+  const offline = source.kind === "api" && exampleData;
+  const names = evaluation?.rotationNames ?? {};
+  const selected = evaluation?.output.results.find((r) => r.rotation_id === selectedId) ?? null;
+  const profile = ctx?.profiles.find((p) => p.profile_id === profileId);
 
   return (
     <AssumptionsContext.Provider value={ctx?.assumptions ?? {}}>
@@ -73,17 +122,23 @@ export function App({ source }: { source: DataSource }) {
           <p className="soft lede">
             Rotaciones para tu lote medidas contra 45 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.
           </p>
-          {source.kind === "fixture" && (
-            <p className="example" role="note">
-              Datos de ejemplo: el ranking y las cifras no son resultados del motor.
+          {offline ? (
+            <p className="example" role="status" data-mode="offline">
+              Modo demo sin conexión: el motor no respondió y se muestran datos de ejemplo, no resultados del motor.
             </p>
+          ) : (
+            exampleData && (
+              <p className="example" role="note">
+                Datos de ejemplo: el ranking y las cifras no son resultados del motor.
+              </p>
+            )
           )}
         </header>
 
         {error && (
           <p className="warn" role="alert">
             No se pudo cargar la evaluación: {error}.{" "}
-            <button type="button" className="btn-secondary" onClick={() => evaluate(profileId)}>
+            <button type="button" className="btn-secondary" onClick={() => setRetry((n) => n + 1)}>
               Reintentar
             </button>
           </p>
@@ -94,11 +149,25 @@ export function App({ source }: { source: DataSource }) {
             <LotMap plot={ctx.plot} />
             <div className="panel" id="ranking">
               <WaterPanel cells={ctx.water_panel} />
-              <ActorSelector profiles={ctx.profiles} value={profileId} onChange={setProfileId} />
-              {output && (
+              <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} overridden={Object.keys(draft).length > 0}>
+                {profile && (
+                  <ProfileSliders
+                    profile={profile}
+                    limits={ctx.slider_limits}
+                    overrides={draft}
+                    onChange={changeSliders}
+                    onReset={resetSliders}
+                    disabled={exampleData}
+                  />
+                )}
+              </ActorSelector>
+              <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
+              {shown && (
                 <RankingTable
-                  results={output.results}
-                  rotations={ctx.rotations}
+                  results={shown.evaluation.output.results}
+                  names={names}
+                  order={shown.order}
+                  warnings={shown.evaluation.output.warnings}
                   strips={ctx.strips}
                   moves={moves}
                   evaluationKey={evaluationKey}
@@ -106,6 +175,7 @@ export function App({ source }: { source: DataSource }) {
                   onSelect={setSelectedId}
                   loading={loading}
                   animateEntry={animateEntry}
+                  inputHash={shown.evaluation.inputHash}
                 />
               )}
             </div>

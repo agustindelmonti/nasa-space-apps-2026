@@ -59,3 +59,21 @@ export const RISK_LABEL: Record<string, string> = {
 
 export const MONTH_INITIAL = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
 export const MONTH_NAME = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+/** Why the engine marked a rotation as not eligible (ExclusionReason), in plain words. */
+export const EXCLUSION_LABEL: Record<string, string> = {
+  DOUBLE_CROP_NOT_ALLOWED: "el actor no hace doble cultivo",
+  COVER_NOT_ALLOWED: "el actor no hace cultivos de servicio",
+  WORKING_CAPITAL_EXCEEDED: "supera el capital de trabajo disponible",
+  WATER_NEVER_FEASIBLE: "el agua no alcanza en ningún año del registro",
+  MACHINERY_WINDOW_CONFLICT: "choca con las ventanas de maquinaria",
+  MISSING_PARAMETERS: "faltan parámetros para evaluarla",
+};
+
+export const YEAR_CLASS_LABEL = { ALL: "Todos", DRY: "Años secos", NORMAL: "Normales", WET: "Húmedos" } as const;
+
+/** Engine warnings shown to the user; the technical ones stay out of the page. */
+export const WARNING_LABEL: Record<string, string> = {
+  LOW_ELIGIBLE_COUNT: "Quedan menos de 3 rotaciones elegibles para este actor: la comparación es limitada.",
+  EMPTY_YEAR_CLASS: "No hay campañas de esa clase de año en el registro: se usaron todos los años.",
+};

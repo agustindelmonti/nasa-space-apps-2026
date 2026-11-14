@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { House, KeyRound, Landmark, Users } from "lucide-react";
 import type { ActorProfile, ProfileId } from "../data/types";
 import { formatNumber } from "../lib/format";
@@ -9,10 +10,15 @@ interface Props {
   profiles: ActorProfile[];
   value: ProfileId;
   onChange: (id: ProfileId) => void;
+  /** True when the user moved a slider: the parameters are then the user's, not the profile's. */
+  overridden?: boolean;
+  /** The sliders, rendered under the selector. */
+  children?: ReactNode;
 }
 
-export function ActorSelector({ profiles, value, onChange }: Props) {
+export function ActorSelector({ profiles, value, onChange, overridden = false, children }: Props) {
   const active = profiles.find((p) => p.profile_id === value);
+  const capital = active?.constraints?.max_working_capital_usd_ha;
   return (
     <section className="actorbar" aria-labelledby="h-actor">
       <h2 id="h-actor" className="label">
@@ -30,22 +36,19 @@ export function ActorSelector({ profiles, value, onChange }: Props) {
           );
         })}
       </div>
+      {children}
       {active && (
         <div className="params">
           <span>
-            Horizonte <b>{formatNumber(active.horizon_years.value)} {active.horizon_years.value === 1 ? "año" : "años"}</b>
-          </span>
-          <span>
-            Peso del suelo α <b>{formatNumber(active.soil_weight_alpha.value, Number.isInteger(active.soil_weight_alpha.value) ? 0 : 1)}</b>{" "}
-            <span className="unit">USD/ha por punto</span>
-          </span>
-          <span>
-            Aversión al riesgo λ <b>{formatNumber(active.risk_aversion_lambda.value, Number.isInteger(active.risk_aversion_lambda.value) ? 0 : 1)}</b>
-          </span>
-          <span>
             Tasa <b>{formatNumber(active.discount_rate.value * 100)} %</b>
           </span>
-          <ProvenanceBadge provenance={active.horizon_years.provenance} />
+          {capital && (
+            <span>
+              Capital de trabajo <b>{formatNumber(capital.value)}</b> <span className="unit">USD/ha</span>
+            </span>
+          )}
+          {active.constraints && !active.constraints.allow_double_crop && <span>Sin doble cultivo</span>}
+          <ProvenanceBadge provenance={overridden ? { kind: "USER_INPUT" } : active.horizon_years.provenance} />
         </div>
       )}
     </section>

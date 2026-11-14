@@ -1,13 +1,19 @@
 import { useLayoutEffect, useRef } from "react";
-import type { Rotation, RotationResult, RotationStrips } from "../data/types";
-import { byRank } from "../lib/rankDiff";
+import type { RotationResult, RotationStrips } from "../data/types";
+import { EXCLUSION_LABEL, WARNING_LABEL } from "../lib/labels";
+import { orderRows } from "../lib/rankDiff";
 import { formatNumber, formatSigned } from "../lib/format";
 import { CampaignStrip, StripLegend } from "./CampaignStrip";
 import { WaterState } from "./WaterState";
 
 interface Props {
   results: RotationResult[];
-  rotations: Rotation[];
+  /** rotation_id -> name, as the API sent it. */
+  names: Record<string, string>;
+  /** Row order: the API's `display_order` with preferences active, otherwise by `rank`. */
+  order: string[];
+  /** Engine warnings (codes); the ones with a label are shown. */
+  warnings?: readonly string[];
   strips: RotationStrips;
   /** Positions moved since the previous evaluation, by rotation id (presentation only). */
   moves: Record<string, number>;
@@ -17,6 +23,8 @@ interface Props {
   onSelect: (rotationId: string) => void;
   loading: boolean;
   animateEntry: boolean;
+  /** Hash of the input that produced these rows (X-Input-Hash), for traceability. */
+  inputHash?: string;
 }
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -28,13 +36,26 @@ function cellsFor(strips: RotationStrips, id: string, length: number) {
   return Array.from({ length }, (_, i) => base[i % base.length]);
 }
 
-export function RankingTable({ results, rotations, strips, moves, evaluationKey, selectedId, onSelect, loading, animateEntry }: Props) {
-  const rows = byRank(results);
+export function RankingTable({
+  results,
+  names,
+  order: displayOrder,
+  warnings = [],
+  strips,
+  moves,
+  evaluationKey,
+  selectedId,
+  onSelect,
+  loading,
+  animateEntry,
+  inputHash,
+}: Props) {
+  const rows = orderRows(results, displayOrder);
   const listRef = useRef<HTMLOListElement>(null);
   const lastTops = useRef<Record<string, number>>({});
-  const names = Object.fromEntries(rotations.map((r) => [r.rotation_id, r.name]));
   const axis = Math.max(12, ...rows.map((r) => strips.strips[r.rotation_id]?.length ?? 12));
   const order = rows.map((r) => r.rotation_id).join(",");
+  const notices = warnings.filter((w) => w in WARNING_LABEL);
 
   // FLIP: compare each row's previous offset with the new one and animate the difference (300 ms).
   useLayoutEffect(() => {
@@ -65,7 +86,7 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
     .join(". ");
 
   return (
-    <section className={`rank${loading ? " is-loading" : ""}`} aria-labelledby="h-rank" aria-busy={loading}>
+    <section className={`rank${loading ? " is-loading" : ""}`} aria-labelledby="h-rank" aria-busy={loading} data-input-hash={inputHash}>
       <div className="loadbar" aria-hidden="true" />
       <div className="rank-head">
         <h2 id="h-rank" className="h-title">Rotaciones comparadas</h2>
@@ -76,22 +97,29 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
           Evaluación incompleta: llegaron {rows.length} rotaciones y se necesitan al menos 3 para comparar.
         </p>
       )}
+      {notices.map((w) => (
+        <p key={w} className="warn" role="status" data-warning={w}>
+          {WARNING_LABEL[w]}
+        </p>
+      ))}
       <p className="sr-only" aria-live="polite">
         {announcement}
       </p>
       <ol ref={listRef} className="rows" aria-label="Ranking de rotaciones">
-        {rows.map((r) => {
+        {rows.map((r, i) => {
           const m = moves[r.rotation_id] ?? 0;
           const name = names[r.rotation_id] ?? r.rotation_id;
+          const reasons = (r.exclusion_reasons ?? []).map((x) => EXCLUSION_LABEL[x] ?? x);
           return (
             <li
               key={r.rotation_id}
               data-id={r.rotation_id}
               data-rank={r.rank}
-              className={`row${r.rank === 1 ? " first" : ""}${r.is_current ? " current" : ""}${selectedId === r.rotation_id ? " selected" : ""}`}
+              data-eligible={r.eligible}
+              className={`row${i === 0 ? " first" : ""}${r.eligible ? "" : " ineligible"}${r.is_current ? " current" : ""}${selectedId === r.rotation_id ? " selected" : ""}`}
             >
-              <span className="pos" aria-label={`Puesto ${r.rank}`}>
-                {r.rank}
+              <span className="pos" aria-label={`Puesto ${i + 1}`}>
+                {i + 1}
               </span>
               <div className="name">
                 <button type="button" className="name-btn" aria-pressed={selectedId === r.rotation_id} onClick={() => onSelect(r.rotation_id)}>
@@ -100,14 +128,25 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
                 </button>
               </div>
               <div className="score">
-                <span className="fig">
-                  {r.breakdown ? <>{formatNumber(r.breakdown.total.value)} <span className="unit">USD/ha</span></> : <span className="soft">sin puntaje</span>}
-                </span>
+                {r.eligible ? (
+                  <span className="fig">
+                    {r.breakdown ? (
+                      <>
+                        {formatNumber(r.breakdown.total.value)} <span className="unit">USD/ha</span>
+                      </>
+                    ) : (
+                      <span className="soft">sin puntaje</span>
+                    )}
+                  </span>
+                ) : (
+                  <span className="out">No elegible</span>
+                )}
                 <span className="move" key={`${evaluationKey}-${m}`} data-move={m || undefined}>
                   {m > 0 ? `▲ ${m}` : m < 0 ? `▼ ${-m}` : ""}
                 </span>
               </div>
               <div className="facts">
+                {!r.eligible && reasons.length > 0 && <span className="why">No elegible: {reasons.join("; ")}</span>}
                 <WaterState state={r.water_feasibility} />
                 <span>
                   ΔSuelo <span className="fig fig-sm">{r.soil_delta_index ? formatSigned(r.soil_delta_index.value) : "desconocido"}</span>
@@ -121,7 +160,7 @@ export function RankingTable({ results, rotations, strips, moves, evaluationKey,
                     años
                   </span>
                 )}
-                {!r.is_current && r.score_delta_vs_current && (
+                {!r.is_current && r.eligible && r.score_delta_vs_current && (
                   <span>
                     <span className="fig fig-sm">{formatSigned(r.score_delta_vs_current.value)}</span> vs actual
                   </span>
