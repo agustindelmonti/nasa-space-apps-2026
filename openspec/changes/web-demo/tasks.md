@@ -1,0 +1,54 @@
+# Tasks: web-demo (P0 con partes P1/P2)
+
+## 1. Scaffolding y cliente de API (P0)
+
+- [ ] 1.1 Crear `web/` con Vite + React + TypeScript, ESLint y vitest; verificar `npm run build` y `npm test` en verde
+- [ ] 1.2 Agregar Playwright con viewports 1920x1080, 1280x720 y 390x844 y un test de humo que carga la página; verificar `npx playwright test` en verde
+- [ ] 1.3 Generar tipos TS desde el JSON Schema de `EngineInput`/`EngineOutput` (`schemas/`) y crear cliente `/api/v1` con errores tipados `{code, message, details}`; verificar con vitest contra un fixture de respuesta de `demo-mode`
+- [ ] 1.4 Configurar `VITE_API_BASE_URL`, `.env.example` y chequeo de `GET /health` con indicadores "Modo demo" y "API caída"; verificar tests Playwright de los escenarios "API en modo demo" y "API caída"
+
+## 2. Mapa y capas GIBS (P0)
+
+- [ ] 2.1 Verificar contra GetCapabilities de GIBS (epsg3857/best) los identificadores, tileMatrixSet, formato, rango temporal y granularidad de NDVI MODIS, SMAP L4 rootzone, IMERG y capa base; volcar en `web/src/config/layers.json`; verificar con un script que pide un tile de cada capa sobre el lote demo y obtiene HTTP 200
+- [ ] 2.2 Mapa Leaflet centrado en el lote con marcador o polígono, selector de capas y opacidad; verificar test Playwright "Capas disponibles" y "Pedido de tiles a GIBS" (intercepción de requests)
+- [ ] 2.3 Selector de fecha con `snapToProduct` y validación de rango por capa; verificar vitest de ajuste de compuesto y Playwright "Fecha fuera de rango"
+- [ ] 2.4 Leyenda por capa con unidad, dataset, resolución, limitación y enlace a glosario desde configuración; verificar Playwright "Limitación visible"
+
+## 3. Ranking por actor (P0)
+
+- [ ] 3.1 Tabla comparativa (rango, nombre, puntaje, desglose, factibilidad con texto, ΔSuelo, riesgo) con fila actual rotulada; verificar Playwright "Ranking tal como llega de la API", "Rotación actual destacada", "Rotación no factible" y "Menos de 3 resultados"
+- [ ] 3.2 Selector de actor desde `GET /actors/profiles` que dispara `POST /evaluate`; verificar Playwright "Propietario vs arrendatario"
+- [ ] 3.3 Vista de tarjetas en celular para la tabla; verificar Playwright "Celular sin scroll horizontal"
+
+## 4. Evidencia y procedencia (P0)
+
+- [ ] 4.1 Componentes de valor con procedencia, badge y tooltip accesible (hover, foco, tap) resolviendo supuestos con `GET /assumptions`; verificar Playwright "Supuesto marcado", "Tooltip de dato SMAP" y "Tooltip de supuesto"
+- [ ] 4.2 Panel de rotación seleccionada con evidencia, beneficios, faltantes y riesgos; verificar Playwright "Faltantes visibles"
+- [ ] 4.3 Leyendas fijas "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción"; verificar Playwright "Leyendas siempre presentes"
+
+## 5. Simulador de chat (P0)
+
+- [ ] 5.1 Componente de chat estilo mensajería contra `POST /chat/simulate` con botón "enviar ubicación del lote demo" y rótulo de simulación; verificar Playwright "Conversación de demo" y "Error del simulador"
+
+## 6. Sliders y cambio de ranking (P1)
+
+- [ ] 6.1 Sliders H, α, λ con rangos de la API, debounce y descarte de respuestas viejas; verificar Playwright "Cambio de λ" y "Respuestas fuera de orden"
+- [ ] 6.2 Indicador de cambio de posición y animación FLIP con `prefers-reduced-motion`; verificar vitest del diff de ranking y Playwright "Subida de posición" y "Movimiento reducido"
+
+## 7. Glosario y fallback (P1)
+
+- [ ] 7.1 Glosario desde `GET /glossary` con enlaces desde la UI; verificar Playwright "Término enlazado" y que existan los 6 términos mínimos
+- [ ] 7.2 Fallback a imagen estática cacheada del lote demo con rótulo y fecha; verificar Playwright "GIBS caído en la demo" con requests a GIBS bloqueadas
+
+## 8. Accesibilidad, deploy e integración (P1)
+
+- [ ] 8.1 Integrar `@axe-core/playwright`, corregir violaciones y navegación por teclado; verificar "Chequeo axe" y "Sliders con teclado"
+- [ ] 8.2 Test de guarda que falla si aparece lógica de score/VAN/riesgo en `web/src`; verificar que el test pasa y falla al introducir un módulo de prueba
+- [ ] 8.3 Deploy en Vercel con `VITE_API_BASE_URL` de producción y CORS de la API; verificar carga de la URL pública y `GET /health` desde el navegador
+- [ ] 8.4 Test E2E contra la API real en DEMO_MODE con red bloqueada salvo API y GIBS; verificar "Sin otras salidas de red"
+- [ ] 8.5 Documentar en README de `web/` cómo correr, testear y desplegar, y las librerías OSS usadas; verificar que los comandos documentados corren tal cual
+
+## 9. Pulido (P2)
+
+- [ ] 9.1 Modo presentación (tipografía grande, ocultar controles secundarios) para 1280x720; verificar Playwright "Proyector" con capturas
+- [ ] 9.2 Capa de anomalía GRACE-FO si GIBS la publica (según 2.1); verificar tile HTTP 200 y leyenda con limitación de ~300 km
