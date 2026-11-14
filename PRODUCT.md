@@ -41,7 +41,8 @@ El mismo lote da rankings distintos según quién decide (propietario, arrendata
 
 ## Brand Commitments
 
-- Nombre: **Rastrojo**. Mundo visual elegido por el equipo: **carta de suelo** (cartografía de suelos INTA/IGN impresa, papel y tinta, horizontes de suelo).
+- Nombre: **Rastrojo**. Mundo visual elegido por el equipo: **imagen satelital** (visor oscuro y mate donde la imagen real del lote es la protagonista). Se descartó la primera dirección "carta de suelo" por verse apagada y poco tecnológica.
+- Íconos donde corresponda, sin abusar, y animaciones con propósito (detalle en DESIGN.md).
 - Leyendas fijas: "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción".
 - PolPilot se menciona solo como visión ("este módulo podría vivir dentro de PolPilot Agro"); sin su marca en la interfaz.
 

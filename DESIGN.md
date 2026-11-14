@@ -1,267 +1,297 @@
 ---
 name: Rastrojo
-description: Comparador de rotaciones con datos NASA para la zona núcleo, con el lenguaje de una carta de suelos impresa.
+description: Comparador de rotaciones con datos NASA para la zona núcleo, con el lenguaje de un visor de imagen satelital oscuro y mate.
 colors:
-  # Superficies (papel de carta)
-  paper: "#F4EEE2"
-  paper-raised: "#FBF8F1"
-  paper-sunk: "#E9E0CE"
-  rule: "#C9B99C"
-  # Tinta
-  ink: "#231A12"
-  ink-soft: "#5C4C3B"
-  # Marca: horizontes del suelo
-  horizon-a: "#4A3423"
-  rastrojo: "#B8862B"
-  rastrojo-ink: "#86601A"
-  # Datos NASA y agua
-  agua: "#2C6A88"
-  agua-wash: "#D7E4E8"
-  # Estados hídricos (siempre acompañados de texto o patrón)
-  state-feasible: "#3E6E33"
-  state-risky: "#86601A"
-  state-not-feasible: "#A23B26"
-  state-unknown: "#6F665A"
+  # Superficies (grafito mate)
+  graphite: "#121517"
+  panel: "#1A1E21"
+  panel-2: "#22282C"
+  rule: "#2F363B"
+  map-ground: "#0B0D0E"
+  # Texto
+  text: "#ECE8E0"
+  text-soft: "#A7AEB2"
+  text-faint: "#7F878C"
+  # Marca y agua
+  straw: "#D8B46A"
+  water: "#5FB4D0"
+  # Estados hídricos (siempre con palabra o patrón)
+  state-feasible: "#79C27A"
+  state-risky: "#E8913F"
+  state-not-feasible: "#EE6650"
+  state-unknown: "#9AA1A6"
   # Series de cultivos (franja de campañas)
-  crop-soy: "#6E8B3D"
-  crop-maize: "#D2A32C"
-  crop-wheat: "#A86B2D"
-  crop-vetch: "#7B5C86"
-  crop-rye-oat: "#5E8C7A"
-  bare-soil: "#E9E0CE"
+  crop-soy: "#8DBF5A"
+  crop-maize: "#E6C34A"
+  crop-wheat: "#C98D4B"
+  crop-vetch: "#A88BC9"
+  crop-rye-oat: "#5FA894"
+  bare-soil: "#2C3236"
+  bare-hatch: "#3E464B"
 typography:
   display:
-    fontFamily: "Newsreader, 'Source Serif 4', Georgia, serif"
-    fontSize: "3rem"
-    fontWeight: 600
-    lineHeight: 1.05
-    letterSpacing: "-0.01em"
+    fontFamily: "'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif"
+    fontSize: "4rem"
+    fontWeight: 800
+    lineHeight: 0.98
+    letterSpacing: "-0.02em"
   headline:
-    fontFamily: "Newsreader, 'Source Serif 4', Georgia, serif"
+    fontFamily: "'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif"
     fontSize: "1.75rem"
-    fontWeight: 600
-    lineHeight: 1.15
+    fontWeight: 800
+    lineHeight: 1.1
+    letterSpacing: "-0.01em"
   title:
-    fontFamily: "'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif"
-    fontSize: "1.25rem"
-    fontWeight: 700
-    lineHeight: 1.25
+    fontFamily: "'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif"
+    fontSize: "1.15rem"
+    fontWeight: 600
+    lineHeight: 1.2
   body:
     fontFamily: "'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif"
-    fontSize: "1.125rem"
+    fontSize: "1.0625rem"
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "0.04em"
+    fontFamily: "'IBM Plex Mono', ui-monospace, monospace"
+    fontSize: "0.78rem"
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: "0.06em"
   figure:
     fontFamily: "'IBM Plex Mono', ui-monospace, monospace"
-    fontSize: "1.125rem"
+    fontSize: "1.25rem"
     fontWeight: 500
-    lineHeight: 1.3
-  place:
-    fontFamily: "Newsreader, 'Source Serif 4', Georgia, serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.3
+    lineHeight: 1.2
 rounded:
   none: "0px"
   sm: "2px"
-  md: "4px"
+  pill: "999px"
 spacing:
   xs: "4px"
   sm: "8px"
-  md: "16px"
+  md: "14px"
   lg: "24px"
-  xl: "40px"
-  xxl: "64px"
+  xl: "36px"
+  xxl: "56px"
 components:
   button-primary:
-    backgroundColor: "{colors.horizon-a}"
-    textColor: "{colors.paper}"
-    typography: "{typography.label}"
+    backgroundColor: "{colors.straw}"
+    textColor: "{colors.graphite}"
+    typography: "{typography.body}"
     rounded: "{rounded.sm}"
-    padding: "12px 20px"
-    height: "44px"
-  button-primary-hover:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
+    padding: "12px 18px"
+    height: "46px"
   button-secondary:
-    backgroundColor: "{colors.paper-raised}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text}"
     rounded: "{rounded.sm}"
-    padding: "12px 20px"
-    height: "44px"
+    padding: "12px 18px"
+    height: "46px"
+  segmented-selected:
+    backgroundColor: "{colors.straw}"
+    textColor: "{colors.graphite}"
+    height: "46px"
+  segmented-idle:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text}"
+    height: "46px"
+  layer-chip:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text-soft}"
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+    padding: "8px 10px"
+    height: "36px"
+  layer-chip-on:
+    backgroundColor: "{colors.straw}"
+    textColor: "{colors.graphite}"
   panel:
-    backgroundColor: "{colors.paper-raised}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text}"
     rounded: "{rounded.none}"
-    padding: "24px"
+    padding: "14px"
   ranking-row:
-    backgroundColor: "{colors.paper-raised}"
-    textColor: "{colors.ink}"
-    padding: "16px 24px"
-    height: "72px"
-  ranking-row-current:
-    backgroundColor: "{colors.paper-sunk}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.text}"
+    padding: "14px"
   badge-observed:
-    backgroundColor: "{colors.agua-wash}"
-    textColor: "{colors.agua}"
+    backgroundColor: "{colors.panel-2}"
+    textColor: "{colors.water}"
     typography: "{typography.label}"
     rounded: "{rounded.sm}"
-    padding: "2px 6px"
+    padding: "5px 8px"
   badge-assumption:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.rastrojo-ink}"
+    backgroundColor: "{colors.graphite}"
+    textColor: "{colors.straw}"
     typography: "{typography.label}"
     rounded: "{rounded.sm}"
-    padding: "2px 6px"
-  input-slider:
-    backgroundColor: "{colors.paper-sunk}"
-    textColor: "{colors.ink}"
-    height: "44px"
+    padding: "5px 8px"
 ---
 
 # Design System: Rastrojo
 
 ## Overview
 
-**Creative North Star: "La carta de suelo del lote"**
+**Creative North Star: "El lote visto desde el satélite"**
 
-Rastrojo se ve como una lámina de la carta de suelos que un agrónomo despliega sobre el capó de la camioneta: papel cálido, tinta parda, líneas finas de cartografía y una leyenda que explica cada color. La interfaz es una herramienta de trabajo (modo Operate): la navegación, los controles y las tablas son los estándar de la web, y el mundo de la carta aporta solo cuatro cosas: tipografía, paleta, densidad y un gesto propio. Nada de texturas de papel simuladas ni ornamentos de mapa antiguo.
+Rastrojo se ve como un visor de imagen satelital trabajado con oficio: una sala oscura y mate donde la imagen real del campo pampeano, con su mosaico de lotes, es lo más luminoso de la pantalla, y los datos se superponen con la precisión de una carta técnica. Es una herramienta de trabajo (modo Operate): navegación, controles y tablas son los estándar de la web. El mundo satelital aporta tipografía, paleta, densidad y un gesto propio; nunca disfraza la interfaz de consola, radar o cabina.
 
-Está diseñada primero para proyector en un aula iluminada (fondo claro, tipografía grande, contraste alto) y después se adapta al celular. La densidad es la de una lámina técnica: mucha información ordenada en una grilla firme, separada por filetes de 1 px en lugar de tarjetas. El dato manda; la marca vive en los detalles de tinta, en la leyenda y en la franja de campañas.
+Está pensada primero para el proyector de la demo (1920×1080 y 1280×720) y después se adapta al celular. El fondo grafito mate deja que la imagen y las series de cultivos brillen solas; el dorado del rastrojo marca lo importante (lote seleccionado, actor activo, primera posición del ranking) y el celeste se reserva para el agua. La densidad es alta pero ordenada: zonas separadas por filetes de 1 px, sin tarjetas.
 
-El gesto propio es **la franja de campañas**: cada rotación se dibuja como una franja horizontal de meses, igual que los horizontes en un corte de suelo, con los cultivos en sus colores, el suelo desnudo con rayado cartográfico y las marcas de helada y déficit hídrico encima. Cuando cambia el actor, las filas se reordenan con un movimiento corto y un indicador de cambio de posición.
+El gesto propio es doble: **la imagen real del lote con su contorno dorado** y **la franja de campañas**, donde cada rotación es una tira de meses con cultivos en color, suelo desnudo rayado y marcas de helada encima. Cuando cambia el actor, el ranking se reordena con un movimiento corto y flechas ▲▼ que dicen cuántos puestos subió o bajó cada rotación.
 
 **Key Characteristics:**
-- Fondo papel claro, tinta parda; jamás negro puro ni blanco puro.
-- Filetes de 1 px y espacio en lugar de tarjetas y sombras.
-- Serif editorial para títulos y topónimos, sans hiperlegible para todo lo operativo, mono solo para cifras y unidades.
-- Cada estado y cada procedencia con texto o patrón, además del color.
-- Una leyenda visible siempre que haya color con significado, como en una carta impresa.
+- Grafito mate, nunca negro puro; texto blanco cálido, nunca blanco puro.
+- La imagen satelital real del lote como protagonista de la vista principal.
+- Dorado de rastrojo como única marca; celeste solo para agua.
+- Filetes de 1 px y aire en lugar de tarjetas y sombras.
+- Íconos de trazo fino donde ayudan a escanear, nunca como decoración.
+- Movimiento con propósito: pocos momentos, cortos, que explican un cambio.
 
 ## Colors
 
-Paleta de tierra y tinta con un solo azul, reservado para agua y datos satelitales.
+Grafito mate con una marca dorada, un celeste reservado para agua y series de cultivos saturadas que se leen sobre oscuro.
 
 ### Primary
-- **Horizonte A** (#4A3423): el pardo oscuro del horizonte superficial. Botón primario, barra superior, títulos de sección sobre papel. Es el color de marca.
+- **Rastrojo** (#D8B46A): marca. Contorno del lote, actor seleccionado, capa activa, primera posición del ranking (filete izquierdo de 3 px solo en esa fila), foco de teclado, selección de texto al 35 %. Texto oscuro sobre dorado da 9,3:1.
 
 ### Secondary
-- **Rastrojo** (#B8862B): el ocre del rastrojo. Solo como relleno (barras, franjas, selección, foco) y en texto grande; nunca texto chico sobre papel (contraste 2,8:1).
-- **Rastrojo tinta** (#86601A): variante para texto y bordes (4,9:1 sobre papel). También es el color de estado RISKY y de los supuestos.
-
-### Tertiary
-- **Agua** (#2C6A88): todo lo que viene del satélite o habla de agua: badge OBSERVED, capa SMAP, curvas de humedad, balance hídrico. Con **Agua lavada** (#D7E4E8) como fondo de badge y de áreas de rango.
+- **Agua** (#5FB4D0): todo lo que habla de agua o viene del satélite como observación: badge OBSERVED, panel "Agua invisible", capa SMAP, balance hídrico. 7,8:1 sobre grafito.
 
 ### Neutral
-- **Papel** (#F4EEE2): fondo de página.
-- **Papel elevado** (#FBF8F1): paneles, tabla de ranking, campos.
-- **Papel hundido** (#E9E0CE): fila de la rotación actual, pista de sliders, suelo desnudo en la franja.
-- **Filete** (#C9B99C): líneas divisorias de 1 px y curvas de nivel del marco del mapa. Nunca para texto.
-- **Tinta** (#231A12): texto principal (14,8:1).
-- **Tinta suave** (#5C4C3B): texto secundario, unidades, metadatos (7,1:1).
+- **Grafito** (#121517): fondo de página.
+- **Panel** (#1A1E21) y **Panel 2** (#22282C): zonas de trabajo y estados hover.
+- **Filete** (#2F363B): líneas divisorias de 1 px.
+- **Fondo de mapa** (#0B0D0E): detrás de la imagen mientras carga.
+- **Texto** (#ECE8E0, 15:1), **Texto suave** (#A7AEB2, 8,2:1), **Texto tenue** (#7F878C, 5:1, solo etiquetas de meses y metadatos).
 
 ### Estados hídricos
-- **Factible** (#3E6E33), **Riesgoso** (#86601A), **No factible** (#A23B26), **Desconocido** (#6F665A). Siempre con su palabra al lado ("Factible", "Riesgoso", "No factible", "Desconocido") y, en la franja, con patrón: liso, rayado fino, rayado cruzado, punteado.
+- **Factible** (#79C27A), **Riesgoso** (#E8913F), **No factible** (#EE6650), **Desconocido** (#9AA1A6). Siempre con su palabra al lado; en la franja y en el mapa, con patrón (liso, rayado, cruzado, punteado).
 
 ### Series de cultivos
-- Soja (#6E8B3D), maíz (#D2A32C), trigo (#A86B2D), vicia (#7B5C86), centeno y avena (#5E8C7A), suelo desnudo (#E9E0CE con rayado diagonal en Filete).
+- Soja (#8DBF5A), maíz (#E6C34A), trigo (#C98D4B), vicia (#A88BC9), centeno y avena (#5FA894), suelo desnudo (#2C3236 con rayado diagonal #3E464B).
 
 ### Named Rules
-**La regla de la leyenda.** Todo color con significado aparece en una leyenda visible en la misma vista. Si no hay leyenda, el color no significa nada y debe ser neutral.
+**La regla de la imagen primero.** Nada en la interfaz es más luminoso ni más saturado que la imagen satelital. Si un elemento compite con ella, se apaga.
 
-**La regla del azul único.** El azul Agua se usa solo para agua y para dato satelital observado. Ningún botón, link decorativo ni acento es azul.
+**La regla del celeste único.** El celeste es agua. Ningún botón, link ni acento decorativo es celeste.
+
+**La regla de la leyenda.** Todo color con significado tiene leyenda visible en la misma vista.
 
 ## Typography
 
-**Display Font:** Newsreader (con Source Serif 4, Georgia)
+**Display Font:** Schibsted Grotesk (con Helvetica Neue, Arial)
 **Body Font:** Atkinson Hyperlegible Next (con Atkinson Hyperlegible, system-ui)
-**Label/Mono Font:** IBM Plex Mono, solo para cifras con unidad, años y coordenadas
+**Label/Mono Font:** IBM Plex Mono, para cifras, unidades, coordenadas, etiquetas de capa y metadatos de dataset
 
-**Character:** la serif da la voz de la carta impresa y de los topónimos; la Atkinson, diseñada para máxima legibilidad, carga todo lo que se lee rápido desde el fondo del aula. Las tres son OFL y se autoalojan.
+**Character:** una grotesca de diario con peso para los títulos, una sans diseñada para leerse bien a distancia para todo lo operativo, y una mono para lo que es medición. Las tres son OFL y se autoalojan.
 
 ### Hierarchy
-- **Display** (600, 3rem, 1,05): nombre del lote en la cabecera del mapa. Una vez por pantalla.
-- **Headline** (600, 1,75rem, 1,15): títulos de panel ("Rotaciones comparadas", "Evidencia").
-- **Title** (700, 1,25rem, 1,25): nombre de cada rotación en el ranking.
-- **Body** (400, 1,125rem, 1,5): explicaciones; medida máxima 68ch.
-- **Label** (700, 0,875rem, tracking 0,04em, versalitas solo en leyendas de mapa): ejes, encabezados de tabla, badges.
-- **Figure** (Plex Mono 500, 1,125rem, cifras tabulares): USD/ha, mm, °C, años. La unidad va en Tinta suave y un punto más chica.
-- **Place** (Newsreader itálica 400, 1rem): topónimos y etiquetas sobre el mapa, como en la cartografía impresa.
+- **Display** (800, 4rem, 0,98, -0,02em): nombre del producto en la cabecera. Una vez.
+- **Headline** (800, 1,75rem, 1,1): títulos de zona ("Rotaciones comparadas", "Evidencia").
+- **Title** (600, 1,15rem, 1,2): nombre de cada rotación.
+- **Body** (400, 1,0625rem, 1,5): explicaciones; medida máxima 68ch.
+- **Label** (Plex Mono 500, 0,78rem, 0,06em, mayúsculas): nombres de capa, dataset y ejes. Es medición y metadato, no adorno.
+- **Figure** (Plex Mono 500, 1,25rem, cifras tabulares): USD/ha, mm, m³/m³, años. Unidad en Texto suave y más chica.
 
 ### Named Rules
-**La regla de la cifra con unidad.** Ninguna cifra aparece sin unidad ni sin su badge de procedencia a mano. Formato argentino: coma decimal, punto de miles.
-
-**La regla de la mono justificada.** La mono se usa solo para medidas, años y coordenadas. Nunca para títulos ni para "dar aire técnico".
+**La regla de la cifra con unidad.** Ninguna cifra sin unidad ni sin procedencia a mano. Formato argentino: coma decimal, punto de miles.
 
 ## Layout
 
-Grilla de 12 columnas con márgenes de 40 px en 1920 y 24 px en 1280. Pantalla principal en proyector: mapa del lote a la izquierda (5 columnas, alto completo), ranking de rotaciones con sus franjas de campañas a la derecha (7 columnas), y debajo del ranking el panel de evidencia y procedencia de la rotación seleccionada. El selector de actor y los sliders H, α y λ viven en una barra fija sobre el ranking, porque son el control que se usa en vivo durante el pitch. El simulador de WhatsApp se abre como panel lateral derecho que empuja el contenido, no como modal.
+Grilla de 12 columnas, ancho máximo 1320 px, gutter de 24 px. Vista principal en proyector: imagen del lote a la izquierda (7 columnas) con selector de capas arriba y pie de resolución y limitación abajo; a la derecha (5 columnas), de arriba hacia abajo: panel "Agua invisible" (GRACE-FO, SMAP, POWER en tres celdas), selector de actor con sus parámetros, y ranking con franjas. Debajo, a todo el ancho, evidencia y procedencia de la rotación seleccionada. El simulador de WhatsApp entra como panel lateral derecho que empuja el contenido.
 
-En celular (390 px) el orden es: actor, ranking con franjas compactas, mapa colapsable, evidencia. Ritmo vertical en múltiplos de 8 px; más espacio sobre un título que debajo. Separación entre zonas con filetes de 1 px en Filete y 40 px de aire, no con tarjetas.
+En celular (390 px): actor, ranking con franjas compactas, imagen del lote, agua invisible, evidencia. Ritmo vertical en múltiplos de 4 px; más espacio sobre un título que debajo.
 
 ## Elevation & Depth
 
-Plano por defecto, como el papel. La profundidad se marca con tono (papel, papel elevado, papel hundido) y con filetes. La única sombra es para elementos que flotan sobre el mapa o la página (tooltips de procedencia, panel de chat): `box-shadow: 0 2px 8px rgba(35, 26, 18, 0.12), 0 1px 2px rgba(35, 26, 18, 0.08)`.
+Plano y mate. La profundidad se marca con tono (grafito, panel, panel 2) y filetes. Lo único que flota (tooltips de procedencia, etiqueta del lote sobre la imagen, panel de chat) lleva fondo grafito al 85 % sobre la imagen y una sombra corta: `box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3)`. Sin brillos, halos ni vidrio esmerilado.
 
 ### Named Rules
-**La regla del papel plano.** Nada en reposo tiene sombra. La sombra aparece solo en lo que flota temporalmente.
+**La regla del mate.** Nada brilla. Ni glow, ni neón, ni degradados, ni glassmorphism.
 
 ## Shapes
 
-Esquinas casi rectas, como una lámina recortada: 0 px en paneles y tablas, 2 px en botones, badges y campos, 4 px como máximo. Bordes de 1 px en Filete. El marco del mapa lleva un doble filete fino (1 px Tinta y 1 px Filete con 3 px de separación), igual que el marco de una carta impresa, con la escala gráfica y el norte en la esquina inferior. Ese marco es el único guiño cartográfico explícito.
+Esquinas rectas en zonas y tablas (0 px), 2 px en botones, chips, badges y campos. Puntos de estado circulares de 9 px. El contorno del lote en la imagen es un polígono real con trazo dorado de 2 px y relleno dorado al 12 %; la etiqueta del lote es un rectángulo con borde dorado unido al lote por una línea de 1 px, como una anotación de carta.
+
+## Iconography
+
+Usamos íconos donde ayudan a escanear o a reconocer algo de un vistazo, **sin abusar**: como máximo un ícono por etiqueta, y nunca un ícono solo sin texto, salvo en controles universales (cerrar, menú) con `aria-label`.
+
+- **Librería:** Lucide (licencia ISC), trazo de 1,5 px, tamaño 16 px junto a texto Body y 20 px en controles. Un solo set; no se mezclan librerías.
+- **Color:** heredan el color del texto que acompañan (`currentColor`). Solo los íconos de estado toman el color del estado.
+- **Dónde sí:**
+  - Selector de capas: `satellite` (color natural), `droplets` (SMAP raíces), `scan-line` (suelo desnudo), `cloud-rain` (lluvia).
+  - Panel "Agua invisible": `waves` (GRACE-FO), `droplets` (SMAP), `cloud-rain` (POWER/IMERG).
+  - Selector de actor: `house` (propietario), `key-round` (arrendatario), `users` (cooperativa), `landmark` (banco).
+  - Estados hídricos junto a su palabra: `circle-check` (factible), `triangle-alert` (riesgoso), `circle-x` (no factible), `circle-help` (desconocido).
+  - Riesgos: `snowflake` (helada), `thermometer-sun` (estrés térmico), `sprout` (cultivo), `bug` (malezas y plagas).
+  - Procedencia en tooltips: `satellite` (OBSERVED), `calculator` (DERIVED), `flask-conical` (ASSUMPTION), `user-round` (USER_INPUT).
+  - Acciones: `message-circle` (abrir chat), `book-open` (glosario), `file-down` (ficha), `rotate-ccw` (reiniciar).
+- **Dónde no:** títulos de sección, nombres de rotación, cifras, párrafos de explicación, ni como viñetas de lista.
+- En la franja de campañas, la helada se marca con el rombo de trazo (no con un ícono completo) para no ensuciar la tira.
+
+## Motion
+
+Pocos momentos, cortos y con propósito: el movimiento explica un cambio de estado, nunca decora. Todo parte de un estado visible (nada empieza en opacidad 0 esperando un scroll) y todo respeta `prefers-reduced-motion`.
+
+**Tokens:**
+- Duraciones: `instant` 120 ms (hover, presionado), `quick` 200 ms (chips, tooltips), `move` 300 ms (reordenar, cambiar capa), `story` 600 ms (entrada orquestada una sola vez).
+- Curva: ease-out exponencial `cubic-bezier(0.16, 1, 0.3, 1)` para todo lo que entra o se mueve; `ease-in` de 150 ms solo para lo que se va.
+- Librería sugerida: Motion para React (MIT) para el reordenamiento por layout; CSS para el resto.
+
+**Momentos autorizados:**
+1. **Reordenamiento del ranking (el momento del pitch).** Al cambiar actor o slider, las filas se mueven a su nueva posición (FLIP, 300 ms) y aparece ▲ n o ▼ n en dorado durante 2,5 s. La fila que queda primera recibe el filete dorado con una transición de color de 200 ms.
+2. **Cifras que cambian.** Puntaje, ΔSuelo y años con pérdida hacen una interpolación numérica de 300 ms al recalcular. No hay conteos desde cero al cargar.
+3. **Cambio de capa sobre la imagen.** Fundido cruzado de 300 ms entre capas y actualización del pie de resolución.
+4. **Entrada orquestada, una sola vez por sesión.** Al cargar el lote: el contorno dorado se dibuja sobre la imagen (trazo animado, 600 ms) y las franjas de campañas se llenan de izquierda a derecha con un escalonado de 30 ms por mes. Después de la primera carga, no se repite.
+5. **Chat de WhatsApp.** Cada mensaje entra con desplazamiento de 8 px y fundido en 200 ms; indicador de "escribiendo" de tres puntos mientras responde la API.
+6. **Carga.** Mientras la API responde, las filas del ranking mantienen su contenido anterior atenuado al 60 % con un indicador lineal fino en dorado arriba del ranking. Sin esqueletos brillantes.
+
+**Con movimiento reducido:** sin desplazamientos ni trazos animados; los cambios son instantáneos y las flechas ▲▼ se muestran igual, porque son información.
 
 ## Components
 
 ### Buttons
-- **Shape:** casi rectos (2 px), alto mínimo 44 px.
-- **Primary:** Horizonte A con texto Papel, Label 700.
-- **Hover / Focus:** hover a Tinta; foco con anillo de 2 px en Rastrojo y 2 px de separación. Transición de 120 ms ease-out.
-- **Secondary:** Papel elevado con borde de 1 px en Tinta suave.
+- **Shape:** 2 px, alto 46 px.
+- **Primary:** dorado con texto grafito. **Secondary:** panel con borde de 1 px en Filete.
+- **Hover / Focus:** hover aclara el fondo un paso (120 ms); foco con anillo dorado de 2 px y 2 px de separación.
 
 ### Selector de actor
-- Control segmentado estándar con cuatro opciones (Propietario, Arrendatario, Cooperativa, Banco). Seleccionado: fondo Horizonte A, texto Papel. Debajo, los sliders H (años), α (peso del suelo) y λ (aversión al riesgo) con su valor en Figure y una línea de ayuda en lenguaje simple.
+- Control segmentado estándar de cuatro opciones con su ícono y su palabra. Seleccionado: dorado con texto grafito. Debajo, los parámetros en lenguaje simple ("Horizonte 10 años · Peso del suelo alto · Aversión al riesgo media") y los sliders H, α, λ con su valor en Figure.
+
+### Imagen del lote (componente firma)
+- Imagen satelital real (Sentinel-2 o HLS vía GIBS), contorno del lote en dorado, etiqueta con superficie y coordenadas, escala gráfica calculada, selector de capas arriba y pie con dataset, resolución y limitación. Atribución del proveedor siempre visible.
+
+### Panel "Agua invisible"
+- Tres celdas con filete: GRACE-FO (anomalía de agua total, mm), SMAP L4 (humedad de raíces, m³/m³), POWER/IMERG (lluvia de la ventana, mm). Cada una con etiqueta mono, cifra grande, unidad y una línea de limitación.
 
 ### Ranking de rotaciones (componente firma)
-- Tabla, no tarjetas. Cada fila: posición, nombre de la rotación (Title), puntaje en USD/ha (Figure), desglose en barra apilada fina (margen, suelo, riesgo), estado hídrico con palabra, ΔSuelo, años con pérdida "x de N", y debajo **la franja de campañas**.
-- La rotación actual lleva el rótulo "Actual" en texto y fondo Papel hundido.
-- Al cambiar actor o slider, las filas se reordenan con una animación FLIP de 280 ms (ease-out exponencial) y un indicador "+1" o "−2" en Rastrojo tinta durante 2 s. Con movimiento reducido: sin desplazamiento, solo el indicador.
+- Tabla de filas, no tarjetas: posición, nombre, puntaje USD/ha, estado hídrico con ícono y palabra, ΔSuelo, años con pérdida "x de N", y debajo la franja de campañas con su leyenda en la cabecera. La rotación actual dice "· actual" en dorado junto al nombre.
 
 ### Franja de campañas
-- Una fila de 12 o 24 celdas (meses del ciclo) con los cultivos en sus colores; el suelo desnudo con rayado diagonal; marcas de helada y déficit hídrico como íconos SVG de trazo de 1,5 px en No factible y Agua; el rango histórico (años secos a húmedos) como banda Agua lavada. Leyenda siempre visible en la cabecera del ranking.
+- 12 o 24 celdas por mes con cultivos en color, suelo desnudo rayado, rombo de helada en No factible y banda de rango histórico. Etiquetas de mes en Texto tenue.
 
 ### Badges de procedencia
-- OBSERVED: Agua sobre Agua lavada. DERIVED: Horizonte A sobre Papel hundido. ASSUMPTION: Rastrojo tinta con borde punteado de 1 px y el id (A-WAT-01). USER_INPUT: Tinta con borde liso. Siempre con la palabra abreviada (OBS, DER, SUP, USU) además del color. Tooltip accesible por teclado con dataset, variable, período y resolución.
-
-### Mapa
-- Leaflet con capas GIBS. Leyenda de cada capa con unidad, resolución y limitación ("SMAP L4 · ~9 km · modelo asimilado, no mide el lote"). Topónimos en Place. Selector de fecha estándar.
-
-### Panel de evidencia
-- Lista con filetes, no tarjetas: cada evidencia con dataset, variable, período, valor con unidad e interpretación en una frase. Faltantes con el estado "Desconocido" y qué haría falta para conseguir el dato.
+- OBSERVED: celeste con borde celeste al 50 %. DERIVED: texto sobre Panel 2. ASSUMPTION: dorado con borde punteado y el id (A-WAT-01). USER_INPUT: texto con borde Texto suave. DESCONOCIDO: gris con borde de puntos. Etiqueta mono en mayúsculas; tooltip accesible por teclado con dataset, variable, período y resolución.
 
 ### Leyendas fijas
-- "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción" en el pie de la vista principal, en Body y Tinta suave, siempre visibles.
+- "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción" en el pie, siempre visibles.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** usar Papel (#F4EEE2) como fondo y Tinta (#231A12) como texto; verificar 4,5:1 en todo texto chico.
-- **Do** acompañar cada color de estado con su palabra y, en la franja, con su patrón.
-- **Do** mostrar la unidad y el badge de procedencia junto a cada cifra.
-- **Do** separar zonas con filetes de 1 px y espacio.
-- **Do** tematizar la selección de texto (Rastrojo al 30 %), el caret, el foco y las barras de desplazamiento con la paleta.
+- **Do** mostrar la imagen satelital real del lote en la vista principal, con su atribución.
+- **Do** acompañar cada estado con ícono y palabra, y cada cifra con unidad y procedencia.
+- **Do** usar íconos Lucide de 1,5 px solo donde ayudan a escanear (capas, actores, estados, riesgos, acciones).
+- **Do** reservar el movimiento para los seis momentos autorizados y respetar movimiento reducido.
+- **Do** tematizar selección, foco, caret y barras de desplazamiento con la paleta.
 
 ### Don't:
-- **Don't** usar tarjetas iguales de ícono, título y texto como estructura, ni tarjetas anidadas.
-- **Don't** poner etiquetas pequeñas (kickers) sobre los títulos.
-- **Don't** usar texturas de papel, manchas, mapas antiguos ni tipografías "western" o de mapa del tesoro: el mundo es la carta técnica, no la nostalgia.
-- **Don't** usar azul fuera de agua y dato satelital.
-- **Don't** mostrar porcentajes de confianza, gauges ni anillos de progreso.
-- **Don't** usar emoji como íconos; un único set SVG de trazo constante.
-- **Don't** usar degradados en texto ni brillos.
+- **Don't** usar brillos, neón, glow, degradados ni glassmorphism.
+- **Don't** usar celeste fuera de agua.
+- **Don't** inventar imágenes de "falso color" ni capas: solo productos reales de NASA o Copernicus, con su nombre.
+- **Don't** poner íconos en títulos, cifras o viñetas, ni íconos sueltos sin texto.
+- **Don't** animar entradas en cada sección, contar números desde cero ni usar rebotes o elásticos.
+- **Don't** usar tarjetas como estructura, porcentajes de confianza, medidores ni anillos de progreso.
+- **Don't** disfrazar la interfaz de consola, radar o cabina: el mundo satelital aporta paleta, tipo y gestos, no los controles.
