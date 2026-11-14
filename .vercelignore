@@ -8,3 +8,7 @@ openspec
 web/node_modules
 web/test-results
 web/playwright-report
+
+# Function deps come from requirements.txt (light, no pandas/pyarrow)
+pyproject.toml
+uv.lock
