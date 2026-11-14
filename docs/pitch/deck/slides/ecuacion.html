@@ -1,0 +1,14 @@
+<section id="ecuacion" class="light withfoot" style="gap:32px;">
+<p class="eyebrow">La función que elige la rotación</p>
+<p class="eq">Puntaje(r) = <span class="m">Margen</span> + α·<span class="s">ΔSuelo</span> − λ·<span class="r">Riesgo</span></p>
+<p class="eq-note">Gana la rotación <b>r</b> con mayor puntaje entre las factibles. <b>α, λ y el horizonte cambian según quién decide.</b></p>
+<div class="factors">
+<div class="factor f-m"><h3><x-icon name="Chart"></x-icon>Margen</h3><p class="small">Cuánto deja por hectárea en las 41 campañas, llevado al horizonte y la tasa del rol.</p><p class="src">NASA POWER: lluvia, temperatura, radiación</p><p class="src-no">Rindes, precios y costos: supuestos a validar con AFA y BCR (no NASA)</p></div>
+<div class="factor f-s"><h3><x-icon name="Activity"></x-icon>ΔSuelo</h3><p class="small">Si la rotación mejora o empeora el suelo: cobertura, carbono, nitrógeno, malezas, raíces.</p><p class="src">NASA POWER: lluvia sobre suelo desnudo</p><p class="src-no">Reglas agronómicas: supuestos registrados</p></div>
+<div class="factor f-r"><h3><x-icon name="Warning"></x-icon>Riesgo</h3><p class="small">Cuánto cae el margen en el peor tercio de las campañas reales. No es un pronóstico.</p><p class="src">NASA POWER: 41 campañas 1984-2024</p></div>
+<div class="factor f-c"><h3><x-icon name="Lock"></x-icon>Factible si…</h3><p class="small">Hay agua para el cultivo, alcanza el capital del rol y se respetan las reglas de rotación.</p><p class="src">NASA POWER → ET0 y balance FAO-56</p></div>
+</div>
+<div class="foot"><span>Cada número de la app lleva su procedencia: observado, derivado, supuesto o dato del usuario.</span><span>5</span></div>
+<aside>[0:45] Esta es la función que elige la rotación. Tres términos. El margen: cuánta plata deja por hectárea en las 41 campañas reales, llevada al horizonte de cada uno. ΔSuelo: si la rotación mejora o empeora el suelo. Y el riesgo: cuánto cae el margen en el peor tercio de los años. Lo importante es que α y λ, y el horizonte, cambian según quién decide: el dueño le da peso al suelo, el arrendatario no, el banco castiga mucho el riesgo. ¿De dónde sale cada cosa? El clima, de NASA POWER. Rindes, precios y costos hoy son supuestos que vamos a validar con AFA y la Bolsa de Comercio; no son de la NASA y lo decimos en la pantalla. Y solo compiten las rotaciones factibles: que tengan agua según el balance FAO-56 y que le alcance el capital a quien decide.
+(Versión formal, por si preguntan: el margen es el VAN de los márgenes esperados, factor de anualidad por el margen medio; el riesgo es el expected shortfall del tercio inferior.)</aside>
+</section>
