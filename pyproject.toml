@@ -17,6 +17,7 @@ dependencies = [
 [dependency-groups]
 # Ingesta de datos NASA (POWER, parquet, validación). Se instala por defecto en desarrollo.
 data = [
+    "h5py>=3.16.0",
     "httpx>=0.28.1",
     "pandas>=3.1.1",
     "pandera>=0.36.0",

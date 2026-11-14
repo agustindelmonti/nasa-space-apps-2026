@@ -43,7 +43,7 @@ from rastrojo.domain import (
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
 from rastrojo.domain.base import DomainModel
 from rastrojo.domain.crops import CROP_INFO, CropKind
-from rastrojo.domain.provenance import Dataset, Period, Source
+from rastrojo.domain.provenance import Dataset, ObservedProvenance, Period, Source
 from rastrojo.engine.climate import RainDay, RainSeries, build_scenarios
 from rastrojo.engine.economics import ECONOMICS_ASSUMPTIONS
 from rastrojo.engine.soil import SOIL_ASSUMPTIONS
@@ -262,6 +262,39 @@ def _load_gwetroot(lat: float, lon: float) -> dict[date, float] | None:
     return {date(int(k[:4]), int(k[4:6]), int(k[6:])): float(v) for k, v in raw.items()}
 
 
+SMAP_DIR = CLIMATE_SNAPSHOT.parent / "SMAP_L4"
+
+
+def load_smap_current(lat: float, lon: float) -> PValue | None:
+    """Humedad de la zona de raíces SMAP L4 del último día bajado con
+    `scripts/fetch_demo_smap.py` (celda EASE-Grid 2.0 de 9 km). None si no está."""
+    import json
+
+    path = SMAP_DIR / f"sm_rootzone_{lat:.4f}_{lon:.4f}.json"
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    day = date.fromisoformat(raw["date"])
+    return PValue(
+        value=float(raw["sm_rootzone_daily_mean"]),
+        unit="m3/m3",
+        provenance=ObservedProvenance(
+            source=Source(
+                dataset=Dataset.SMAP_L4,
+                variable="sm_rootzone",
+                period=Period(start=day, end=day),
+                spatial_resolution="~9 km (EASE-Grid 2.0)",
+                temporal_resolution="3-horaria (promedio del día)",
+                is_modeled=True,
+                location_note=(
+                    f"celda EASE-Grid 2.0 fila {raw['ease2_row']}, columna {raw['ease2_col']}, "
+                    f"centro {raw['cell_lat']:.3f}, {raw['cell_lon']:.3f}"
+                ),
+            )
+        ),
+    )
+
+
 def _gwetroot_source(lat: float, lon: float) -> Source:
     from rastrojo.data.power import METEO_RESOLUTION, TEMPORAL_RESOLUTION
 
@@ -401,6 +434,9 @@ def build_engine_input(
         economics=demo_economics(registry),
         scenarios=climate.scenarios,
         resolved_assumptions=resolve(registry, ENGINE_ASSUMPTIONS),
-        water_inputs=WaterInputs(weather=climate.weather),
+        water_inputs=WaterInputs(
+            weather=climate.weather,
+            smap_initial_rootzone=load_smap_current(plot.location.lat, plot.location.lon),
+        ),
         year_class_filter=year_class_filter,
     )

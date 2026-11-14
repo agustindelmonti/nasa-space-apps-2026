@@ -7,7 +7,7 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 60,
-      "includeFiles": "{src/**,data/assumptions.yaml,data/glossary.yaml,data/forbidden_phrases.yaml,data/intents.yaml,data/fixtures/demo/engine_climate.json}"
+      "includeFiles": "{src/**,data/assumptions.yaml,data/glossary.yaml,data/forbidden_phrases.yaml,data/intents.yaml,data/fixtures/demo/engine_climate.json,data/fixtures/demo/SMAP_L4/**}"
     }
   },
   "rewrites": [

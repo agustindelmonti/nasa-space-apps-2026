@@ -3,71 +3,255 @@
   "plot": {
     "plot_id": "demo-casilda",
     "name": "Lote demo, sureste de Casilda",
-    "location": { "lat": -33.073, "lon": -61.119 },
-    "area_ha": { "value": 31, "unit": "ha", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-DEMO-01" } },
+    "location": {
+      "lat": -33.073,
+      "lon": -61.119
+    },
+    "area_ha": {
+      "value": 31,
+      "unit": "ha",
+      "provenance": {
+        "kind": "ASSUMPTION",
+        "assumption_id": "A-DEMO-01"
+      }
+    },
     "polygon": {
       "type": "Polygon",
       "coordinates": [
         [
-          [-61.11969, -33.06918],
-          [-61.11489, -33.07487],
-          [-61.11883, -33.07704],
-          [-61.12286, -33.07113],
-          [-61.11969, -33.06918]
+          [
+            -61.11969,
+            -33.06918
+          ],
+          [
+            -61.11489,
+            -33.07487
+          ],
+          [
+            -61.11883,
+            -33.07704
+          ],
+          [
+            -61.12286,
+            -33.07113
+          ],
+          [
+            -61.11969,
+            -33.06918
+          ]
         ]
       ]
     }
   },
   "rotations": [
-    { "rotation_id": "R_SOY_MONO", "name": "Soja continua", "campaigns": [{ "summer": "SOY_1ST" }] },
-    { "rotation_id": "R_MAIZE_SOY", "name": "Maíz / Soja", "campaigns": [{ "summer": "MAIZE_EARLY" }, { "summer": "SOY_1ST" }] },
+    {
+      "rotation_id": "R_SOY_MONO",
+      "name": "Soja continua",
+      "campaigns": [
+        {
+          "summer": "SOY_1ST"
+        }
+      ]
+    },
+    {
+      "rotation_id": "R_MAIZE_SOY",
+      "name": "Maíz / Soja",
+      "campaigns": [
+        {
+          "summer": "MAIZE_EARLY"
+        },
+        {
+          "summer": "SOY_1ST"
+        }
+      ]
+    },
     {
       "rotation_id": "R_WHEAT_SOY2_MAIZE",
       "name": "Trigo / Soja 2ª → Maíz",
-      "campaigns": [{ "winter": "WHEAT", "summer": "SOY_2ND" }, { "summer": "MAIZE_EARLY" }]
+      "campaigns": [
+        {
+          "winter": "WHEAT",
+          "summer": "SOY_2ND"
+        },
+        {
+          "summer": "MAIZE_EARLY"
+        }
+      ]
     },
     {
       "rotation_id": "R_MAIZE_SOY_COVER",
       "name": "Maíz / Soja con vicia",
-      "campaigns": [{ "summer": "MAIZE_EARLY" }, { "winter": "COVER_VETCH", "summer": "SOY_1ST" }]
+      "campaigns": [
+        {
+          "summer": "MAIZE_EARLY"
+        },
+        {
+          "winter": "COVER_VETCH",
+          "summer": "SOY_1ST"
+        }
+      ]
     }
   ],
   "profiles": [
     {
       "profile_id": "OWNER",
       "label": "Propietario",
-      "horizon_years": { "value": 10, "unit": "year", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-01" } },
-      "soil_weight_alpha": { "value": 6, "unit": "USD/ha/point", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-01" } },
-      "risk_aversion_lambda": { "value": 0.5, "unit": "ratio", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-01" } },
-      "discount_rate": { "value": 0.08, "unit": "fraction", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-01" } },
-      "constraints": { "allow_double_crop": true, "allow_cover_crop": true }
+      "horizon_years": {
+        "value": 10,
+        "unit": "year",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-01"
+        }
+      },
+      "soil_weight_alpha": {
+        "value": 6,
+        "unit": "USD/ha/point",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-01"
+        }
+      },
+      "risk_aversion_lambda": {
+        "value": 0.5,
+        "unit": "ratio",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-01"
+        }
+      },
+      "discount_rate": {
+        "value": 0.08,
+        "unit": "fraction",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-01"
+        }
+      },
+      "constraints": {
+        "allow_double_crop": true,
+        "allow_cover_crop": true
+      }
     },
     {
       "profile_id": "TENANT",
       "label": "Arrendatario",
-      "horizon_years": { "value": 1, "unit": "year", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-02" } },
-      "soil_weight_alpha": { "value": 0.5, "unit": "USD/ha/point", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-02" } },
-      "risk_aversion_lambda": { "value": 0.2, "unit": "ratio", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-02" } },
-      "discount_rate": { "value": 0.12, "unit": "fraction", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-02" } },
-      "constraints": { "allow_double_crop": true, "allow_cover_crop": true }
+      "horizon_years": {
+        "value": 1,
+        "unit": "year",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-02"
+        }
+      },
+      "soil_weight_alpha": {
+        "value": 0.5,
+        "unit": "USD/ha/point",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-02"
+        }
+      },
+      "risk_aversion_lambda": {
+        "value": 0.2,
+        "unit": "ratio",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-02"
+        }
+      },
+      "discount_rate": {
+        "value": 0.12,
+        "unit": "fraction",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-02"
+        }
+      },
+      "constraints": {
+        "allow_double_crop": true,
+        "allow_cover_crop": true
+      }
     },
     {
       "profile_id": "COOP",
       "label": "Cooperativa",
-      "horizon_years": { "value": 8, "unit": "year", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-03" } },
-      "soil_weight_alpha": { "value": 5, "unit": "USD/ha/point", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-03" } },
-      "risk_aversion_lambda": { "value": 0.5, "unit": "ratio", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-03" } },
-      "discount_rate": { "value": 0.08, "unit": "fraction", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-03" } },
-      "constraints": { "allow_double_crop": true, "allow_cover_crop": true }
+      "horizon_years": {
+        "value": 8,
+        "unit": "year",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-03"
+        }
+      },
+      "soil_weight_alpha": {
+        "value": 5,
+        "unit": "USD/ha/point",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-03"
+        }
+      },
+      "risk_aversion_lambda": {
+        "value": 0.5,
+        "unit": "ratio",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-03"
+        }
+      },
+      "discount_rate": {
+        "value": 0.08,
+        "unit": "fraction",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-03"
+        }
+      },
+      "constraints": {
+        "allow_double_crop": true,
+        "allow_cover_crop": true
+      }
     },
     {
       "profile_id": "BANK",
       "label": "Banco",
-      "horizon_years": { "value": 3, "unit": "year", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-04" } },
-      "soil_weight_alpha": { "value": 1.5, "unit": "USD/ha/point", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-04" } },
-      "risk_aversion_lambda": { "value": 1, "unit": "ratio", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-04" } },
-      "discount_rate": { "value": 0.1, "unit": "fraction", "provenance": { "kind": "ASSUMPTION", "assumption_id": "A-ACT-04" } },
-      "constraints": { "allow_double_crop": true, "allow_cover_crop": true }
+      "horizon_years": {
+        "value": 3,
+        "unit": "year",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-04"
+        }
+      },
+      "soil_weight_alpha": {
+        "value": 1.5,
+        "unit": "USD/ha/point",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-04"
+        }
+      },
+      "risk_aversion_lambda": {
+        "value": 1,
+        "unit": "ratio",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-04"
+        }
+      },
+      "discount_rate": {
+        "value": 0.1,
+        "unit": "fraction",
+        "provenance": {
+          "kind": "ASSUMPTION",
+          "assumption_id": "A-ACT-04"
+        }
+      },
+      "constraints": {
+        "allow_double_crop": true,
+        "allow_cover_crop": true
+      }
     }
   ],
   "water_panel": {
@@ -81,7 +265,10 @@
           "source": {
             "dataset": "GRACE_FO",
             "variable": "lwe_thickness",
-            "period": { "start": "2026-08-01", "end": "2026-08-31" },
+            "period": {
+              "start": "2026-08-01",
+              "end": "2026-08-31"
+            },
             "spatial_resolution": "~300 km",
             "temporal_resolution": "mensual",
             "is_modeled": true,
@@ -92,24 +279,27 @@
       "limitation": "Señal regional de ~300 km. Contexto, no decide sola."
     },
     "smap": {
-      "label": "Raíces · SMAP L4",
+      "label": "Raíces hoy · SMAP L4",
       "value": {
-        "value": 0.27,
+        "value": 0.247,
         "unit": "m3/m3",
         "provenance": {
           "kind": "OBSERVED",
           "source": {
             "dataset": "SMAP_L4",
             "variable": "sm_rootzone",
-            "period": { "start": "2026-11-01", "end": "2026-11-10" },
+            "period": {
+              "start": "2026-11-10",
+              "end": "2026-11-10"
+            },
             "spatial_resolution": "~9 km",
-            "temporal_resolution": "3-horaria",
+            "temporal_resolution": "3-horaria (promedio del día)",
             "is_modeled": true,
-            "location_note": "celda EASE-Grid de ~9 km"
+            "location_note": "celda EASE-Grid 2.0 de ~9 km que contiene el lote"
           }
         }
       },
-      "limitation": "Celda de ~9 km. Humedad inicial del balance."
+      "limitation": "Celda de ~9 km, 10/11/2026. Percentil 36: algo más seco que lo normal."
     },
     "rain": {
       "label": "Lluvia verano · POWER",
@@ -121,7 +311,10 @@
           "source": {
             "dataset": "NASA_POWER",
             "variable": "PRECTOTCORR",
-            "period": { "start": "1981-07-01", "end": "2026-06-30" },
+            "period": {
+              "start": "1981-07-01",
+              "end": "2026-06-30"
+            },
             "spatial_resolution": "0.5° x 0.625°",
             "temporal_resolution": "diaria",
             "is_modeled": true,
@@ -133,23 +326,95 @@
     }
   },
   "assumptions": {
-    "A-AGR-01": { "description": "Calendario de cultivos: siembra y cosecha representativas", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-DEMO-01": { "description": "Ubicación y superficie del lote demo", "source": "placeholder del equipo", "status": "PENDING_AFA" },
-    "A-DEMO-02": { "description": "Precios de ejemplo por cultivo", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-DEMO-04": { "description": "Costos directos de ejemplo por cultivo", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-DEMO-06": { "description": "Rindes de ejemplo por cultivo y clase de año", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-ACT-01": { "description": "Perfil Propietario: H, i, α, λ y restricciones", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-ACT-02": { "description": "Perfil Arrendatario: H, i, α, λ y restricciones", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-ACT-03": { "description": "Perfil Cooperativa: H, i, α, λ y restricciones", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-ACT-04": { "description": "Perfil Banco: H, i, α, λ y restricciones", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-ACT-05": { "description": "Nivel de la cola del expected shortfall de márgenes (Riesgo)", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-CLI-05": { "description": "Umbral de temperatura mínima para helada", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-SOIL-01": { "description": "Pesos de los 5 componentes de ΔSuelo", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-SOIL-08": { "description": "Diversidad de especies y peso del cultivo de invierno", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-SOIL-10": { "description": "Umbral de NDVI para considerar el suelo cubierto", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-WAT-04": { "description": "Índice de estrés hídrico moderado (umbral mensual de déficit)", "source": "FAO-56, pendiente AFA", "status": "PENDING_AFA" },
-    "A-WAT-08": { "description": "Fracción mínima de agua útil a la siembra del cultivo de verano siguiente", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-WAT-09": { "description": "Días entre secado del cultivo de servicio y siembra siguiente", "source": "pendiente AFA", "status": "PENDING_AFA" },
-    "A-WAT-10": { "description": "Meses recientes y umbral de anomalía de agua total que indica déficit regional", "source": "pendiente AFA", "status": "PENDING_AFA" }
+    "A-AGR-01": {
+      "description": "Calendario de cultivos: siembra y cosecha representativas",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-DEMO-01": {
+      "description": "Ubicación y superficie del lote demo",
+      "source": "placeholder del equipo",
+      "status": "PENDING_AFA"
+    },
+    "A-DEMO-02": {
+      "description": "Precios de ejemplo por cultivo",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-DEMO-04": {
+      "description": "Costos directos de ejemplo por cultivo",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-DEMO-06": {
+      "description": "Rindes de ejemplo por cultivo y clase de año",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-ACT-01": {
+      "description": "Perfil Propietario: H, i, α, λ y restricciones",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-ACT-02": {
+      "description": "Perfil Arrendatario: H, i, α, λ y restricciones",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-ACT-03": {
+      "description": "Perfil Cooperativa: H, i, α, λ y restricciones",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-ACT-04": {
+      "description": "Perfil Banco: H, i, α, λ y restricciones",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-ACT-05": {
+      "description": "Nivel de la cola del expected shortfall de márgenes (Riesgo)",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-CLI-05": {
+      "description": "Umbral de temperatura mínima para helada",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-SOIL-01": {
+      "description": "Pesos de los 5 componentes de ΔSuelo",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-SOIL-08": {
+      "description": "Diversidad de especies y peso del cultivo de invierno",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-SOIL-10": {
+      "description": "Umbral de NDVI para considerar el suelo cubierto",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-WAT-04": {
+      "description": "Índice de estrés hídrico moderado (umbral mensual de déficit)",
+      "source": "FAO-56, pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-WAT-08": {
+      "description": "Fracción mínima de agua útil a la siembra del cultivo de verano siguiente",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-WAT-09": {
+      "description": "Días entre secado del cultivo de servicio y siembra siguiente",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    },
+    "A-WAT-10": {
+      "description": "Meses recientes y umbral de anomalía de agua total que indica déficit regional",
+      "source": "pendiente AFA",
+      "status": "PENDING_AFA"
+    }
   }
 }

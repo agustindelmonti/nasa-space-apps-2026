@@ -148,7 +148,7 @@ test("provenance tooltip opens with the keyboard and shows dataset, variable, pe
   await expect(tip).toBeVisible();
   await expect(tip).toContainText("SMAP L4");
   await expect(tip).toContainText("sm_rootzone");
-  await expect(tip).toContainText("01/11/2026 a 10/11/2026");
+  await expect(tip).toContainText("10/11/2026");
   await expect(tip).toContainText("~9 km");
   await page.keyboard.press("Escape");
   await expect(tip).toBeHidden();

@@ -556,7 +556,7 @@ def resolve_initial(
     soil: Soil, inputs: WaterInputs, awc: PValue, cfg: WaterConfig
 ) -> tuple[PValue, list[Reason], list[MissingInfo]]:
     smap = inputs.smap_initial_rootzone
-    if smap is None and inputs.weather and all(w.gwetroot is not None for w in inputs.weather):
+    if inputs.weather and all(w.gwetroot is not None for w in inputs.weather):
         value = cfg.fallback_initial_fraction * awc.value
         return (
             PValue(
@@ -574,7 +574,9 @@ def resolve_initial(
                     assumption_ids=("A-WAT-18",),
                 )
             ],
-            [
+            []
+            if smap is not None
+            else [
                 MissingInfo(
                     item="humedad del perfil a escala de lote (SMAP L4)",
                     why_it_matters="GWETROOT es una celda de ~50 km; SMAP L4 baja a ~9 km.",
@@ -723,11 +725,7 @@ def evaluate_rotation(
     for sc in scenarios:
         y0 = sc.campaign_start_year
         gw_starts[y0] = date(y0, cfg.winter_start[0], cfg.winter_start[1])
-    gw_initial = (
-        gwetroot_initials(inputs, awc, cfg, gw_starts)
-        if inputs.smap_initial_rootzone is None
-        else None
-    )
+    gw_initial = gwetroot_initials(inputs, awc, cfg, gw_starts)
     if gw_initial:
         vals = sorted(gw_initial.values())
         initial = initial.model_copy(update={"value": round(vals[len(vals) // 2], 6)})
@@ -1220,8 +1218,13 @@ def _evidence(inputs: WaterInputs, initial: PValue, sources: set[Dataset]) -> tu
                 period=smap.provenance.source.period,
                 value=smap,
                 interpretation=(
-                    f"Humedad de la zona de raíces (celda de ~9 km, modelo asimilado). Equivale a "
-                    f"{initial.value:.1f} mm de agua útil al inicio."
+                    "Humedad actual del primer metro de suelo en la celda de ~9 km del "
+                    "lote, modelo asimilado. Es el estado de hoy, no entra al historial."
+                    if gw_weather
+                    else (
+                        "Humedad de la zona de raíces (celda de ~9 km, modelo asimilado). "
+                        f"Equivale a {initial.value:.1f} mm de agua útil al inicio."
+                    )
                 ),
             )
         )

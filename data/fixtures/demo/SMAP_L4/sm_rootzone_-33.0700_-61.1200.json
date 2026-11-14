@@ -1,0 +1,58 @@
+{
+  "cell_lat": -33.08198165893555,
+  "cell_lon": -61.104774475097656,
+  "dataset": "SMAP_L4",
+  "date": "2026-11-10",
+  "ease2_col": 1273,
+  "ease2_row": 1255,
+  "fetched_at": "2026-11-14T23:13:03Z",
+  "granules": [
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T013000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2477,
+      "start": "2026-11-10T00:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T043000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2478,
+      "start": "2026-11-10T03:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T073000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2479,
+      "start": "2026-11-10T06:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T103000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.248,
+      "start": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T133000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2478,
+      "start": "2026-11-10T12:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T163000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2471,
+      "start": "2026-11-10T15:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T193000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2464,
+      "start": "2026-11-10T18:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261110T223000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2465,
+      "start": "2026-11-10T21:00:00.000Z"
+    }
+  ],
+  "lat": -33.07,
+  "lon": -61.12,
+  "short_name": "SPL4SMGP",
+  "sm_rootzone_daily_mean": 0.2474,
+  "sm_rootzone_pctl_daily_mean": 35.6,
+  "unit": "m3/m3",
+  "variable": "sm_rootzone"
+}

@@ -146,6 +146,12 @@ class LiteEvaluateRequest(_Strict):
 # ---------------------------------------------------------------------------
 
 
+def _smap_available() -> bool:
+    from rastrojo.application.demo import SMAP_DIR
+
+    return any(SMAP_DIR.glob("sm_rootzone_*.json"))
+
+
 def _registry() -> AssumptionRegistry:
     return AssumptionRegistry.load()
 
@@ -312,7 +318,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
                 "api_version": __version__,
                 "datasets": {
                     "NASA_POWER": "FIXTURE",
-                    "SMAP_L4": "EMPTY",
+                    "SMAP_L4": "FIXTURE" if _smap_available() else "EMPTY",
                     "GPM_IMERG": "EMPTY",
                     "GRACE_FO": "EMPTY",
                     "MODIS_NDVI": "EMPTY",
