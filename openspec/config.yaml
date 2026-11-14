@@ -1,0 +1,72 @@
+schema: spec-driven
+
+context: |
+  Proyecto: "Field Shift AR" (nombre de trabajo), equipo PolPilot, NASA Space Apps Challenge 2026,
+  sede Rosario (UCEL), 14 y 15 de noviembre de 2026. Desafío oficial "Field Shift: Adapting Farms
+  with NASA Data" + desafío local AgTech con AFA (eje: Gestión hídrica inteligente).
+  Deadline duro: domingo 15/11 15:00 todo en GitHub y verificado. Demo E2E objetivo: sábado 19:00.
+
+  Qué construimos: herramienta de apoyo a la decisión que compara al menos 3 rotaciones (incluida la
+  actual) para un lote de zona núcleo pampeana (sur de Santa Fe), usando datos NASA (POWER, SMAP L4,
+  GPM IMERG, GRACE-FO, MODIS/HLS NDVI), datos de suelo del usuario y prioridades del actor
+  (propietario, arrendatario, cooperativa, banco). Para cada rotación: por qué, evidencia, beneficios,
+  faltantes de información y riesgos. "Apoya, no reemplaza al agrónomo". Escenarios históricos, no
+  predicción. Canal WhatsApp (o simulador web) + web de demo con mapa GIBS.
+
+  Función objetivo del motor, por actor:
+    score(r) = Σ_{t=1..H} E[Margen_t(r)]/(1+i)^t + α·ΔSuelo(r) − λ·Riesgo(r)
+    sujeto a factibilidad hídrica, capital de trabajo mensual, ventanas de siembra.
+  E[·] y Riesgo se calculan sobre años históricos enumerados (clasificados seco/normal/húmedo), nunca
+  Monte Carlo.
+
+  Restricciones duras (no negociables):
+  - Todo el código se escribe en este repo durante el evento. Nada de código de otros equipos.
+  - Nada de código, prompts, endpoints ni esquemas propietarios de PolPilot. PolPilot es solo visión.
+  - Repo público, licencia MIT, sin secretos (.env + .env.example). Librerías OSS declaradas.
+  - Motor 100 % determinista: misma entrada, misma salida byte a byte. Sin LLM, red, reloj ni random
+    dentro del motor.
+  - Pydantic v2 en todas las entradas/salidas: modelos frozen, extra="forbid", validadores de rango
+    y unidades.
+  - No inventar datos agronómicos ni económicos. Todo valor que no venga de un dataset o del usuario
+    es un supuesto explícito con assumption_id y fuente, a validar con agrónomos de AFA.
+  - Precios, retenciones, costos y rindes son parámetros de entrada con fuente y fecha, nunca
+    hardcodeados.
+  - Procedencia obligatoria en cada número de salida: OBSERVED | DERIVED | ASSUMPTION | USER_INPUT.
+  - La salida del motor lleva SHA-256 del JSON canónico de la entrada y la versión del motor.
+  - Uso de IA (Claude Code) declarado en el README.
+
+  Stack: Python 3.12 + uv, Pydantic v2 + pydantic-settings, pandas (+ pandera) y xarray, earthaccess
+  (Earthdata), httpx (POWER), FastAPI, pytest + hypothesis + snapshot tests. Front: Vite + React +
+  Leaflet con capas GIBS WMTS. WhatsApp vía Twilio Sandbox detrás de un adaptador. Deploy gratuito
+  (Render/Fly para API, Vercel para front).
+
+  Arquitectura en capas, dependencias en un solo sentido:
+    adapters (whatsapp, web, api) -> application (casos de uso) -> engine (puro)
+    data (ingesta NASA -> caché parquet validada) alimenta a application; engine no hace I/O.
+
+  Convenciones: documentación y specs en español rioplatense; código, identificadores y commits en
+  inglés. Evitar rayas largas (em dash) en los textos. Unidades SI explícitas en nombres de campos
+  (mm, kg_ha, usd_ha, degc).
+
+rules:
+  proposal:
+    - Máximo una página. Incluir siempre una sección "Fuera de alcance".
+    - Indicar prioridad para el hackathon (P0 demo sábado, P1 domingo, P2 opcional).
+  specs:
+    - Requisitos normativos con SHALL o MUST. Nada de should/may en requisitos.
+    - Cada escenario con pasos GIVEN/WHEN/THEN en negrita (GIVEN opcional, WHEN y THEN obligatorios).
+    - Todo valor numérico agronómico o económico citado en una spec es un ejemplo o un ASSUMPTION
+      con id (formato A-<AREA>-<NN>), nunca una verdad.
+    - Las specs del motor deben ser testeables sin red.
+  design:
+    - Declarar alternativas descartadas y por qué.
+    - Listar supuestos abiertos para AFA cuando aplique.
+  tasks:
+    - Tareas de 2 horas o menos, cada una con su verificación (test o comando).
+    - Marcar cada grupo con su prioridad P0/P1/P2.
+
+operations:
+  apply:
+    guidance:
+      - Commits chicos y frecuentes, mensajes en inglés.
+      - Correr pytest antes de cada commit del engine.
