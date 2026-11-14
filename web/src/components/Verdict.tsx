@@ -114,10 +114,15 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
       <div className="verdict-body" aria-live="polite">
         <p className="label verdict-q">{isTenant ? "¿Me conviene seguir arrendando?" : "¿Me conviene sembrar?"}</p>
         {sowing && v ? (
+          <>
           <h2 id="h-verdict" className="verdict-line" data-verdict={sowing.verdict}>
             <v.Icon className="verdict-icon" size={34} strokeWidth={1.75} aria-hidden="true" />
-            <span>{emphasize(sowing.headline, sowing.rotation_id ? names[sowing.rotation_id] : undefined)}</span>
+            <span>{sowing.headline}</span>
           </h2>
+          {sowing.detail && (
+            <p className="verdict-detail">{emphasize(sowing.detail, sowing.rotation_id ? names[sowing.rotation_id] : undefined)}</p>
+          )}
+          </>
         ) : (
           <h2 id="h-verdict" className="verdict-line">
             {top ? (

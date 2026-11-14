@@ -227,7 +227,7 @@ def _sowing(out: EngineOutput, trace: list[ToolTrace]) -> SowingDecision:
 
 
 def _sowing_text(d: SowingDecision, asks_future: bool) -> str:
-    lines = [d.headline, *d.reasons]
+    lines = [d.headline, d.detail, *d.reasons]
     lines.append(
         "El arriendo de referencia (A-ECO-05) y el costo de barbecho (A-ECO-06) son supuestos de ejemplo:"
         " cambialos por los de tu contrato en la web."
@@ -385,7 +385,8 @@ def respond(req: AskRequest) -> AskResponse:
         out = _evaluate(state, trace, flt)
         if intent in ("ranking", "what_if_dry"):
             # "¿Me conviene?" a secas: primero el sí o no, después el orden.
-            head = _sowing(out, trace).headline + "\n\n" if intent == "ranking" else ""
+            d = _sowing(out, trace) if intent == "ranking" else None
+            head = f"{d.headline} {d.detail}\n\n" if d else ""
             text = (
                 head
                 + (

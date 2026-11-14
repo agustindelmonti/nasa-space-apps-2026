@@ -88,6 +88,7 @@ export interface SowingDecision {
   campaigns_total: number;
   water: WaterFeasibility | null;
   headline: string;
+  detail: string;
   reasons: string[];
   assumptions: string[];
 }

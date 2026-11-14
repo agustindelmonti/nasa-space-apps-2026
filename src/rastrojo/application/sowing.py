@@ -63,6 +63,7 @@ class SowingDecision(DomainModel):
     campaigns_total: int = 0
     water: WaterFeasibility | None = None
     headline: str
+    detail: str = ""
     reasons: tuple[str, ...] = ()
     assumptions: tuple[str, ...] = ()
 
@@ -138,11 +139,8 @@ def decide(
             rent=rent,
             rent_qq=round(rent_qq, 6),
             fallow_cost=fallow_cost,
-            headline=(
-                "Con estas condiciones no conviene seguir arrendando: ninguna rotación es elegible."
-                if tenant
-                else "Con estas condiciones no conviene sembrar: ninguna rotación es elegible."
-            ),
+            headline="No conviene seguir arrendando." if tenant else "No conviene sembrar.",
+            detail="Con estas condiciones ninguna rotación es elegible.",
             reasons=(f"Mejor alternativa: {alt}.",),
             assumptions=used,
         )
@@ -164,36 +162,38 @@ def decide(
     share = below_rent / n if n else 0.0
 
     reasons: list[str] = []
+    # Titular corto (el sí o el no) y una línea de detalle con el número que lo explica.
     if d_fallow <= 0:
         verdict: Verdict = "DONT_SOW"
-        headline = (
-            f"No conviene seguir arrendando: {name}, la mejor opción, deja menos que el barbecho."
-            if tenant
-            else f"No conviene sembrar: {name}, la mejor opción, deja menos que el barbecho."
-        )
+        headline = "No conviene seguir arrendando." if tenant else "No conviene sembrar."
+        detail = f"Ni la mejor opción, {name}, cubre lo que cuesta dejar el lote en barbecho."
     elif d_rent <= 0:
         verdict = "RENT_BETTER"
         headline = (
-            f"Conviene más devolver el campo: {name} deja en promedio "
-            f"{_fmt(-d_rent)} USD/ha menos que lo que cuesta el arriendo."
+            "Conviene más devolver el campo que seguir arrendando."
             if tenant
-            else f"Conviene más alquilar el campo: sembrar {name} deja en promedio "
-            f"{_fmt(-d_rent)} USD/ha menos por año."
+            else "Conviene más alquilar el campo que sembrarlo."
+        )
+        detail = (
+            f"La mejor opción, {name}, deja {_fmt(-d_rent)} USD/ha por año menos que el arriendo."
         )
     elif share > max_share_below_rent or risky_water:
         verdict = "SOW_WITH_RISK"
         headline = (
-            f"Sí, conviene seguir arrendando con {name}, pero con riesgo."
+            "Sí, conviene seguir arrendando, pero con riesgo."
             if tenant
-            else f"Sí, conviene sembrar {name}, pero con riesgo."
+            else "Sí, conviene sembrar, pero con riesgo."
         )
+        caveat = (
+            f"pero en {below_rent} de {n} campañas habría dejado menos."
+            if share > max_share_below_rent
+            else "pero en años secos el agua es riesgosa."
+        )
+        detail = f"Con {name} deja {_fmt(d_rent)} USD/ha por año más que {short}, {caveat}"
     else:
         verdict = "SOW"
-        headline = (
-            f"Sí, conviene seguir arrendando y sembrar {name}."
-            if tenant
-            else f"Sí, conviene sembrar {name}."
-        )
+        headline = "Sí, conviene seguir arrendando." if tenant else "Sí, conviene sembrar."
+        detail = f"Con {name} deja {_fmt(d_rent)} USD/ha por año más que {short}."
 
     if d_rent > 0:
         reasons.append(
@@ -239,6 +239,7 @@ def decide(
         campaigns_total=n,
         water=top.water_feasibility,
         headline=headline,
+        detail=detail,
         reasons=tuple(reasons),
         assumptions=used,
     )

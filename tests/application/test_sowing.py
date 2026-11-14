@@ -36,6 +36,7 @@ def test_cheap_rent_says_sow_and_expensive_rent_says_rent() -> None:
     cheap = _decide(rent_qq_ha=0)
     assert cheap.verdict in ("SOW", "SOW_WITH_RISK")
     assert cheap.headline.startswith("Sí, conviene sembrar")
+    assert "deja" in cheap.detail
     dear = _decide(rent_qq_ha=40)
     assert dear.verdict == "RENT_BETTER"
     assert dear.vs_rent is not None and dear.vs_rent.value < 0
@@ -98,7 +99,7 @@ def test_numbers_in_text_come_from_the_decision() -> None:
         for v in (d.expected_margin.value, d.rent.value, d.vs_rent.value, d.vs_fallow.value)
     }
     allowed |= {d.campaigns_below_rent, d.campaigns_total}
-    for line in (d.headline, *d.reasons):
+    for line in (d.headline, d.detail, *d.reasons):
         for n in parse_ar_numbers(line):
             if n == round(d.breakeven_rent_qq.value, 1):
                 continue

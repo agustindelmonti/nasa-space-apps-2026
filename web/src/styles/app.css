@@ -99,7 +99,9 @@ header.top {
 .verdict-q { color: var(--v); }
 .verdict-line { display: flex; gap: 14px; align-items: center; font: 800 clamp(1.5rem, 2.3vw, 2.25rem)/1.12 var(--font-display); letter-spacing: -0.015em; color: var(--color-text); }
 .verdict-icon { flex: none; color: var(--v); }
-.verdict-line em { font-style: normal; color: var(--color-straw); }
+.verdict-line em, .verdict-detail em { font-style: normal; color: var(--color-straw); font-weight: 700; }
+.verdict-detail { font-size: clamp(1.05rem, 1.25vw, 1.25rem); line-height: 1.4; color: var(--color-text); max-width: 80ch; padding-left: 48px; }
+@media (max-width: 640px) { .verdict-detail { padding-left: 0; } }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); border-top: 1px solid var(--color-rule); }
 .stat { padding: 12px 20px 14px; border-right: 1px solid var(--color-rule); display: grid; gap: 6px; align-content: start; min-width: 0; }
 .stat:last-child { border-right: 0; }
@@ -310,11 +312,11 @@ header.top {
 .st-unknown svg { color: var(--color-state-unknown); }
 
 /* Campaign strip */
-.strip-wrap { grid-column: 2 / 4; min-width: 0; margin-top: 4px; }
-.strip, .months, .campaigns { display: grid; grid-template-columns: repeat(var(--cells), minmax(0, 1fr)); gap: 2px; }
+.strip-wrap { grid-column: 2 / 4; min-width: 0; margin-top: 6px; max-width: 620px; }
+.strip, .months, .campaigns { display: grid; grid-template-columns: repeat(var(--cells), minmax(0, 1fr)); gap: 3px; }
 .campaigns { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 2px; font: 400 0.7rem/1.1 var(--font-mono); color: var(--color-text-faint); }
 .campaigns span:last-child { border-left: 1px solid var(--color-rule); padding-left: 6px; }
-.strip i { height: 16px; display: block; position: relative; }
+.strip i { height: 18px; display: block; position: relative; }
 .strip i.camp-start, .months span.camp-start { margin-left: 3px; }
 .crop-soy { background: var(--color-crop-soy); }
 .crop-maize { background: var(--color-crop-maize); }
@@ -475,4 +477,20 @@ header.top {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .lot-outline.draw { stroke-dasharray: none; stroke-dashoffset: 0; }
+}
+
+/* Wide screens: one condensed line per rotation (name and facts | strip | score). */
+@media (min-width: 1500px) {
+  .row {
+    grid-template-columns: 28px minmax(0, 1fr) minmax(0, 470px) 118px;
+    grid-template-areas: "pos name strip score" "pos facts strip score";
+    gap: 2px 20px; align-items: center; padding: 10px 16px;
+  }
+  .row > .pos { grid-area: pos; align-self: start; }
+  .row > .name { grid-area: name; align-self: end; }
+  .row > .facts { grid-area: facts; grid-column: auto; align-self: start; gap: 2px 12px; font-size: 0.82rem; }
+  .row > .facts > span { white-space: nowrap; }
+  .row > .strip-wrap { grid-area: strip; grid-column: auto; margin-top: 0; max-width: none; }
+  .row > .score { grid-area: score; align-self: center; }
+  .row .why { flex-basis: 100%; }
 }
