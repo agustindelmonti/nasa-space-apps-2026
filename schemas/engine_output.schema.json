@@ -693,14 +693,55 @@
           "title": "Frequency By Month",
           "type": "array"
         },
+        "in_field_by_month": {
+          "description": "False = NOT_IN_FIELD (fuera del ciclo)",
+          "items": {
+            "type": "boolean"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "In Field By Month",
+          "type": "array"
+        },
+        "level_by_month": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Severity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Level By Month",
+          "type": "array"
+        },
         "provenance": {
           "$ref": "#/$defs/DerivedProvenance"
+        },
+        "years_by_month": {
+          "items": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Years By Month",
+          "type": "array"
         }
       },
       "required": [
         "crop",
         "event",
         "frequency_by_month",
+        "in_field_by_month",
+        "level_by_month",
+        "years_by_month",
         "provenance"
       ],
       "title": "VulnerabilityEntry",

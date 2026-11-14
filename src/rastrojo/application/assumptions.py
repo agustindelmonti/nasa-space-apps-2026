@@ -7,6 +7,7 @@ from typing import Any
 
 import yaml
 
+from rastrojo.domain.engine_io import ResolvedAssumption
 from rastrojo.domain.provenance import Assumption
 from rastrojo.engine.climate import ClassificationConfig, WindowDef
 
@@ -67,3 +68,12 @@ def climate_config(registry: AssumptionRegistry) -> ClassificationConfig:
         min_years=int(registry.value("A-CLI-03")),
         assumption_ids=("A-CLI-01", "A-CLI-02", "A-CLI-03"),
     )
+
+
+def resolve(registry: AssumptionRegistry, ids: tuple[str, ...]) -> dict[str, ResolvedAssumption]:
+    """Copia los valores usados al formato de `EngineInput.resolved_assumptions`."""
+    out: dict[str, ResolvedAssumption] = {}
+    for aid in sorted(set(ids)):
+        a = registry.get(aid)
+        out[aid] = ResolvedAssumption(value=a.value, unit=a.unit)
+    return out

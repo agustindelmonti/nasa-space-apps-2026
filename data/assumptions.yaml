@@ -32,3 +32,210 @@
   unit: "%"
   reference: criterio del equipo
   status: PENDING_AFA
+
+- assumption_id: A-CLI-05
+  description: Umbral de T2M_MIN (temperatura a 2 m de la celda POWER) que cuenta como helada
+  value: 0.0
+  unit: degC
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-06
+  description: Ventanas sensibles a helada por cultivo, en días después de la siembra (trigo espigazón-floración; soja y maíz emergencia)
+  value:
+    WHEAT: [95, 140]
+    SOY_1ST: [0, 30]
+    SOY_2ND: [0, 30]
+    MAIZE_EARLY: [0, 30]
+    MAIZE_LATE: [0, 30]
+  unit: días después de siembra
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-07
+  description: Frecuencias que separan severidad LOW, MEDIUM y HIGH de helada y de cada evento del calendario de vulnerabilidad
+  value: {medium: 0.1, high: 0.3}
+  unit: fraction
+  reference: criterio del equipo
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-08
+  description: Umbral de T2M_MAX para estrés térmico en floración
+  value: 35.0
+  unit: degC
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-09
+  description: Ventanas de floración por cultivo de renta, en días después de la siembra
+  value:
+    WHEAT: [95, 125]
+    SOY_1ST: [60, 95]
+    SOY_2ND: [50, 85]
+    MAIZE_EARLY: [100, 130]
+    MAIZE_LATE: [70, 100]
+  unit: días después de siembra
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-CLI-10
+  description: Percentil de lluvia diaria IMERG (sobre días con lluvia) que define lluvia extrema
+  value: 0.95
+  unit: fraction
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-AGR-01
+  description: Calendario de cultivos del sur de Santa Fe, fecha representativa de siembra y cosecha (mes-día; +1 = año siguiente al de inicio de campaña). Los servicios terminan según A-WAT-09
+  value:
+    WHEAT: {sow: "06-10", harvest: "12-05"}
+    SOY_1ST: {sow: "11-10", harvest: "+1-04-10"}
+    SOY_2ND: {sow: "12-15", harvest: "+1-04-25"}
+    MAIZE_EARLY: {sow: "09-25", harvest: "+1-03-15"}
+    MAIZE_LATE: {sow: "12-15", harvest: "+1-05-30"}
+    COVER_VETCH: {sow: "05-05", harvest: "10-15"}
+    COVER_RYE: {sow: "05-05", harvest: "10-15"}
+    COVER_OAT: {sow: "05-05", harvest: "10-15"}
+  unit: mes-día
+  reference: valores de referencia del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-01
+  description: Coeficientes de cultivo Kc (ini, mid, end), fracciones del ciclo por etapa (inicial, desarrollo, media, final) y Kc de barbecho
+  value:
+    stage_fractions: [0.15, 0.25, 0.35, 0.25]
+    fallow_kc: 0.3
+    crops:
+      SOY_1ST: [0.40, 1.15, 0.50]
+      SOY_2ND: [0.40, 1.15, 0.50]
+      MAIZE_EARLY: [0.30, 1.20, 0.60]
+      MAIZE_LATE: [0.30, 1.20, 0.60]
+      WHEAT: [0.30, 1.15, 0.40]
+      COVER_VETCH: [0.40, 1.00, 0.90]
+      COVER_RYE: [0.30, 1.10, 0.90]
+      COVER_OAT: [0.30, 1.10, 0.90]
+  unit: adimensional
+  reference: FAO-56 Tabla 12 para soja, maíz y trigo; servicios aproximados (pendiente AFA); fracciones de etapa y Kc de barbecho son simplificaciones del equipo
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-02
+  description: Lluvia efectiva como fracción fija de la precipitación diaria
+  value: 0.8
+  unit: fraction
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-03
+  description: Fracción de agotamiento p (agua fácilmente disponible) por cultivo y barbecho
+  value:
+    SOY_1ST: 0.50
+    SOY_2ND: 0.50
+    MAIZE_EARLY: 0.55
+    MAIZE_LATE: 0.55
+    WHEAT: 0.55
+    COVER_VETCH: 0.55
+    COVER_RYE: 0.55
+    COVER_OAT: 0.55
+    FALLOW: 0.50
+  unit: fraction
+  reference: FAO-56 Tabla 22 (soja 0.50, maíz 0.55, trigo 0.55); servicios y barbecho pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-04
+  description: Índice de estrés hídrico a partir del cual un año es MODERATE para un cultivo
+  value: 0.15
+  unit: index
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-05
+  description: Índice de estrés hídrico a partir del cual un año es SEVERE para un cultivo
+  value: 0.40
+  unit: index
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-06
+  description: Frecuencia ponderada máxima de años SEVERE (o de perfil no recargado) para FEASIBLE
+  value: 0.20
+  unit: fraction
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-07
+  description: Frecuencia ponderada de años SEVERE por encima de la cual la campaña es NOT_FEASIBLE
+  value: 0.50
+  unit: fraction
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-08
+  description: Fracción mínima del agua útil a la siembra del cultivo de verano en campañas dobles o con servicio
+  value: 0.5
+  unit: fraction
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-09
+  description: Días entre la terminación (secado) del cultivo de servicio y la siembra del cultivo siguiente
+  value: 30
+  unit: días
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-10
+  description: Anomalía de agua total GRACE-FO (mm, meses recientes) por debajo de la cual se considera déficit regional
+  value: -50.0
+  unit: mm
+  reference: criterio del equipo
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-11
+  description: Rango de profundidad de napa que se informa como atenuante
+  value: [1.5, 3.0]
+  unit: m
+  reference: pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-12
+  description: Fracción del agua útil inicial cuando falta el dato SMAP
+  value: 0.5
+  unit: fraction
+  reference: criterio del equipo
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-13
+  description: Contenido volumétrico de agua a capacidad de campo y marchitez por clase textural (punto medio de los rangos)
+  value:
+    SAND: [0.12, 0.045]
+    LOAMY_SAND: [0.15, 0.065]
+    SANDY_LOAM: [0.23, 0.11]
+    LOAM: [0.25, 0.12]
+    SILT_LOAM: [0.29, 0.15]
+    SILT: [0.32, 0.17]
+    SILTY_CLAY_LOAM: [0.335, 0.205]
+    SILTY_CLAY: [0.36, 0.23]
+    CLAY: [0.36, 0.22]
+    GENERIC: [0.29, 0.15]
+  unit: m3/m3
+  reference: FAO-56 Tabla 19 (puntos medios); GENERIC igual a franco limoso, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-14
+  description: Agua útil del perfil por textura = (θcc − θmp) de A-WAT-13 × profundidad de referencia; valor genérico sin textura
+  value: {reference_root_depth_m: 1.4, generic_mm: 180}
+  unit: m / mm
+  reference: pendiente AFA (cartas de suelo INTA)
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-15
+  description: Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP)
+  value: rule
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-16
+  description: Lluvia conservadora - por escenario, el balance usa la serie (POWER o IMERG) con menor lluvia en la campaña cuando ambas están completas
+  value: rule
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA

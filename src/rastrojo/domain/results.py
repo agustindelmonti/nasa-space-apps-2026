@@ -144,12 +144,22 @@ class VulnerabilityEntry(DomainModel):
     crop: Crop
     event: Literal["FROST", "HEAT_STRESS", "WATER_DEFICIT", "EXTREME_RAIN"]
     frequency_by_month: tuple[float, ...] = Field(min_length=12, max_length=12)
+    in_field_by_month: tuple[bool, ...] = Field(
+        min_length=12, max_length=12, description="False = NOT_IN_FIELD (fuera del ciclo)"
+    )
+    level_by_month: tuple[Severity | None, ...] = Field(min_length=12, max_length=12)
+    years_by_month: tuple[tuple[int, ...], ...] = Field(min_length=12, max_length=12)
     provenance: DerivedProvenance
 
     @model_validator(mode="after")
     def _range(self) -> VulnerabilityEntry:
         if any(f < 0 or f > 1 for f in self.frequency_by_month):
             raise ValueError("las frecuencias del calendario deben estar entre 0 y 1")
+        for f, inside, lvl in zip(
+            self.frequency_by_month, self.in_field_by_month, self.level_by_month, strict=True
+        ):
+            if not inside and (f != 0 or lvl is not None):
+                raise ValueError("un mes NOT_IN_FIELD no puede tener frecuencia ni nivel")
         return self
 
 
