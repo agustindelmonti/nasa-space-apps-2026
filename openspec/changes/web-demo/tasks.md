@@ -71,3 +71,8 @@
 ## Agente (P1)
 
 - [ ] A.1 Construir el panel "Preguntale a Rastrojo" con badges, sugerencias, indicador de modo y traza desplegable; test Playwright de traza y sugerencia
+
+## Verificación de capas (hecho 14/11)
+
+- [x] V.1 Identificadores GIBS verificados contra GetCapabilities y documentados en `docs/gibs-layers.md` (NDVI MODIS/VIIRS, SMAP L4 raíces e incertidumbre, IMERG, GRACE mascon, HLS, SRTM)
+- [ ] V.2 Implementar búsqueda de la última fecha HLS con datos para el lote (los tiles vacíos pesan menos de 2 KB) con fallback al mosaico base; test con fixture
