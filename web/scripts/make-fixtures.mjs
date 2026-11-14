@@ -62,12 +62,28 @@ const months12 = (entries) => {
   for (const [m, f] of Object.entries(entries)) a[Number(m) - 1] = f;
   return a;
 };
-const vuln = (crop, event, entries, ref) => ({
-  crop,
-  event,
-  frequency_by_month: months12(entries),
-  provenance: der(`frecuencia de años históricos con el evento por mes (${ref})`, "NASA_POWER.T2M_MIN", "NASA_POWER.PRECTOTCORR"),
-});
+// Calendar months (1..12) a crop is in the field, read from the strips (single A-AGR-01 calendar).
+const inField = (crop) => {
+  const months = new Array(12).fill(false);
+  for (const strip of Object.values(STRIPS)) strip.forEach((c, i) => c === crop && (months[(5 + i) % 12] = true));
+  return months;
+};
+// Example level rule for the fixture only (the engine applies A-CLI-07).
+const levelOf = (f) => (f >= 0.3 ? "HIGH" : f >= 0.15 ? "MEDIUM" : f > 0 ? "LOW" : null);
+const EXAMPLE_YEARS = [1988, 1989, 1995, 1996, 2003, 2008, 2009, 2011, 2012, 2013, 2017, 2018, 2020, 2021, 2022, 2023, 1999, 2006];
+const vuln = (crop, event, entries, ref) => {
+  const field = inField(crop);
+  const freq = months12(entries).map((f, i) => (field[i] ? f : 0));
+  return {
+    crop,
+    event,
+    frequency_by_month: freq,
+    in_field_by_month: field,
+    level_by_month: freq.map((f, i) => (field[i] ? levelOf(f) : null)),
+    years_by_month: freq.map((f) => EXAMPLE_YEARS.slice(0, Math.round(f * TOTAL_YEARS)).sort((a, b) => a - b)),
+    provenance: der(`frecuencia de años históricos con el evento por mes (${ref})`, "NASA_POWER.T2M_MIN", "NASA_POWER.PRECTOTCORR"),
+  };
+};
 
 const rainEvidence = {
   dataset: "NASA_POWER",

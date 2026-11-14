@@ -175,6 +175,62 @@ export type FrequencyByMonth = [
   number,
   number
 ];
+/**
+ * False = NOT_IN_FIELD (fuera del ciclo)
+ *
+ * @minItems 12
+ * @maxItems 12
+ */
+export type InFieldByMonth = [
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean,
+  boolean
+];
+/**
+ * @minItems 12
+ * @maxItems 12
+ */
+export type LevelByMonth = [
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null,
+  Severity | null
+];
+/**
+ * @minItems 12
+ * @maxItems 12
+ */
+export type YearsByMonth = [
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[],
+  number[]
+];
 export type VulnerabilityCalendar = VulnerabilityEntry[];
 export type CampaignIndex = number;
 export type Effect = "NOT_SOWN" | "FORCE_DRY" | "NONE";
@@ -376,7 +432,10 @@ export interface VulnerabilityEntry {
   crop: Crop;
   event: Event;
   frequency_by_month: FrequencyByMonth;
+  in_field_by_month: InFieldByMonth;
+  level_by_month: LevelByMonth;
   provenance: DerivedProvenance;
+  years_by_month: YearsByMonth;
 }
 /**
  * This interface was referenced by `EngineOutput`'s JSON-Schema
