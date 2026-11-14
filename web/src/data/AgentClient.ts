@@ -60,7 +60,8 @@ export class AgentClient {
 
   /** Sends one turn. `whatsapp` goes to `/chat/simulate` and returns the split `messages`. */
   async send(text: string, state: ConversationState | null, channel: Channel, signal?: AbortSignal): Promise<AskResponse> {
-    if (!this.baseUrl) throw new AgentUnavailable();
+    // "" is a valid base (same origin), so compare against null, not falsiness.
+    if (this.baseUrl === null) throw new AgentUnavailable();
     const path = channel === "whatsapp" ? "/chat/simulate" : "/ask";
     const body: Record<string, unknown> = { text, channel };
     if (state) body.state = state;

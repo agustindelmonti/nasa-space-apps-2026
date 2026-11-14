@@ -29,6 +29,15 @@ describe("AgentClient", () => {
     expect(res.mode).toBe("scripted");
   });
 
+  it("talks to the same origin when the base is \"/\" (web and API on one domain)", async () => {
+    const fetch = vi.fn(async () => json(reply));
+    const client = new AgentClient("/", { fetch });
+    expect(client.available).toBe(true);
+    await client.send("¿Cuándo queda el suelo desnudo?", null, "web");
+    const [url] = fetch.mock.calls[0] as unknown as [string];
+    expect(url).toBe("/api/v1/ask");
+  });
+
   it("uses /chat/simulate for the WhatsApp simulator and returns the split messages", async () => {
     const fetch = vi.fn(async () => json({ ...reply, messages: ["primera parte", "segunda parte"] }));
     const client = new AgentClient(BASE, { fetch });
