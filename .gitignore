@@ -13,3 +13,5 @@ data/raw/
 .impeccable/hook.cache.json
 .claude/worktrees/
 data/cache/
+*.parquet.tmp
+*.meta.json.tmp
