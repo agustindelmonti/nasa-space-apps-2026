@@ -60,3 +60,9 @@
 - [ ] 9.1 Modo presentación (tipografía grande, ocultar controles secundarios) para 1280x720; verificar Playwright "Proyector" con capturas
 - [ ] 9.2 Capa de anomalía GRACE-FO si GIBS la publica (según 2.1); verificar tile HTTP 200 y leyenda con limitación de ~300 km
 - [ ] 9.3 Botón "Descargar ficha" contra `/rotation-sheet`; verificar Playwright "Descargar ficha"
+
+## Sistema visual (P0)
+
+- [ ] D.1 Cargar tokens de `DESIGN.md` como variables CSS y autoalojar Newsreader, Atkinson Hyperlegible Next e IBM Plex Mono; verificar con un script que todo hex usado en `web/src` existe en el frontmatter
+- [ ] D.2 Construir la franja de campañas como componente aislado con su leyenda y probarla con Playwright a 1920x1080 y 390x844
+- [ ] D.3 Correr `npx impeccable detect web/src` y resolver hallazgos primarios antes del domingo 13:00

@@ -6,6 +6,19 @@ Presentar en una web responsive el análisis de rotaciones de un lote: mapa con 
 
 ## ADDED Requirements
 
+### Requirement: Sistema visual según DESIGN.md
+La web MUST usar exclusivamente los tokens de `DESIGN.md` (colores, tipografías, radios, espaciado) y su componente firma, la franja de campañas. Todo color con significado MUST tener leyenda visible en la misma vista y todo estado MUST llevar texto o patrón además del color. Las fuentes MUST autoalojarse.
+
+#### Scenario: Color fuera de sistema
+- **GIVEN** el código del front
+- **WHEN** se corre el chequeo de tokens en CI
+- **THEN** falla si aparece un color hex que no está en el frontmatter de `DESIGN.md`
+
+#### Scenario: Detector de anti-patrones
+- **GIVEN** la web construida
+- **WHEN** se corre `npx impeccable detect` sobre el código del front
+- **THEN** no hay hallazgos primarios sin justificar en el PR
+
 ### Requirement: El front solo presenta
 La web MUST obtener todo puntaje, rango, desglose, factibilidad, ΔSuelo, riesgo, evidencia, orden de presentación y texto explicativo desde la API `/api/v1`. La web MUST NOT calcular, reordenar por su cuenta (solo usa `rank` o `display_order` de la API) ni redondear distinto ningún resultado; solo formatea unidades.
 

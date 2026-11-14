@@ -1,6 +1,6 @@
-# Field Shift AR
+# Rastrojo
 
-Herramienta de apoyo a la decisión para comparar rotaciones de cultivos en lotes de la zona núcleo pampeana (sur de Santa Fe), usando datos de observación de la Tierra de NASA, información de suelo del productor y las prioridades de cada actor (propietario, arrendatario, cooperativa, banco).
+**Rastrojo** es una herramienta de apoyo a la decisión para comparar rotaciones de cultivos en lotes de la zona núcleo pampeana (sur de Santa Fe), usando datos de observación de la Tierra de NASA, información de suelo del productor y las prioridades de cada actor (propietario, arrendatario, cooperativa, banco).
 
 NASA Space Apps Challenge 2026, sede Rosario (UCEL). Desafío "Field Shift: Adapting Farms with NASA Data" y desafío local AgTech con AFA (Gestión hídrica inteligente).
 
