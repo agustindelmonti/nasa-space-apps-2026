@@ -987,7 +987,7 @@ def evaluate_rotation(
         missing.append(
             MissingInfo(
                 item="profundidad de napa",
-                why_it_matters="Una napa a 1,5 a 3 m puede aportar agua al doble cultivo en años secos.",
+                why_it_matters="Una napa somera (rango del supuesto A-WAT-11) puede aportar agua al doble cultivo en años secos.",
                 how_to_get="Freatímetro en el lote o registro de napas de la zona (INTA, cooperativa).",
             )
         )

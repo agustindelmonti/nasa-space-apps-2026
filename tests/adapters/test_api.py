@@ -88,3 +88,10 @@ def test_cors_header() -> None:
         headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "POST"},
     )
     assert r.headers.get("access-control-allow-origin") == "http://localhost:5173"
+
+
+def test_evaluate_includes_explanation_and_glossary() -> None:
+    body = client.post(f"{P}/evaluate", json={"actor": "OWNER"}).json()
+    assert body["explanation"]["disclaimers"] and "Por qué" in body["explanation_text"]
+    terms = client.get(f"{P}/glossary").json()["terms"]
+    assert any(t["id"] == "satellite_vs_field" for t in terms)
