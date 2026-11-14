@@ -1,0 +1,35 @@
+# Tasks: explanations
+
+## 1. Formato numérico y citas (P0)
+
+- [ ] 1.1 Implementar `format_ar` con tabla de decimales por unidad y `parse_ar_numbers`; tests de "Margen con miles", "NDVI con decimales", "Año sin separador" e ida y vuelta (hypothesis) en verde
+- [ ] 1.2 Implementar documento citable (salida + entrada con mismo `input_hash`), resolución por JSON Pointer y registro de citas; test que falla si los hashes no coinciden y test de resolución de ruta en verde
+- [ ] 1.3 Implementar lista blanca de tokens con dígitos y el test de trazabilidad genérico (extraer, excluir, buscar en citas); test "Número inventado detectado" en verde con una plantilla trampa
+
+## 2. Explicación por rotación (P0)
+
+- [ ] 2.1 Definir modelos Pydantic `Explanation`, `RotationExplanation`, `Citation`, `Disclaimer` (frozen, extra=forbid); test de "Hash de entrada propagado" en verde
+- [ ] 2.2 Plantillas de "por qué" (posición, actual, factibilidad, término dominante, comparación cualitativa); tests "Término dominante de suelo", "Rotación no factible" y "Comparación sin número disponible" en verde
+- [ ] 2.3 Plantillas de evidencia (con limitación desde catálogo de datasets), beneficios, faltantes y riesgos con marca de supuesto; tests "Evidencia de humedad SMAP", "Riesgo basado en supuesto" y "Faltantes vacíos" en verde
+- [ ] 2.4 Resumen comparativo y leyendas obligatorias; tests "Rotación actual en tercer lugar" y presencia de `disclaimers` en verde
+
+## 3. Formatos de salida (P0)
+
+- [ ] 3.1 Renderizador de texto web con marcado mínimo y lista de supuestos; tests "Sin HTML embebido" y "Precio supuesto en texto web" en verde; snapshot de la fixture `demo-casilda` generado
+- [ ] 3.2 Renderizador WhatsApp y particionador determinista; tests "Texto que entra en un mensaje", "Texto largo partido", "Partición estable", "Leyendas en WhatsApp particionado" y "Supuestos en WhatsApp" en verde
+- [ ] 3.3 Test de determinismo: generar los tres formatos en dos subprocesos y comparar bytes; test "Sin acceso a red" con socket bloqueado en verde
+
+## 4. Glosario (P1)
+
+- [ ] 4.1 Escribir `data/glossary.yaml` con las 7 entradas y huecos al catálogo de datasets; test "Glosario completo" y "Definición corta para WhatsApp" en verde
+- [ ] 4.2 Resolver huecos de resolución desde el catálogo de `nasa-ingestion`; test "Resolución desde el catálogo" en verde
+- [ ] 4.3 Remisión al glosario en la primera mención de cada término; test "Término técnico con remisión" en verde
+
+## 5. Propietario vs arrendatario y lenguaje (P1)
+
+- [ ] 5.1 Sección comparativa OWNER vs TENANT con validación de lote; tests "Ranking que cambia por horizonte" y "Salidas de lotes distintos" en verde
+- [ ] 5.2 Test de lenguaje no prescriptivo con lista de expresiones prohibidas sobre todas las plantillas y fixtures; test "Expresión prohibida en plantilla" en verde
+
+## 6. Pulido (P2)
+
+- [ ] 6.1 Revisión de redacción rioplatense con alguien del equipo no técnico; bump de `templates_version` y snapshots regenerados sin otros diffs (`uv run pytest -k explanations`)

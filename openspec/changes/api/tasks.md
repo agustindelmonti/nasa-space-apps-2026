@@ -1,0 +1,40 @@
+# Tasks: api
+
+## 1. Esqueleto y errores (P0)
+
+- [ ] 1.1 Crear app FastAPI con router `/api/v1`, `Settings` con `pydantic-settings` y `.env.example`; verificar `uv run uvicorn fieldshift.adapters.api.main:app` y GET /api/v1/health 200 con TestClient
+- [ ] 1.2 Implementar `ErrorCode`, `ApiError` y handlers globales (validación, 404, 405, 500); tests "Campo extra en request", "Ruta inexistente" y "Error interno sin traza" en verde
+- [ ] 1.3 Implementar `CanonicalJSONResponse` con el JSON canónico de dominio; test que compara bytes con `canonical_json(model)` en verde
+
+## 2. Evaluación (P0)
+
+- [ ] 2.1 Modelos `EvaluateRequest` (unión por `mode`), `EvaluateResponse` y `ResolutionEntry`; test de esquema que rechaza `mode` desconocido en verde
+- [ ] 2.2 POST /evaluate modo full contra la fixture `demo-casilda`; test "EngineInput válido" en verde
+- [ ] 2.3 Caso de uso `resolve_lite_input` (celda de caché, perfil, parámetros, suelo, faltantes); tests "Lite en el lote de demo", "Suelo no informado", "Actor desconocido" y "Rotación desconocida" en verde
+- [ ] 2.4 Errores de cobertura y parámetros; tests "Coordenada fuera de Argentina", "Celda sin caché" y "Precio de maíz ausente" en verde
+- [ ] 2.5 Headers `X-Input-Hash` y `X-Engine-Version`; tests "Dos requests iguales" y "Orden de claves distinto" en verde
+- [ ] 2.6 `explanation_formats` y contraste OWNER vs TENANT; test "Solo WhatsApp" y test de `contrast_output` presente en verde
+
+## 3. Catálogos y health (P0)
+
+- [ ] 3.1 GET /rotations/catalog y GET /actors/profiles; tests "Catálogo estable" y "Perfiles con supuestos" en verde
+- [ ] 3.2 GET /health con manifest de caché; test "Health con caché vacía" y health en DEMO_MODE en verde
+- [ ] 3.3 CORS desde configuración; tests "Origen permitido" y "Origen desconocido" en verde
+
+## 4. Contexto, glosario y supuestos (P1)
+
+- [ ] 4.1 GET /plots/{plot_id}/context desde caché o fixtures; tests "Contexto del lote de demo" y "Lote inexistente" en verde
+- [ ] 4.2 GET /glossary y GET /assumptions; test "Supuestos pendientes visibles" en verde
+
+## 5. Protección y contrato (P1)
+
+- [ ] 5.1 Middleware de tamaño por ruta y validación de content type; tests "Body excedido" y "Evaluate con form" en verde
+- [ ] 5.2 Rate limit token bucket para /whatsapp/webhook y /chat/simulate; test "Ráfaga de requests" con reloj inyectado en verde
+- [ ] 5.3 Timeout de evaluación en threadpool; test "Evaluación lenta" con motor falso en verde
+- [ ] 5.4 OpenAPI con ejemplos y enum de errores; tests "Esquema exportable", "Catálogo publicado" y "Código fuera de catálogo" en verde
+- [ ] 5.5 Test "Escaneo de secretos" recorriendo todos los endpoints en verde
+
+## 6. Deploy y métricas (P2)
+
+- [ ] 6.1 Deploy en Render o Fly con variables de entorno; verificar `curl <url>/api/v1/health` 200 y `X-Engine-Version` presente en /evaluate
+- [ ] 6.2 Log de latencia por endpoint sin datos personales; verificar en logs locales una línea por request con ruta, estado y duración
