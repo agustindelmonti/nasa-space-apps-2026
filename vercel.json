@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
   "installCommand": "cd web && npm ci",
   "buildCommand": "cd web && VITE_API_URL=/ npm run build",
   "outputDirectory": "web/dist",
@@ -9,5 +10,10 @@
       "includeFiles": "{src/**,data/assumptions.yaml,data/glossary.yaml,data/forbidden_phrases.yaml,data/intents.yaml,data/fixtures/demo/engine_climate.json}"
     }
   },
-  "rewrites": [{ "source": "/api/(.*)", "destination": "/api/index" }]
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    }
+  ]
 }
