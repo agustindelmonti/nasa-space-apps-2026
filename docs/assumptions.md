@@ -32,9 +32,10 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | A-WAT-12 | Fracción de agua útil inicial cuando falta SMAP | 0.5 | fracción | criterio del equipo | water-feasibility | baja |
 | A-WAT-13 | θ de capacidad de campo y marchitez por clase textural | tabla por textura | m³/m³ | FAO-56 Tabla 19, pendiente AFA | water-feasibility | media |
 | A-WAT-14 | Agua útil del perfil por clase textural y valor genérico | tabla por textura | mm | pendiente AFA (cartas de suelo INTA) | water-feasibility | alta |
-| A-WAT-15 | Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP) | n/a | n/a | criterio del equipo, pendiente AFA | water-feasibility | media |
+| A-WAT-15 | Cada campaña se evalúa por separado, sin encadenar años (con GWETROOT, cada una arranca con la humedad de su propio 1/5; sin él, desde la misma humedad inicial) (simplificación MVP) | n/a | n/a | criterio del equipo, pendiente AFA | water-feasibility | media |
 | A-WAT-16 | Regla de lluvia conservadora para el balance: por escenario se usa la serie diaria (POWER o IMERG) con menor lluvia de campaña cuando ambas están completas; la clasificación de años sigue solo con POWER | n/a (regla) | n/a | criterio del equipo, pendiente AFA | water-feasibility | media |
 | A-WAT-17 | Integración del agua útil desde SoilGrids: profundidad y método por capa (θ a 33 kPa menos θ a 1500 kPa por espesor de capa, capas 0-5, 5-15, 15-30, 30-60 y 60-100 cm) | 0 a 100 cm (ejemplo) | cm, mm | criterio del equipo; documentación de SoilGrids, pendiente AFA | nasa-ingestion | media |
+| A-WAT-18 | Escala de GWETROOT (NASA POWER) a fracción de agua útil inicial: percentil bajo del registro = perfil vacío, alto = perfil lleno | p5 y p95 | percentil | criterio del equipo, pendiente AFA (calibrar con sonda o SMAP L4) | water-feasibility | alta |
 | A-SOIL-01 | Pesos w_k de los 5 componentes de ΔSuelo (cobertura, carbono, N, malezas, raíces) | 0.25 / 0.25 / 0.15 / 0.20 / 0.15 | adim. | pendiente AFA | soil-impact | alta |
 | A-SOIL-02 | Persistencia de cobertura del rastrojo post cosecha por cultivo | pendiente | días | pendiente AFA; literatura de rastrojos en siembra directa | soil-impact | alta |
 | A-SOIL-03 | Referencia y escala de fracción cubierta | pendiente | fracción | pendiente AFA | soil-impact | media |

@@ -27,6 +27,8 @@ interface Props {
   inputHash?: string;
   /** Controls that filter or reorder the rows (year class, display preferences). */
   toolbar?: ReactNode;
+  /** Horizon of the actor (years): the score is the margins over it, plus soil, minus risk. */
+  horizon?: number;
 }
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -52,6 +54,7 @@ export function RankingTable({
   animateEntry,
   inputHash,
   toolbar,
+  horizon,
 }: Props) {
   const rows = orderRows(results, displayOrder);
   const listRef = useRef<HTMLOListElement>(null);
@@ -92,7 +95,14 @@ export function RankingTable({
     <section className={`rank${loading ? " is-loading" : ""}`} aria-labelledby="h-rank" aria-busy={loading} data-input-hash={inputHash}>
       <div className="loadbar" aria-hidden="true" />
       <div className="rank-head">
-        <h2 id="h-rank" className="h-title">Rotaciones comparadas</h2>
+        <div className="rank-title">
+          <h2 id="h-rank" className="h-title">Rotaciones comparadas</h2>
+          {horizon !== undefined && (
+            <p className="rank-note">
+              Puntaje en USD/ha acumulado a {formatNumber(horizon)} {horizon === 1 ? "año" : "años"}: márgenes + suelo − riesgo. No es el margen de un año.
+            </p>
+          )}
+        </div>
         <StripLegend />
       </div>
       {toolbar}

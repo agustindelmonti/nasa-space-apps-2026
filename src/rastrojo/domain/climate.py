@@ -72,6 +72,7 @@ class WeatherSources(DomainModel):
     t2m_min: Source
     t2m_max: Source
     imerg_rain: Source | None = None
+    gwetroot: Source | None = None
 
 
 class ScenarioWeather(DomainModel):
@@ -85,6 +86,10 @@ class ScenarioWeather(DomainModel):
     t2m_min_c: tuple[float, ...] = Field(min_length=1)
     t2m_max_c: tuple[float, ...] = Field(min_length=1)
     imerg_rain_mm: tuple[float, ...] | None = None
+    gwetroot: tuple[float, ...] | None = Field(
+        default=None,
+        description="Humedad relativa de la zona de raíces de NASA POWER (MERRA-2), 0 a 1",
+    )
     sources: WeatherSources
 
     @model_validator(mode="after")
@@ -99,6 +104,12 @@ class ScenarioWeather(DomainModel):
             series["imerg_rain_mm"] = self.imerg_rain_mm
             if self.sources.imerg_rain is None:
                 raise ValueError("hay serie IMERG pero falta su Source")
+        if self.gwetroot is not None:
+            series["gwetroot"] = self.gwetroot
+            if self.sources.gwetroot is None:
+                raise ValueError("hay serie GWETROOT pero falta su Source")
+            if any(not (0.0 <= v <= 1.0) for v in self.gwetroot):
+                raise ValueError("GWETROOT debe estar entre 0 y 1")
         for name, s in series.items():
             if len(s) != n:
                 raise ValueError(f"{name} tiene {len(s)} días y rain_mm tiene {n}")

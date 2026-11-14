@@ -97,7 +97,8 @@ def test_every_number_in_text_is_traceable() -> None:
         "300",
         "2",
         "30",
-    }  # resoluciones y alturas del catálogo de datasets (9 km, 250 m, 300 km, 2 m, 30 m)
+        "50",
+    }  # resoluciones y alturas del catálogo de datasets (9 km, 250 m, 300 km, 2 m, 30 m, 50 km)
     import re
 
     clean = re.sub(r"A-[A-Z]+-\d{2}|FAO-56|SMAP L4", " ", text)

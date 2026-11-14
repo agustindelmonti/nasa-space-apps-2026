@@ -138,10 +138,10 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
 
       {sowing && sowing.vs_rent && sowing.vs_fallow && (
         <dl className="stats">
-          <Stat label={`Frente a ${alt}`} note="USD/ha por año">
+          <Stat label={`Diferencia con ${alt}`} note="USD/ha por año">
             <span className={sowing.vs_rent.value >= 0 ? "pos-val" : "neg-val"}>{formatSigned(sowing.vs_rent.value)}</span>
           </Stat>
-          <Stat label="Frente a barbecho" note="USD/ha por año">
+          <Stat label="Diferencia con barbecho" note="USD/ha por año">
             <span className={sowing.vs_fallow.value >= 0 ? "pos-val" : "neg-val"}>{formatSigned(sowing.vs_fallow.value)}</span>
           </Stat>
           <Stat label={`Campañas peor que ${alt}`} note={`de ${sowing.campaigns_total}`}>

@@ -229,9 +229,16 @@
   status: PENDING_AFA
 
 - assumption_id: A-WAT-15
-  description: Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP)
+  description: Cada campaña se evalúa por separado, sin encadenar años (simplificación MVP). Con GWETROOT de NASA POWER cada una arranca con la humedad de su propio 1/5; sin él, todas con la misma humedad inicial
   value: rule
   reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-WAT-18
+  description: Escala de GWETROOT (NASA POWER) a fracción de agua útil inicial. El percentil bajo del registro diario del punto es perfil vacío y el alto, perfil lleno; en el medio, lineal
+  value: {low: 0.05, high: 0.95}
+  unit: percentil
+  reference: criterio del equipo, pendiente AFA (calibrar contra sonda o SMAP L4)
   status: PENDING_AFA
 
 - assumption_id: A-WAT-16

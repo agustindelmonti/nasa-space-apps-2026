@@ -227,10 +227,14 @@ def _adjustments(
     adj: dict[AdjustmentKey, Adjustment] = {}
     rows: list[WaterAdjustment] = []
     for st in wat.crop_status:
+        # El tipo de año (seco, normal, húmedo) ya fija el rinde. El balance de agua solo lo
+        # baja a rinde de año seco cuando el estrés es severo, o cuando el perfil no se
+        # recargó para el cultivo de verano del doble cultivo o del servicio. El estrés
+        # moderado queda como riesgo, sin castigar el rinde dos veces.
         effect: Adjustment = "NONE"
-        if st.status is WaterFeasibility.NOT_FEASIBLE:
-            effect = "NOT_SOWN"
-        elif st.status is WaterFeasibility.RISKY:
+        if st.status is WaterFeasibility.NOT_FEASIBLE or (
+            st.status is WaterFeasibility.RISKY and st.recharge_limited
+        ):
             effect = "FORCE_DRY"
         if effect != "NONE":
             adj[(st.crop, st.campaign_index, st.campaign_start_year)] = effect

@@ -494,3 +494,6 @@ header.top {
   .row > .score { grid-area: score; align-self: center; }
   .row .why { flex-basis: 100%; }
 }
+
+.rank-title { display: grid; gap: 2px; }
+.rank-note { font-size: 0.8rem; color: var(--color-text-soft); max-width: 70ch; }

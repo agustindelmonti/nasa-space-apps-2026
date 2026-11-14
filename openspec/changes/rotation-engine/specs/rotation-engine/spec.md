@@ -51,7 +51,7 @@ Si economics o soil-impact fallan para una candidata por parámetros o supuestos
 - **THEN** R_WHEAT_SOY2_MAIZE queda no elegible con MISSING_PARAMETERS y un Faltante que nombra WHEAT y price, y las demás candidatas se rankean normalmente
 
 ### Requirement: Efecto del estado hídrico
-Para cada (cultivo, posición, escenario) el motor MUST calcular el estado con water-feasibility como submódulo y traducirlo: NOT_FEASIBLE → NOT_SOWN; RISKY → FORCE_DRY (rinde de clase DRY); FEASIBLE y UNKNOWN → sin ajuste. Si la factibilidad agregada no es UNKNOWN y un cultivo es NOT_FEASIBLE en todos los escenarios con estado conocido, la rotación MUST quedar no elegible con WATER_NEVER_FEASIBLE.
+Para cada (cultivo, posición, escenario) el motor MUST calcular el estado con water-feasibility como submódulo y traducirlo: NOT_FEASIBLE → FORCE_DRY (rinde DRY); RISKY por perfil no recargado → FORCE_DRY; RISKY por estrés moderado, FEASIBLE y UNKNOWN → sin ajuste. Si la factibilidad agregada no es UNKNOWN y un cultivo es NOT_FEASIBLE en todos los escenarios con estado conocido, la rotación MUST quedar no elegible con WATER_NEVER_FEASIBLE.
 
 #### Scenario: Soja de segunda infactible en años secos
 - **GIVEN** soja de segunda NOT_FEASIBLE en los escenarios DRY y FEASIBLE en el resto

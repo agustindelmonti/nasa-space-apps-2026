@@ -885,6 +885,22 @@
           "title": "Et0 Mm",
           "type": "array"
         },
+        "gwetroot": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Humedad relativa de la zona de raíces de NASA POWER (MERRA-2), 0 a 1",
+          "title": "Gwetroot"
+        },
         "imerg_rain_mm": {
           "anyOf": [
             {
@@ -1339,6 +1355,17 @@
             }
           ],
           "title": "Et0"
+        },
+        "gwetroot": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Source"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "imerg_rain": {
           "anyOf": [

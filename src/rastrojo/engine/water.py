@@ -64,6 +64,7 @@ WATER_ASSUMPTIONS: tuple[str, ...] = (
     "A-WAT-14",
     "A-WAT-15",
     "A-WAT-16",
+    "A-WAT-18",
 )
 
 _STATE_ORDER = {
@@ -112,6 +113,7 @@ class WaterConfig:
     grace_threshold_mm: float
     water_table_range: tuple[float, float]
     fallback_initial_fraction: float
+    gwet_percentiles: tuple[float, float]
     theta: dict[str, tuple[float, float]]
     awc_reference_depth_m: float
     awc_generic_mm: float
@@ -177,6 +179,10 @@ def water_config(resolved: dict[str, ResolvedAssumption]) -> WaterConfig:
             grace_threshold_mm=float(_get(resolved, "A-WAT-10")),
             water_table_range=(float(wt[0]), float(wt[1])),
             fallback_initial_fraction=float(_get(resolved, "A-WAT-12")),
+            gwet_percentiles=(
+                float(dict(_get(resolved, "A-WAT-18"))["low"]),
+                float(dict(_get(resolved, "A-WAT-18"))["high"]),
+            ),
             theta={str(k): (float(v[0]), float(v[1])) for k, v in theta_raw.items()},
             awc_reference_depth_m=float(awc["reference_root_depth_m"]),
             awc_generic_mm=float(awc["generic_mm"]),
@@ -207,6 +213,7 @@ class ReasonCode(StrEnum):
     GRACE_REGIONAL_DEFICIT = "GRACE_REGIONAL_DEFICIT"
     SHALLOW_WATER_TABLE_MITIGATES = "SHALLOW_WATER_TABLE_MITIGATES"
     INITIAL_MOISTURE_ASSUMED = "INITIAL_MOISTURE_ASSUMED"
+    INITIAL_MOISTURE_FROM_POWER = "INITIAL_MOISTURE_FROM_POWER"
     SOIL_AWC_ASSUMED = "SOIL_AWC_ASSUMED"
     SOIL_AWC_FROM_SOILGRIDS = "SOIL_AWC_FROM_SOILGRIDS"
     SCENARIOS_EXCLUDED = "SCENARIOS_EXCLUDED"
@@ -263,6 +270,10 @@ class CropScenarioStatus(DomainModel):
     campaign_index: int
     campaign_start_year: int
     status: WaterFeasibility
+    recharge_limited: bool = Field(
+        default=False,
+        description="RISKY porque el perfil no se recargó para el cultivo de verano siguiente",
+    )
 
 
 class CampaignWater(DomainModel):
@@ -507,10 +518,70 @@ def resolve_awc(soil: Soil, cfg: WaterConfig) -> tuple[PValue, list[Reason], lis
     )
 
 
+def _nearest_rank(sorted_vals: list[float], q: float) -> float:
+    k = min(len(sorted_vals) - 1, max(0, math.ceil(q * len(sorted_vals)) - 1))
+    return sorted_vals[k]
+
+
+def gwetroot_initials(
+    inputs: WaterInputs, awc: PValue, cfg: WaterConfig, starts: dict[int, date]
+) -> dict[int, float] | None:
+    """Agua útil inicial por campaña desde GWETROOT de NASA POWER.
+
+    GWETROOT (0 a 1) se lleva a fracción de agua útil escalando entre sus percentiles bajo y
+    alto del registro del punto (A-WAT-18): el piso del registro es perfil vacío y el techo,
+    perfil lleno. None si alguna campaña no trae la serie."""
+    if not inputs.weather or any(w.gwetroot is None for w in inputs.weather):
+        return None
+    pooled = sorted(v for w in inputs.weather for v in (w.gwetroot or ()))
+    lo = _nearest_rank(pooled, cfg.gwet_percentiles[0])
+    hi = _nearest_rank(pooled, cfg.gwet_percentiles[1])
+    if hi <= lo:
+        return None
+    out: dict[int, float] = {}
+    for w in inputs.weather:
+        start = starts.get(w.campaign_start_year)
+        if start is None:
+            continue
+        idx = (start - w.start_date).days
+        series = w.gwetroot or ()
+        if not 0 <= idx < len(series):
+            continue
+        frac = min(1.0, max(0.0, (series[idx] - lo) / (hi - lo)))
+        out[w.campaign_start_year] = frac * awc.value
+    return out
+
+
 def resolve_initial(
     soil: Soil, inputs: WaterInputs, awc: PValue, cfg: WaterConfig
 ) -> tuple[PValue, list[Reason], list[MissingInfo]]:
     smap = inputs.smap_initial_rootzone
+    if smap is None and inputs.weather and all(w.gwetroot is not None for w in inputs.weather):
+        value = cfg.fallback_initial_fraction * awc.value
+        return (
+            PValue(
+                value=value,
+                unit="mm",
+                provenance=_derived(
+                    "GWETROOT de NASA POWER al inicio de cada campaña, escalado a agua útil",
+                    "NASA_POWER:GWETROOT",
+                    "A-WAT-18",
+                ),
+            ),
+            [
+                Reason(
+                    code=ReasonCode.INITIAL_MOISTURE_FROM_POWER,
+                    assumption_ids=("A-WAT-18",),
+                )
+            ],
+            [
+                MissingInfo(
+                    item="humedad del perfil a escala de lote (SMAP L4)",
+                    why_it_matters="GWETROOT es una celda de ~50 km; SMAP L4 baja a ~9 km.",
+                    how_to_get="Bajar SMAP L4 sm_rootzone (Earthdata) o medir con sonda.",
+                )
+            ],
+        )
     if smap is None:
         value = cfg.fallback_initial_fraction * awc.value
         return (
@@ -647,6 +718,19 @@ def evaluate_rotation(
     initial, r2, m2 = resolve_initial(soil, inputs, awc, cfg)
     reasons += r2
     missing += m2
+    # GWETROOT: cada campaña arranca con la humedad de NASA POWER de su propio inicio.
+    gw_starts: dict[int, date] = {}
+    for sc in scenarios:
+        y0 = sc.campaign_start_year
+        gw_starts[y0] = date(y0, cfg.winter_start[0], cfg.winter_start[1])
+    gw_initial = (
+        gwetroot_initials(inputs, awc, cfg, gw_starts)
+        if inputs.smap_initial_rootzone is None
+        else None
+    )
+    if gw_initial:
+        vals = sorted(gw_initial.values())
+        initial = initial.model_copy(update={"value": round(vals[len(vals) // 2], 6)})
     weather_by_year = {w.campaign_start_year: w for w in inputs.weather}
     ordered = sorted(scenarios, key=lambda s: s.campaign_start_year)
     extreme_thr = _extreme_threshold(inputs, cfg.extreme_percentile)
@@ -694,8 +778,9 @@ def evaluate_rotation(
             rain, source, _, _ = _rain_for(w, period)
             sources_used.add(source)
             summer_sow = next((cw.start for cw in windows if cw.crop is campaign.summer), None)
+            start_water = (gw_initial or {}).get(y, initial.value)
             sim = simulate_campaign(
-                w, windows, period, initial.value, awc.value, cfg, rain, source, summer_sow
+                w, windows, period, start_water, awc.value, cfg, rain, source, summer_sow
             )
             crops_out: list[CropScenarioWater] = []
             any_severe = False
@@ -715,14 +800,15 @@ def evaluate_rotation(
                     total_deficit += deficit
                     if label == "SEVERE":
                         any_severe = True
-                if label == "SEVERE":
-                    status = WaterFeasibility.NOT_FEASIBLE
-                elif label == "MODERATE" or (
+                recharge_low = (
                     cw.crop is campaign.summer
                     and is_double_or_cover
                     and frac is not None
                     and frac < cfg.min_recharge_fraction
-                ):
+                )
+                if label == "SEVERE":
+                    status = WaterFeasibility.NOT_FEASIBLE
+                elif label == "MODERATE" or recharge_low:
                     status = WaterFeasibility.RISKY
                 else:
                     status = WaterFeasibility.FEASIBLE
@@ -745,7 +831,11 @@ def evaluate_rotation(
                 )
                 crop_status.append(
                     CropScenarioStatus(
-                        crop=cw.crop, campaign_index=idx, campaign_start_year=y, status=status
+                        crop=cw.crop,
+                        campaign_index=idx,
+                        campaign_start_year=y,
+                        status=status,
+                        recharge_limited=status is WaterFeasibility.RISKY and recharge_low,
                     )
                 )
                 # Calendario: déficit mensual, helada, calor y lluvia extrema.
@@ -795,7 +885,7 @@ def evaluate_rotation(
                     w,
                     fallow_windows,
                     period,
-                    initial.value,
+                    start_water,
                     awc.value,
                     cfg,
                     rain,
@@ -1102,6 +1192,25 @@ def _evidence(inputs: WaterInputs, initial: PValue, sources: set[Dataset]) -> tu
             interpretation="Demanda de agua de la atmósfera: cuánto evaporaría un cultivo de referencia por día.",
         )
     )
+    gw_weather = [w for w in inputs.weather if w.gwetroot is not None]
+    if gw_weather and gw_weather[0].sources.gwetroot is not None:
+        gw_vals = [v for w in gw_weather for v in (w.gwetroot or ())]
+        out.append(
+            Evidence(
+                dataset=Dataset.NASA_POWER,
+                variable="GWETROOT (humedad de la zona de raíces, MERRA-2)",
+                period=period,
+                value=PValue(
+                    value=round(math.fsum(gw_vals) / len(gw_vals), 6),
+                    unit="fraction",
+                    provenance=_derived("media de GWETROOT diaria", "NASA_POWER:GWETROOT"),
+                ),
+                interpretation=(
+                    "Humedad relativa del suelo en la zona de raíces (celda de ~50 km). Define el "
+                    "agua guardada al inicio de cada campaña."
+                ),
+            )
+        )
     smap = inputs.smap_initial_rootzone
     if smap is not None and isinstance(smap.provenance, ObservedProvenance):
         out.append(

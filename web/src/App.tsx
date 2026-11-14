@@ -197,6 +197,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                   loading={loading}
                   animateEntry={animateEntry}
                   inputHash={shown.evaluation.inputHash}
+                  horizon={draft.horizon_years ?? profile?.horizon_years.value}
                   toolbar={
                     <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
                   }

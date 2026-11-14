@@ -43,7 +43,7 @@ from rastrojo.domain import (
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
 from rastrojo.domain.base import DomainModel
 from rastrojo.domain.crops import CROP_INFO, CropKind
-from rastrojo.domain.provenance import Dataset
+from rastrojo.domain.provenance import Dataset, Period, Source
 from rastrojo.engine.climate import RainDay, RainSeries, build_scenarios
 from rastrojo.engine.economics import ECONOMICS_ASSUMPTIONS
 from rastrojo.engine.soil import SOIL_ASSUMPTIONS
@@ -57,6 +57,8 @@ if TYPE_CHECKING:
 CLIMATE_SNAPSHOT = (
     Path(__file__).resolve().parents[3] / "data" / "fixtures" / "demo" / "engine_climate.json"
 )
+
+GWETROOT_DIR = CLIMATE_SNAPSHOT.parent / "NASA_POWER"
 
 DEMO_PLOT_ID = "demo-casilda"
 POWER_START = date(1981, 1, 1)
@@ -246,6 +248,34 @@ def _rain_series(power: PowerDaily, wide: pd.DataFrame) -> RainSeries:
     return RainSeries(source=src, days=days)
 
 
+def _load_gwetroot(lat: float, lon: float) -> dict[date, float] | None:
+    """Humedad de la zona de raíces de NASA POWER (GWETROOT), bajada con
+    `scripts/fetch_demo_gwetroot.py`. None si el fixture no está."""
+    import json
+
+    path = GWETROOT_DIR / (
+        f"GWETROOT_{lat:.4f}_{lon:.4f}_{POWER_START:%Y%m%d}-{POWER_END:%Y%m%d}.json"
+    )
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text(encoding="utf-8"))["values"]
+    return {date(int(k[:4]), int(k[4:6]), int(k[6:])): float(v) for k, v in raw.items()}
+
+
+def _gwetroot_source(lat: float, lon: float) -> Source:
+    from rastrojo.data.power import METEO_RESOLUTION, TEMPORAL_RESOLUTION
+
+    return Source(
+        dataset=Dataset.NASA_POWER,
+        variable="GWETROOT",
+        period=Period(start=POWER_START, end=POWER_END),
+        spatial_resolution=METEO_RESOLUTION,
+        temporal_resolution=TEMPORAL_RESOLUTION,
+        is_modeled=True,
+        location_note="celda MERRA-2 que contiene el lote (humedad relativa de la zona de raíces)",
+    )
+
+
 def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBundle:
     import pandas as pd
 
@@ -258,6 +288,9 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
         t2m_min=power.source("T2M_MIN"),
         t2m_max=power.source("T2M_MAX"),
     )
+    gwet = _load_gwetroot(power.lat, power.lon)
+    if gwet is not None:
+        sources = sources.model_copy(update={"gwetroot": _gwetroot_source(power.lat, power.lon)})
     weather: list[ScenarioWeather] = []
     excluded: list[int] = []
     for sc in combined.scenarios:
@@ -274,6 +307,8 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
         if rain.isna().any() or tmin.isna().any() or tmax.isna().any() or e.isna().any():
             excluded.append(sc.campaign_start_year)
             continue
+        days = [start + timedelta(days=k) for k in range(WEATHER_DAYS)]
+        gw = tuple(gwet[d] for d in days) if gwet and all(d in gwet for d in days) else None
         weather.append(
             ScenarioWeather(
                 campaign_start_year=sc.campaign_start_year,
@@ -282,7 +317,10 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
                 et0_mm=tuple(round(float(x), 3) for x in e),
                 t2m_min_c=tuple(round(float(x), 2) for x in tmin),
                 t2m_max_c=tuple(round(float(x), 2) for x in tmax),
-                sources=sources,
+                gwetroot=gw,
+                sources=sources
+                if gw is not None
+                else sources.model_copy(update={"gwetroot": None}),
             )
         )
     kept = {w.campaign_start_year for w in weather}
