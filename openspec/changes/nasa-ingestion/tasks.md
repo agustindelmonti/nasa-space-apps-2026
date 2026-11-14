@@ -2,18 +2,18 @@
 
 ## 1. Base de la capa de datos (P0)
 
-- [ ] 1.1 Crear `Settings` (pydantic-settings) con `cache_dir`, `demo_mode`, `offline` y credenciales Earthdata, y `.env.example` sin valores; verificar con un test que carga `.env.example` y que el `repr` no muestra secretos
+- [x] 1.1 Crear `Settings` (pydantic-settings) con `cache_dir`, `demo_mode`, `offline` y credenciales Earthdata, y `.env.example` sin valores; verificar con un test que carga `.env.example` y que el `repr` no muestra secretos
 - [ ] 1.2 Definir esquemas pandera en formato largo (`date`, `variable`, `value`, `unit`, `is_missing`, `missing_reason`) y rangos físicos por dataset; verificar con tests de "Caché corrupta" y "Rango físico fuera de lo plausible"
-- [ ] 1.3 Implementar caché parquet + sidecar con clave normalizada a 4 decimales y `content_sha256`; verificar con tests de "Coordenadas equivalentes" y escritura doble con hash idéntico
+- [x] 1.3 Implementar caché parquet + sidecar con clave normalizada a 4 decimales y `content_sha256`; verificar con tests de "Coordenadas equivalentes" y escritura doble con hash idéntico
 - [ ] 1.4 Implementar registro de huecos y errores tipados (`PERIOD_OUT_OF_COVERAGE`, `DATA_NOT_CACHED`, `EARTHDATA_AUTH_MISSING`, `CACHE_SCHEMA_INVALID`, `SOURCE_INCOMPLETE`); verificar con test de "Source incompleta bloqueada"
-- [ ] 1.5 Implementar modo offline que bloquea red; verificar con test que usa `pytest-socket` (o monkeypatch de httpx) y escenario "Faltante en modo offline"
+- [x] 1.5 Implementar modo offline que bloquea red; verificar con test que usa `pytest-socket` (o monkeypatch de httpx) y escenario "Faltante en modo offline"
 
 ## 2. NASA POWER y ET0 (P0)
 
-- [ ] 2.1 Verificar en la documentación/API de POWER si existe ET0 FAO-56 diaria en la comunidad AG y anotar el resultado en design.md (Open Questions); verificación: nota commiteada con la URL consultada
-- [ ] 2.2 Implementar adaptador POWER (httpx, tramos por año, relleno -999 a faltante) con normalización pura; verificar con test sobre un JSON de muestra guardado en `tests/fixtures/power/` (escenarios "Valor de relleno de POWER" y "Período anterior a 1981 rechazado")
-- [ ] 2.3 Implementar ET0 Penman-Monteith FAO-56 pura (si 2.1 da negativo) o mapeo OBSERVED (si da positivo); verificar con test contra el ejemplo 18 de FAO-56 (tolerancia 0.1 mm/día) y escenario "ET0 con insumo faltante"
-- [ ] 2.4 Ingestar POWER 1981 a la fecha para `demo-casilda` y guardarlo en `data/fixtures/demo/`; verificar con `uv run python -m rastrojo.data.cli ingest power --plot demo-casilda` y una segunda corrida sin red con el mismo hash
+- [x] 2.1 Verificar en la documentación/API de POWER si existe ET0 FAO-56 diaria en la comunidad AG y anotar el resultado en design.md (Open Questions); verificación: nota commiteada con la URL consultada
+- [x] 2.2 Implementar adaptador POWER (httpx, tramos por año, relleno -999 a faltante) con normalización pura; verificar con test sobre un JSON de muestra guardado en `tests/fixtures/power/` (escenarios "Valor de relleno de POWER" y "Período anterior a 1981 rechazado")
+- [x] 2.3 Implementar ET0 Penman-Monteith FAO-56 pura (si 2.1 da negativo) o mapeo OBSERVED (si da positivo); verificar con test contra el ejemplo 18 de FAO-56 (tolerancia 0.1 mm/día) y escenario "ET0 con insumo faltante"
+- [x] 2.4 Ingestar POWER 1981 a la fecha para `demo-casilda` y guardarlo en `data/fixtures/demo/`; verificar con `uv run python -m rastrojo.data.cli ingest power --plot demo-casilda` y una segunda corrida sin red con el mismo hash
 
 ## 3. SMAP L4 y GRACE-FO (P0)
 
