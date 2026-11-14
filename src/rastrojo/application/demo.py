@@ -43,7 +43,13 @@ from rastrojo.domain import (
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
 from rastrojo.domain.base import DomainModel
 from rastrojo.domain.crops import CROP_INFO, CropKind
-from rastrojo.domain.provenance import Dataset, ObservedProvenance, Period, Source
+from rastrojo.domain.provenance import (
+    Dataset,
+    DerivedProvenance,
+    ObservedProvenance,
+    Period,
+    Source,
+)
 from rastrojo.engine.climate import RainDay, RainSeries, build_scenarios
 from rastrojo.engine.economics import ECONOMICS_ASSUMPTIONS
 from rastrojo.engine.soil import SOIL_ASSUMPTIONS
@@ -295,6 +301,51 @@ def load_smap_current(lat: float, lon: float) -> PValue | None:
     )
 
 
+GRACE_DIR = CLIMATE_SNAPSHOT.parent / "GRACE_FO"
+
+
+def load_grace_raw(lat: float, lon: float) -> dict[str, object] | None:
+    import json
+
+    path = GRACE_DIR / f"tws_{lat:.4f}_{lon:.4f}.json"
+    if not path.exists():
+        return None
+    raw: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+    return raw
+
+
+def load_grace_recent(lat: float, lon: float) -> PValue | None:
+    """Anomalía de agua total GRACE/GRACE-FO: media de los últimos 3 meses de la celda del
+    lote (mascons JPL RL06.3 CRI), bajada con `scripts/fetch_demo_grace.py`."""
+    raw = load_grace_raw(lat, lon)
+    if raw is None:
+        return None
+    months = raw["months"]
+    assert isinstance(months, list)
+    last3 = months[-3:]
+    return PValue(
+        value=float(str(raw["last3_mean_mm"])),
+        unit="mm",
+        provenance=ObservedProvenance(
+            source=Source(
+                dataset=Dataset.GRACE_FO,
+                variable="lwe_thickness",
+                period=Period(
+                    start=date.fromisoformat(str(last3[0]["date"])),
+                    end=date.fromisoformat(str(last3[-1]["date"])),
+                ),
+                spatial_resolution="~300 km efectivos (mascon de 3°, grilla de 0,5°)",
+                temporal_resolution="mensual (media de los últimos 3 meses)",
+                is_modeled=True,
+                location_note=(
+                    f"celda de 0,5° centrada en {raw['cell_lat']}, {raw['cell_lon']}; "
+                    "anomalía respecto de 2004-2009"
+                ),
+            )
+        ),
+    )
+
+
 def _gwetroot_source(lat: float, lon: float) -> Source:
     from rastrojo.data.power import METEO_RESOLUTION, TEMPORAL_RESOLUTION
 
@@ -437,6 +488,83 @@ def build_engine_input(
         water_inputs=WaterInputs(
             weather=climate.weather,
             smap_initial_rootzone=load_smap_current(plot.location.lat, plot.location.lon),
+            grace_tws_anomaly=load_grace_recent(plot.location.lat, plot.location.lon),
         ),
         year_class_filter=year_class_filter,
     )
+
+
+def water_panel(registry: AssumptionRegistry | None = None) -> dict[str, dict[str, object]]:
+    """Las tres celdas del panel de agua del lote demo, con datos reales y su procedencia:
+    GRACE-FO (agua total regional), SMAP L4 (humedad de raíces hoy) y lluvia de verano de
+    NASA POWER. Una celda sin dato queda con `value: null` y lo dice en `limitation`."""
+    registry = registry or AssumptionRegistry.load()
+    plot = demo_plot(registry)
+    lat, lon = plot.location.lat, plot.location.lon
+    panel: dict[str, dict[str, object]] = {}
+
+    grace = load_grace_recent(lat, lon)
+    raw = load_grace_raw(lat, lon)
+    if grace is not None and raw is not None:
+        month = str(raw["latest_month"])[:7]
+        pct = float(str(raw["last3_percentile"]))
+        state = (
+            "más agua que lo normal"
+            if pct >= 60
+            else "menos agua que lo normal"
+            if pct <= 40
+            else "cerca de lo normal"
+        )
+        limitation = f"Señal regional de ~300 km, último mes {month}. Percentil {pct:.0f}: {state}."
+    else:
+        limitation = "Sin dato: falta bajar GRACE-FO (Earthdata)."
+    panel["grace"] = {
+        "label": "Agua total · GRACE-FO",
+        "value": grace.model_dump(mode="json") if grace else None,
+        "limitation": limitation,
+    }
+
+    smap = load_smap_current(lat, lon)
+    if smap is not None:
+        import json
+
+        sraw = json.loads(
+            (SMAP_DIR / f"sm_rootzone_{lat:.4f}_{lon:.4f}.json").read_text(encoding="utf-8")
+        )
+        pct = float(sraw["sm_rootzone_pctl_daily_mean"])
+        state = (
+            "más húmedo que lo normal"
+            if pct >= 60
+            else "más seco que lo normal"
+            if pct <= 40
+            else "cerca de lo normal"
+        )
+        day = date.fromisoformat(sraw["date"])
+        limitation = f"Celda de ~9 km, {day:%d/%m/%Y}. Percentil {pct:.0f}: {state}."
+    else:
+        limitation = "Sin dato: falta bajar SMAP L4 (Earthdata)."
+    panel["smap"] = {
+        "label": "Raíces hoy · SMAP L4",
+        "value": smap.model_dump(mode="json") if smap else None,
+        "limitation": limitation,
+    }
+
+    climate = _demo_climate(lat, lon)
+    summer = sorted(s.summer_rain.value for s in climate.scenarios)
+    n = len(summer)
+    median = summer[n // 2] if n % 2 else (summer[n // 2 - 1] + summer[n // 2]) / 2
+    years = [s.campaign_start_year for s in climate.scenarios]
+    rain_src = climate.weather[0].sources.rain
+    panel["rain"] = {
+        "label": "Lluvia verano · POWER",
+        "value": PValue(
+            value=round(median, 1),
+            unit="mm",
+            provenance=DerivedProvenance(
+                method=f"mediana de la lluvia de verano en {n} campañas",
+                derived_from=(f"{rain_src.dataset.value}:{rain_src.variable}",),
+            ),
+        ).model_dump(mode="json"),
+        "limitation": f"Mediana de {n} campañas ({min(years)} a {max(years)}), noviembre a marzo.",
+    }
+    return panel

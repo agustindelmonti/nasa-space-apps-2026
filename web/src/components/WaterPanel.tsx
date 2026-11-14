@@ -19,7 +19,7 @@ export function WaterPanel({ cells }: { cells: PlotContext["water_panel"] }) {
             <span className="label">
               <Icon size={16} strokeWidth={1.5} aria-hidden="true" /> {cell.label}
             </span>
-            <Figure value={cell.value} signed={signed} className="fig-lg" />
+            {cell.value ? <Figure value={cell.value} signed={signed} className="fig-lg" /> : <span className="fig fig-lg soft">sin dato</span>}
             <small>{cell.limitation}</small>
           </div>
         ))}

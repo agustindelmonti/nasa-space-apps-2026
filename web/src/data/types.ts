@@ -8,7 +8,8 @@ export type ProfileId = "OWNER" | "TENANT" | "COOP" | "BANK";
 
 export interface WaterCell {
   label: string;
-  value: PValue;
+  /** null when the dataset is not downloaded yet (the limitation says so). */
+  value: PValue | null;
   limitation: string;
 }
 

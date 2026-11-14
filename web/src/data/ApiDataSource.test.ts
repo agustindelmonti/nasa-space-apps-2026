@@ -32,6 +32,12 @@ function deferred<T>() {
 
 describe("ApiDataSource", () => {
   it("reads profiles, slider limits and catalog from the API", async () => {
+    const pv = { value: 0.25, unit: "m3/m3", provenance: { kind: "DERIVED", method: "x", derived_from: ["SMAP_L4"] } };
+    const waterBody = {
+      grace: { label: "Agua total", value: null, limitation: "sin dato" },
+      smap: { label: "Raíces", value: pv, limitation: "hoy" },
+      rain: { label: "Lluvia", value: { ...pv, unit: "mm", value: 597 }, limitation: "mediana" },
+    };
     const assumptionsBody = {
       assumptions: [{ assumption_id: "A-ACT-06", description: "Rangos de sliders", reference: "AFA", status: "PENDING_AFA" }],
     };
@@ -39,10 +45,13 @@ describe("ApiDataSource", () => {
       const u = String(url);
       if (u.endsWith("/actors/profiles")) return json(profilesBody);
       if (u.endsWith("/assumptions")) return json(assumptionsBody);
+      if (u.endsWith("/water-panel")) return json({ water_panel: waterBody });
       return json(catalogBody);
     });
     const src = new ApiDataSource(BASE + "/", new FixtureDataSource(), { fetch });
     const ctx = await src.getContext(PLOT);
+    expect(ctx.water_panel.grace.value).toBeNull(); // the panel comes from the API, gaps included
+    expect(ctx.water_panel.smap.limitation).toBe("hoy");
     expect(ctx.origin).toBe("api");
     expect(ctx.slider_limits.lambda).toEqual([0, 3]);
     expect(ctx.profiles.map((p) => p.profile_id)).toEqual(["OWNER"]);
@@ -54,6 +63,7 @@ describe("ApiDataSource", () => {
       `${BASE}/api/v1/actors/profiles`,
       `${BASE}/api/v1/rotations/catalog`,
       `${BASE}/api/v1/assumptions`,
+      `${BASE}/api/v1/water-panel`,
     ]);
   });
 

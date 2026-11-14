@@ -152,6 +152,12 @@ def _smap_available() -> bool:
     return any(SMAP_DIR.glob("sm_rootzone_*.json"))
 
 
+def _grace_available() -> bool:
+    from rastrojo.application.demo import GRACE_DIR
+
+    return any(GRACE_DIR.glob("tws_*.json"))
+
+
 def _registry() -> AssumptionRegistry:
     return AssumptionRegistry.load()
 
@@ -320,7 +326,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
                     "NASA_POWER": "FIXTURE",
                     "SMAP_L4": "FIXTURE" if _smap_available() else "EMPTY",
                     "GPM_IMERG": "EMPTY",
-                    "GRACE_FO": "EMPTY",
+                    "GRACE_FO": "FIXTURE" if _grace_available() else "EMPTY",
                     "MODIS_NDVI": "EMPTY",
                 },
             }
@@ -362,6 +368,12 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
         body = resp.model_dump(mode="json")
         body["messages"] = partition(resp.text, tail=())
         return canonical_response(body)
+
+    @app.get(f"{API_PREFIX}/water-panel")
+    async def water_panel_endpoint() -> Response:
+        from rastrojo.application.demo import water_panel
+
+        return canonical_response({"plot_id": DEMO_PLOT_ID, "water_panel": water_panel()})
 
     @app.get(f"{API_PREFIX}/glossary")
     async def glossary() -> Response:

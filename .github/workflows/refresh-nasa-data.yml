@@ -1,9 +1,9 @@
-# Refresca a diario la humedad de suelo SMAP L4 del lote demo y la commitea a main.
+# Refresca a diario los datos NASA del lote demo (SMAP L4 y GRACE-FO) y los commitea a main.
 # Vercel redespliega con el commit, así producción nunca consulta a Earthdata en vivo.
 #
 # Requiere el secret de repositorio EARTHDATA_TOKEN (token de urs.earthdata.nasa.gov).
 # Si el token vence o Earthdata falla, el workflow falla y el último dato queda como está.
-name: Refrescar SMAP L4
+name: Refrescar datos NASA (SMAP L4 y GRACE-FO)
 
 on:
   schedule:
@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: refresh-smap
+  group: refresh-nasa-data
   cancel-in-progress: false
 
 jobs:
@@ -43,12 +43,17 @@ jobs:
           fi
           uv run python scripts/fetch_demo_smap.py
 
+      - name: Bajar GRACE-FO de la celda del lote
+        env:
+          EARTHDATA_TOKEN: ${{ secrets.EARTHDATA_TOKEN }}
+        run: uv run python scripts/fetch_demo_grace.py
+
       - name: ¿Cambió el dato?
         id: diff
         run: |
-          if git diff --quiet -- data/fixtures/demo/SMAP_L4; then
+          if git diff --quiet -- data/fixtures/demo/SMAP_L4 data/fixtures/demo/GRACE_FO; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "SMAP sin cambios; no hay nada para commitear."
+            echo "SMAP y GRACE-FO sin cambios; no hay nada para commitear."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
@@ -63,6 +68,6 @@ jobs:
           DAY=$(python3 -c "import json,glob;print(json.load(open(glob.glob('data/fixtures/demo/SMAP_L4/*.json')[0]))['date'])")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/fixtures/demo/SMAP_L4
-          git commit -m "chore(data): refresh SMAP L4 root zone moisture for the demo lot ($DAY)"
+          git add data/fixtures/demo/SMAP_L4 data/fixtures/demo/GRACE_FO
+          git commit -m "chore(data): refresh NASA data for the demo lot (SMAP L4 $DAY, GRACE-FO)"
           git push origin HEAD:main

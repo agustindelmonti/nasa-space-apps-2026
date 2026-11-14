@@ -95,3 +95,20 @@ def test_evaluate_includes_explanation_and_glossary() -> None:
     assert body["explanation"]["disclaimers"] and "Por qué" in body["explanation_text"]
     terms = client.get(f"{P}/glossary").json()["terms"]
     assert any(t["id"] == "satellite_vs_field" for t in terms)
+
+
+def test_water_panel_serves_real_nasa_cells_with_provenance() -> None:
+    body = client.get("/api/v1/water-panel").json()["water_panel"]
+    assert set(body) == {"grace", "smap", "rain"}
+    grace, smap, rain = body["grace"], body["smap"], body["rain"]
+    assert grace["value"]["unit"] == "mm"
+    assert grace["value"]["provenance"]["source"]["dataset"] == "GRACE_FO"
+    assert smap["value"]["unit"] == "m3/m3"
+    assert smap["value"]["provenance"]["source"]["dataset"] == "SMAP_L4"
+    assert rain["value"]["provenance"]["kind"] == "DERIVED"
+    assert "Percentil" in grace["limitation"] and "Percentil" in smap["limitation"]
+
+
+def test_health_reports_smap_and_grace_fixtures() -> None:
+    ds = client.get("/api/v1/health").json()["datasets"]
+    assert ds["SMAP_L4"] == "FIXTURE" and ds["GRACE_FO"] == "FIXTURE"
