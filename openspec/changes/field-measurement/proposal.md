@@ -20,14 +20,14 @@ El desafío pide explicar en qué difiere el dato satelital de la medición de c
 - `field-measurement`: registro, validación y normalización relativa de lecturas de impacto tomadas con el celular, con limitaciones explícitas y comparación cualitativa con SMAP L4.
 
 ### Modified Capabilities
-- Ninguna en specs archivadas. Requiere agregar `FIELD_HAMMER` al conjunto de datasets de Source en `domain-models` (cambio aditivo) y dos rutas en `api`.
+- Ninguna en specs archivadas. Usa `FIELD_HAMMER`, ya agregado al enum de datasets de Source en `domain-models`, y las rutas POST/GET de lecturas de campo ya listadas en `api` (P2).
 
 ## Impact
 
 - `fieldshift.application.field` (caso de uso) y rutas `POST/GET /api/v1/plots/{id}/field-readings` en el adaptador FastAPI.
 - Web: pantalla de captura con DeviceMotion API (requiere HTTPS y permiso de sensores en iOS) y tarjeta "campo vs satélite".
 - Almacenamiento en archivos JSON bajo `data/field/` (sin base de datos).
-- Supuestos nuevos: A-FLD-01 a A-FLD-06.
+- Supuestos nuevos: A-FLD-01 a A-FLD-06 (el área FLD es exclusiva de este change; el lote demo usa A-DEMO-01).
 
 ## Fuera de alcance
 

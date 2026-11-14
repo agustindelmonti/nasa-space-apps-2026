@@ -2,7 +2,7 @@
 
 ## 1. Modelos y supuestos (P2)
 
-- [ ] 1.1 Agregar `FIELD_HAMMER` al enum de datasets de Source en `domain-models` y definir modelos frozen `FieldSession`, `FieldPoint`, `Impact`, `PointSummary`; verificar con tests de validación (escenarios "Muestreo insuficiente" y "Punto fuera del lote")
+- [ ] 1.1 Usar `FIELD_HAMMER` del enum de datasets de `domain-models` y definir modelos frozen `FieldSession`, `FieldPoint`, `Impact`, `PointSummary`; verificar con tests de validación (escenarios "Muestreo insuficiente" y "Punto fuera del lote")
 - [ ] 1.2 Cargar A-FLD-01 a A-FLD-06 en `assumptions.yaml` (PENDING_AFA); verificar con test que la aplicación los resuelve
 
 ## 2. Procesamiento (P2)

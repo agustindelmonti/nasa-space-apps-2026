@@ -21,6 +21,7 @@
 - [ ] 3.5 Implementar el estado por (cultivo, posición, escenario) para el motor; verificar con tests "Soja de segunda en un año severo", "Perfil seco a la siembra" y "Escenario excluido"
 - [ ] 3.6 Implementar calendario mensual de vulnerabilidad con helada y déficit hídrico; verificar con tests "Déficit en enero para la soja de segunda", "Mes fuera del ciclo" y "Calendario determinista"
 - [ ] 3.7 Implementar salida con motivos, Evidencias y supuestos usados; verificar con tests "Porqué legible" y "Supuestos listados" y snapshot de la salida canónica del lote de demo
+- [ ] 3.8 Implementar rango hídrico por clase anual (déficit y agua a la siembra); verificar con tests "Rango de agua a la siembra" y "Clase sin escenarios válidos"
 
 ## 4. Contexto y riesgos (P1)
 

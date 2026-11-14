@@ -2,7 +2,7 @@
 
 ## 1. Lote demo y configuración (P0)
 
-- [ ] 1.1 Registrar `A-FLD-01` (ubicación y superficie placeholder de `demo-casilda`) en `assumptions.yaml` y definir el Lote demo; verificar test "Lote demo válido" y "Lote demo marcado como supuesto"
+- [ ] 1.1 Registrar `A-DEMO-01` (ubicación y superficie placeholder de `demo-casilda`) en `assumptions.yaml` y definir el Lote demo; verificar test "Lote demo válido" y "Lote demo marcado como supuesto"
 - [ ] 1.2 Agregar `DEMO_MODE` a `Settings` con credenciales opcionales en modo demo; verificar test que instancia `Settings` sin credenciales con `DEMO_MODE=1` y falla sin él
 
 ## 2. Fixtures NASA (P0)
@@ -14,7 +14,7 @@
 
 ## 3. Económicos de ejemplo (P0)
 
-- [ ] 3.1 Crear `economics.example.yaml` con cada parámetro como `A-ECO-NN` con fuente y fecha (valores y fuentes provistos por el responsable de `economics`) y registrar los ids en `assumptions.yaml`; verificar tests "Parámetro sin fuente rechazado" y "Rótulo de ejemplo visible"
+- [ ] 3.1 Crear `economics.example.yaml` con cada parámetro como A-DEMO-02 a A-DEMO-06 con fuente y fecha (valores y fuentes provistos por el responsable de `economics`) y registrar los ids en `assumptions.yaml`; verificar tests "Parámetro sin fuente rechazado" y "Rótulo de ejemplo visible"
 
 ## 4. Snapshot del motor (P0)
 

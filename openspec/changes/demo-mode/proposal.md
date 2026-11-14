@@ -8,9 +8,9 @@ La demo en vivo es un criterio de evaluación y la red de la sede, Earthdata y l
 
 ## What Changes
 
-- Lote de demo `demo-casilda` (coordenadas placeholder del sur de Santa Fe, ASSUMPTION `A-FLD-01` a confirmar con el equipo).
-- Fixtures cacheados en `data/fixtures/demo/` para todos los datasets NASA usados (POWER, SMAP L4, GPM IMERG, GRACE-FO, MODIS NDVI), con manifiesto de procedencia y checksums.
-- Parámetros económicos de ejemplo con fuente y fecha, marcados como ejemplo/ASSUMPTION `A-ECO-NN`.
+- Lote de demo `demo-casilda` (coordenadas placeholder del sur de Santa Fe, ASSUMPTION `A-DEMO-01` a confirmar con el equipo).
+- Fixtures cacheados en `data/fixtures/demo/` para todos los datasets NASA usados (POWER, SMAP L4, GPM IMERG, GRACE-FO, MODIS NDVI y SRTM si se implementa en P1), con manifiesto de procedencia y checksums.
+- Parámetros económicos de ejemplo con fuente y fecha, marcados como ejemplo/ASSUMPTION `A-DEMO-02` a `A-DEMO-06` (área DEMO, para no chocar con los ids de economics ni de field-measurement).
 - Flag `DEMO_MODE=1`: la API arranca sin red ni credenciales y resuelve todo desde fixtures.
 - Script de un comando que regenera fixtures desde NASA y reporta diff.
 - Snapshot de la salida del motor para el lote demo por actor (test de regresión).

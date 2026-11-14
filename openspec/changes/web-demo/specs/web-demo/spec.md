@@ -58,7 +58,7 @@ Si los tiles de GIBS fallan (error de red o timeout configurable), la web MUST m
 - **THEN** se ve la imagen estática del lote con el rótulo "imagen cacheada" y su fecha, y la página no muestra errores no manejados
 
 ### Requirement: Tabla comparativa de rotaciones
-La web MUST mostrar una tabla con al menos 3 rotaciones evaluadas, incluida la actual, con rango, nombre, puntaje total en USD/ha y su desglose (VAN del margen, α·ΔSuelo, λ·Riesgo), factibilidad hídrica (FEASIBLE, RISKY, NOT_FEASIBLE), ΔSuelo y Riesgo. La rotación con `is_current` MUST quedar destacada con rótulo textual "actual", no solo por color.
+La web MUST mostrar una tabla con al menos 3 rotaciones evaluadas, incluida la actual, con rango, nombre, puntaje total en USD/ha y su desglose (VAN, α·ΔSuelo, λ·Riesgo, términos de prioridad), diferencia contra la actual (`score_delta_vs_current`), factibilidad hídrica, ΔSuelo y Riesgo. La rotación con `is_current` MUST quedar destacada con rótulo textual "actual", no solo por color.
 
 #### Scenario: Rotación actual destacada
 - **GIVEN** una evaluación donde R_SOY_MONO tiene `is_current=true`
@@ -113,7 +113,7 @@ Tras cada nueva evaluación la web MUST indicar, por rotación, el cambio de pos
 Cada número del análisis mostrado (puntaje, términos, ΔSuelo, riesgo, datos NASA, parámetros) MUST llevar un badge con su procedencia OBSERVED, DERIVED, ASSUMPTION o USER_INPUT, distinguible por texto o ícono además de color.
 
 #### Scenario: Supuesto marcado
-- **GIVEN** un precio con procedencia ASSUMPTION `A-ECO-01`
+- **GIVEN** un precio de ejemplo con procedencia ASSUMPTION `A-DEMO-02`
 - **WHEN** se muestra en el panel
 - **THEN** el valor lleva el badge ASSUMPTION
 
@@ -137,7 +137,7 @@ Al seleccionar una rotación la web MUST mostrar su evidencia (dataset, variable
 - **THEN** ve el faltante "profundidad de napa" con por qué importa y cómo conseguirlo
 
 ### Requirement: Glosario en lenguaje simple
-La web MUST ofrecer un glosario obtenido de `GET /glossary` que incluya al menos evapotranspiración, anomalía de humedad, NDVI, helada, balance hídrico y la diferencia entre dato satelital y medición de campo. Los términos del glosario que aparezcan en la UI MUST enlazar a su definición.
+La web MUST ofrecer un glosario obtenido de `GET /glossary` que incluya al menos evapotranspiración, anomalía de humedad, NDVI, helada, estrés térmico, balance hídrico, GRACE-FO y la diferencia entre dato satelital y medición de campo. Los términos del glosario que aparezcan en la UI MUST enlazar a su definición.
 
 #### Scenario: Término enlazado
 - **WHEN** el usuario activa el término "NDVI" en la leyenda del mapa
@@ -199,3 +199,46 @@ La web MUST leer la URL de la API de configuración de build, MUST consultar `GE
 - **GIVEN** Playwright bloqueando todo host salvo la API y `gibs.earthdata.nasa.gov`
 - **WHEN** se recorre el flujo completo de demo
 - **THEN** no hay requests bloqueadas ni errores en consola
+
+### Requirement: Calendario de suelo desnudo
+Al seleccionar una rotación la web MUST mostrar su calendario de 12 meses de días sin cultivo vivo y sin cobertura tal como lo envía la API y, para la rotación actual, la fracción observada de NDVI bajo umbral del lote como fila de evidencia con badge OBSERVED. La web MUST NOT calcular días ni fracciones.
+
+#### Scenario: Calendario de la actual con NDVI
+- **GIVEN** una respuesta mockeada con calendario de suelo desnudo y evidencia NDVI para la actual
+- **WHEN** se selecciona la rotación actual
+- **THEN** se ven 12 celdas con los días de la API y la fila de NDVI observado con su badge y tooltip de dataset y período
+
+#### Scenario: Comparar con una alternativa
+- **WHEN** se selecciona una rotación con cultivo de servicio
+- **THEN** su calendario muestra los valores de la API y no tiene fila de NDVI observado
+
+### Requirement: Timeline de vulnerabilidad
+La web MUST mostrar, por cultivo de la rotación seleccionada, un timeline mensual con los eventos que envía la API (helada y déficit hídrico en P0; estrés térmico y lluvia extrema en P1) y su nivel por texto o ícono además de color, con los meses fuera del ciclo marcados y el umbral como tooltip de supuesto.
+
+#### Scenario: Déficit en enero
+- **GIVEN** una respuesta con déficit HIGH en enero para la soja de segunda
+- **WHEN** se abre el timeline de esa rotación
+- **THEN** la celda de enero de la soja de segunda muestra "alto" con su frecuencia y el tooltip cita el supuesto del umbral
+
+#### Scenario: Evento ausente
+- **WHEN** la respuesta no trae lluvia extrema porque falta IMERG
+- **THEN** el timeline no muestra esa fila y el panel de faltantes muestra el Faltante enviado por la API
+
+### Requirement: Rango entre años secos y húmedos
+Para cada rotación la web MUST mostrar el rango de margen por clase de año (mínimo, esperado, máximo de DRY, NORMAL y WET) y el rango hídrico por clase que envía la API, con una leyenda que diga que así se expresa la incertidumbre.
+
+#### Scenario: Barras de rango
+- **GIVEN** una respuesta con rangos de margen por clase
+- **WHEN** se abre el panel de la rotación
+- **THEN** se ven tres barras rotuladas Seco, Normal y Húmedo con mínimo, esperado y máximo tal como los envía la API
+
+### Requirement: Filtro por clase de año y prioridades
+La web MUST ofrecer un filtro de clase de año (Todos, Solo secos, Solo húmedos) y controles de prioridades del productor que se envían a `POST /evaluate`, y MUST mostrar el filtro efectivo y los años usados que declara la respuesta.
+
+#### Scenario: Solo años secos
+- **WHEN** el usuario elige "Solo secos"
+- **THEN** se envía `year_class_filter: "DRY"` a `/evaluate` y la tabla muestra el rótulo del filtro y la cantidad de años usados según la respuesta
+
+#### Scenario: Prioridad de agua
+- **WHEN** el usuario sube la prioridad de agua
+- **THEN** se envía un único pedido con la prioridad y la tabla muestra el término de prioridad que devuelve la API

@@ -26,6 +26,9 @@
 - [ ] 4.2 Panel de rotación seleccionada con evidencia, beneficios, faltantes y riesgos; verificar Playwright "Faltantes visibles"
 - [ ] 4.3 Leyendas fijas "Apoya, no reemplaza al agrónomo" y "Escenarios históricos, no predicción"; verificar Playwright "Leyendas siempre presentes"
 
+- [ ] 4.4 Componente `<MonthStrip>` para el calendario de suelo desnudo con fila de NDVI observado; verificar Playwright "Calendario de la actual con NDVI" y "Comparar con una alternativa"
+- [ ] 4.5 Timeline de vulnerabilidad por cultivo (helada y déficit) y barras de rango por clase; verificar Playwright "Déficit en enero", "Evento ausente" y "Barras de rango"
+
 ## 5. Simulador de chat (P0)
 
 - [ ] 5.1 Componente de chat estilo mensajería contra `POST /chat/simulate` con botón "enviar ubicación del lote demo" y rótulo de simulación; verificar Playwright "Conversación de demo" y "Error del simulador"
@@ -35,9 +38,11 @@
 - [ ] 6.1 Sliders H, α, λ con rangos de la API, debounce y descarte de respuestas viejas; verificar Playwright "Cambio de λ" y "Respuestas fuera de orden"
 - [ ] 6.2 Indicador de cambio de posición y animación FLIP con `prefers-reduced-motion`; verificar vitest del diff de ranking y Playwright "Subida de posición" y "Movimiento reducido"
 
+- [ ] 6.3 Filtro por clase de año y controles de prioridades enviados a `/evaluate`, más filas de calor y lluvia extrema en el timeline cuando vengan en la respuesta; verificar Playwright "Solo años secos" y "Prioridad de agua"
+
 ## 7. Glosario y fallback (P1)
 
-- [ ] 7.1 Glosario desde `GET /glossary` con enlaces desde la UI; verificar Playwright "Término enlazado" y que existan los 6 términos mínimos
+- [ ] 7.1 Glosario desde `GET /glossary` con enlaces desde la UI; verificar Playwright "Término enlazado" y que existan los 8 términos mínimos
 - [ ] 7.2 Fallback a imagen estática cacheada del lote demo con rótulo y fecha; verificar Playwright "GIBS caído en la demo" con requests a GIBS bloqueadas
 
 ## 8. Accesibilidad, deploy e integración (P1)

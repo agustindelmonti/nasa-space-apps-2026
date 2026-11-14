@@ -217,3 +217,14 @@ El calendario MUST incluir, por cultivo de renta y mes, estrés térmico (algún
 #### Scenario: Sin IMERG en la entrada
 - **WHEN** la entrada no trae lluvia IMERG
 - **THEN** el calendario no tiene evento de lluvia extrema y se emite un Faltante que explica cómo conseguirla
+
+### Requirement: Rango hídrico por clase de año
+Por campaña, el sistema MUST informar para cada clase anual (DRY, NORMAL, WET) el mínimo, la media ponderada y el máximo del déficit del ciclo (mm) y del agua útil a la siembra del cultivo de verano (mm), como DERIVED, para que explanations explique la incertidumbre entre años secos y húmedos sin calcular números nuevos.
+
+#### Scenario: Rango de agua a la siembra
+- **WHEN** se evalúa trigo/soja de segunda sobre 30 escenarios con 10 por clase
+- **THEN** la salida trae, para DRY, NORMAL y WET, mínimo, media y máximo del agua a la siembra de la soja en mm
+
+#### Scenario: Clase sin escenarios válidos
+- **WHEN** todos los años WET quedan excluidos por `MISSING_WEATHER`
+- **THEN** el rango WET se informa vacío con el motivo

@@ -16,6 +16,7 @@ El eje AFA es gestión hídrica: la pregunta real del productor es si le da el a
 - GRACE-FO como contexto regional que puede subir FEASIBLE a RISKY, nunca decide solo. Napa opcional como atenuante informado.
 - Riesgo de helada (T2M_MIN bajo umbral en ventanas sensibles) como Riesgo separado del estado hídrico, cubierto aquí por compartir insumos y escenarios.
 - Calendario mensual de vulnerabilidad por cultivo: helada y déficit hídrico (P0), estrés térmico en floración con T2M_MAX y lluvia extrema con IMERG sobre su percentil p95 de ejemplo (P1), con umbrales A-CLI-08 a A-CLI-10.
+- Rango hídrico por clase de año (déficit y agua a la siembra: mínimo, media y máximo) para explicar la incertidumbre entre años secos y húmedos.
 - Salida con motivos codificados, evidencia, supuestos usados y faltantes. Puro y testeable sin red.
 
 ## Capabilities

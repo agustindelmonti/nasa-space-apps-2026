@@ -24,9 +24,30 @@ Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El mot
    - GRACE/GRACE-FO: archivo único de mascons JPL RL06.x CRI (grilla 0.5°, mascons de ~3°) en PO.DAAC; se baja una vez y se extrae la celda. CSR como alternativa documentada.
    - MOD13Q1 v061: subsetting por punto (servicio de subsets de ORNL DAAC o lectura de tile); QA "pixel reliability" > 1 se descarta.
    - HLS (P2): solo si sobra tiempo, NDVI desde B04/B05 (L30) o B04/B8A (S30) con máscara Fmask.
-8. **Procedencia de productos modelados**: los valores tal como los publica NASA se emiten como OBSERVED con `is_modeled` explícito (true para SMAP L4, POWER meteorológico basado en MERRA-2 y mascons GRACE; false para IMERG y MODIS se discute). Agregaciones y ET0 calculada son DERIVED. Alternativa descartada: marcar todo producto modelado como DERIVED (borra la diferencia entre "lo publica NASA" y "lo calculamos nosotros", que es la que importa en el panel de evidencia).
+8. **Procedencia de productos modelados** (regla acordada en domain-models): los valores tal como los publica un tercero se emiten como OBSERVED con `is_modeled` explícito (true para SMAP L4, POWER basado en MERRA-2, mascons GRACE-FO, SoilGrids y GLDAS; false para IMERG, MODIS, SRTM y ECOSTRESS). Agregaciones, ET0 calculada, pendiente y posición en el relieve son DERIVED. Alternativa descartada: marcar todo producto modelado como DERIVED (borra la diferencia entre "lo publica NASA" y "lo calculamos nosotros", que es la que importa en el panel de evidencia).
 9. **Modo offline**: un `Settings` (pydantic-settings) con `demo_mode`, `offline`, `cache_dir`, credenciales. En modo offline los adaptadores de red se reemplazan por uno que lanza `DATA_NOT_CACHED`; un test con `pytest-socket` (o monkeypatch de httpx) garantiza cero red.
 10. **Errores tipados**: `PERIOD_OUT_OF_COVERAGE`, `DATA_NOT_CACHED`, `EARTHDATA_AUTH_MISSING`, `UPSTREAM_UNAVAILABLE`, `CACHE_SCHEMA_INVALID`, `SOURCE_INCOMPLETE`. La API los traduce a `{code, message, details}`.
+
+11. **SRTM (P1)**: SRTMGL1 (30 m) vía earthaccess; se recorta una ventana de tamaño fijo alrededor del lote (por ejemplo 2 km de lado, parámetro técnico de ingesta documentado en el catálogo, no agronómico) y se calcula pendiente media en % y posición relativa por percentil de la elevación del lote dentro de la ventana (loma, media loma, bajo). Salida: Evidencia de contexto de anegamiento y erosión para explanations y web; MUST NOT entrar al motor. Alternativa descartada: índice topográfico de humedad completo (requiere dirección de flujo y más tiempo).
+12. **ECOSTRESS (P2)**: LST y ET (L2/L3) para fechas con pasada sobre el lote; solo evidencia, con limitación de cobertura irregular. MUST NOT entrar al motor.
+13. **Resumen NDVI mensual**: por mes calendario, mediana de NDVI y fracción de compuestos válidos con NDVI bajo el umbral A-SOIL-10, sobre todo el período disponible; es el insumo de evidencia que viaja en `EngineInput` para soil-impact.
+
+### Armonización de resoluciones (P0 documental)
+
+El enunciado pide armonizar resoluciones a una grilla común. En el MVP no se re-grilla: cada dataset se muestrea en su resolución nativa al elemento que contiene el centroide del lote, y la Source registra la celda efectiva (coordenadas del centro y tamaño). La comparación entre datasets se hace en el dominio del lote (un punto), no en una grilla.
+
+| Dataset | Resolución nativa | Muestreo al lote | Celda efectiva registrada |
+|---|---|---|---|
+| NASA_POWER | ~0.5° x 0.625° (radiación ~1°); diario | celda que contiene el punto (la API de POWER ya devuelve el punto de grilla) | centro de celda y tamaño |
+| SMAP_L4 | ~9 km EASE-Grid 2.0; 3-horario | celda EASE que contiene el punto; media diaria DERIVED | índice de fila/columna y centro |
+| GPM_IMERG | 0.1°; diario | celda que contiene el punto | centro de celda |
+| GRACE_FO | grilla 0.5°, mascons ~3°, ~300 km efectivos; mensual | celda 0.5° que contiene el punto | centro de celda y aviso de resolución efectiva |
+| MODIS_NDVI | 250 m; 16 días | píxel que contiene el punto | centro de píxel |
+| HLS_NDVI (P2) | 30 m; 2 a 3 días | píxel que contiene el punto | centro de píxel |
+| SRTM (P1) | 30 m; estático | ventana fija alrededor del punto para pendiente y posición | bbox de la ventana |
+| ECOSTRESS (P2) | ~70 m; irregular | píxel que contiene el punto por pasada | centro de píxel y fecha de pasada |
+
+Temporalmente, todo se lleva a paso diario o a ventanas de campaña con agregaciones DERIVED explícitas (media diaria de SMAP, acumulados por ventana, resumen NDVI mensual); GRACE-FO queda mensual. Alternativa descartada: re-grillar todo a 0.1° con interpolación (agrega números que ningún dataset publicó y esconde la diferencia de escala que queremos mostrar).
 
 ### Metadatos por dataset (catálogo inicial, verificar versiones al implementar)
 
@@ -38,6 +59,8 @@ Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El mot
 | GRACE_FO | Mascons JPL RL06.x CRI, TWS anomaly | ~300 km efectivos; mensual | 2002-04+ con hueco 2017-07 a 2018-05 y meses sueltos | Regional: dice si la región está más seca o húmeda que su línea base, no el lote |
 | MODIS_NDVI | MOD13Q1 v061 NDVI | 250 m; 16 días | 2000-02+ | Mezcla lote y bordes; nubes generan huecos |
 | HLS_NDVI (P2) | HLSL30/HLSS30 v2.0 | 30 m; 2 a 3 días combinado | 2013+/2015+ | Muchas nubes en invierno; volumen grande |
+| SRTM (P1) | SRTMGL1 v003 elevación | 30 m; estático | 2000 (misión única) | Elevación de 2000; en llanura plana las diferencias son de pocos metros y el error vertical pesa |
+| ECOSTRESS (P2) | ECO L2 LST / L3 ET | ~70 m; pasadas irregulares | 2018-07+ | Horario de pasada variable y huecos; no es serie diaria |
 
 ## Risks / Trade-offs
 
@@ -46,7 +69,7 @@ Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El mot
 - [Cambios de versión de producto] → versión en Source y en la clave del sidecar; si cambia, se invalida la caché.
 - [ET0 calculada distinta de otras referencias] → test contra ejemplo FAO-56 y método declarado en la procedencia.
 - [Celda POWER grande frente al lote] → se muestra la celda efectiva y la limitación en el panel de evidencia.
-- [Inconsistencia con el ejemplo de SoilGrids de domain-models (modelado como DERIVED)] → decisión 8 explicitada para revisar con el equipo.
+- [Lectura de productos modelados como "medidos"] → OBSERVED con `is_modeled=true` (regla de domain-models) y limitación visible en el panel de evidencia.
 
 ## Supuestos abiertos para AFA
 

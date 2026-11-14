@@ -165,11 +165,11 @@ Para cada candidata con economía completa, el motor MUST informar por clase anu
 - **THEN** el puntaje y el ranking no cambian
 
 ### Requirement: Calendarios en el resultado
-Cada resultado MUST incluir el calendario mensual de suelo desnudo que produce soil-impact y el calendario mensual de vulnerabilidad que produce water-feasibility, copiados sin recalcular y con procedencia DERIVED.
+Cada resultado MUST incluir el calendario mensual de suelo desnudo de soil-impact, y el calendario mensual de vulnerabilidad y el rango hídrico por clase de año de water-feasibility, copiados sin recalcular y con procedencia DERIVED.
 
 #### Scenario: Calendarios presentes
 - **WHEN** se evalúa la entrada del lote demo
-- **THEN** cada resultado trae 12 meses de suelo desnudo y el calendario de vulnerabilidad por cultivo
+- **THEN** cada resultado trae 12 meses de suelo desnudo, el calendario de vulnerabilidad por cultivo y el rango hídrico por clase
 
 ### Requirement: Filtro por clase de año
 Si `EngineInput` trae `year_class_filter` DRY o WET, el motor MUST usar solo los escenarios de esa clase anual, re-ponderados w'_s = w_s / Σ w seleccionados, para economía, Riesgo y frecuencias hídricas, controlar A-CLI-03 sobre el conjunto completo y declarar en la salida el filtro, los años usados y la advertencia YEAR_CLASS_FILTER_APPLIED.

@@ -22,11 +22,13 @@ Ver proposal.md. El motor (`rotation-engine`) entrega un `EngineOutput` con resu
 8. **Partición WhatsApp**: algoritmo voraz determinista: acumular párrafos mientras quepan (reservando el largo del marcador `(n/m)` calculado con m estimado y recalculado hasta punto fijo); si un párrafo no entra, cortar por línea y luego por palabra. Nunca se corta dentro de un token de cita (los tokens se protegen como unidades indivisibles). Las leyendas y la nota de supuestos se fuerzan en el último mensaje.
 9. **Glosario como YAML versionado** (`data/glossary.yaml`), con huecos `{dataset:SMAP_L4.spatial_resolution}` que se resuelven contra el catálogo de datasets de `nasa-ingestion`. Alternativa descartada: glosario hardcodeado en código (los agrónomos de AFA no pueden revisarlo).
 10. **Versión de plantillas** (`templates_version`, semver manual) en la salida estructurada; los snapshot tests fallan si cambia el texto sin bump.
+11. **Incertidumbre**: plantilla fija "en años secos el margen fue de X a Y; en años húmedos, de Z a W" citando el rango de margen por clase del resultado, y lo mismo con el agua a la siembra del rango hídrico de water-feasibility. El Riesgo se explica como "en el peor q de los años históricos ganaste en promedio tanto menos que en un año medio" (expected shortfall de márgenes, A-ACT-05); nunca como "el margen de los años DRY". Alternativa descartada: mostrar solo el esperado con un desvío estándar (no se entiende y esconde la cola).
+12. **Calendarios**: suelo desnudo mes a mes con frases por tramo ("de junio a septiembre el lote queda sin cultivo vivo") y la fracción observada de NDVI bajo umbral como evidencia OBSERVED de la actual; vulnerabilidad como lista de meses con nivel MEDIUM o HIGH por cultivo y evento. Sin cálculos: todos los números vienen del resultado.
 
 ## Risks / Trade-offs
 
 - [Textos rígidos y repetitivos] → aceptado: la prioridad es la trazabilidad; la capa LLM opcional de `whatsapp-channel` puede reformular con guardas.
-- [El motor no expone algún número que el texto quiere citar, por ejemplo diferencia vs la actual] → el texto usa comparación cualitativa; si el equipo lo quiere numérico, se pide a `rotation-engine` que lo agregue a la salida.
+- [El motor no expone algún número que el texto quiere citar] → el texto usa comparación cualitativa y se pide a `rotation-engine` que lo agregue. La diferencia contra la actual ya sale de `score_delta_vs_current`; los rangos por clase salen del motor (margen) y de water-feasibility (balance hídrico).
 - [Falsos positivos del extractor con nombres que contienen dígitos] → lista blanca cerrada y revisada en code review.
 - [Límite de 1600 caracteres cambia según proveedor] → límite configurable; default documentado como dato de plataforma, no agronómico.
 

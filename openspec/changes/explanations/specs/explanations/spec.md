@@ -45,8 +45,13 @@ La sección "por qué" MUST indicar la posición de la rotación en el ranking, 
 - **WHEN** se genera la sección por qué
 - **THEN** el texto dice explícitamente que en los escenarios históricos evaluados no hay agua suficiente para esa rotación, independientemente de su puntaje
 
+#### Scenario: Diferencia contra la actual citada
+- **GIVEN** una rotación con `score_delta_vs_current` = 65 USD/ha en la salida del motor
+- **WHEN** se compara con la actual
+- **THEN** el texto cita "65 USD/ha más que la actual" con la ruta a `score_delta_vs_current` y no calcula la diferencia
+
 #### Scenario: Comparación sin número disponible
-- **GIVEN** que la salida del motor no informa la diferencia de puntaje entre dos rotaciones
+- **GIVEN** que la salida no trae `score_delta_vs_current` (la actual no tiene puntaje)
 - **WHEN** se compara una rotación con la actual
 - **THEN** el texto usa una comparación cualitativa ("más alto", "más bajo") y no calcula la diferencia
 
@@ -62,9 +67,9 @@ Cada evidencia MUST mostrar dataset, variable, período, valor con unidad, inter
 Los beneficios MUST provenir de la salida del motor. Cada faltante MUST decir qué dato falta, por qué importa y cómo conseguirlo. Cada riesgo MUST decir tipo, severidad en palabras (bajo, medio, alto) y su base (evidencia o supuesto con su id).
 
 #### Scenario: Riesgo basado en supuesto
-- **GIVEN** un riesgo de helada con severidad MEDIUM cuya base es el supuesto A-AGR-04
+- **GIVEN** un riesgo de helada con severidad MEDIUM cuya base es el umbral de helada A-CLI-05
 - **WHEN** se genera el texto web
-- **THEN** el riesgo se muestra como "riesgo de helada: medio" seguido de la marca de supuesto A-AGR-04
+- **THEN** el riesgo se muestra como "riesgo de helada: medio" seguido de la marca de supuesto A-CLI-05
 
 ### Requirement: Trazabilidad de números citados
 Todo número que aparezca en un texto generado MUST existir en la salida del motor o en su entrada resuelta con el mismo `input_hash`, y MUST registrarse como cita con la ruta al campo de origen y su procedencia. El generador MUST NOT hacer cálculos que produzcan números nuevos para el texto.
@@ -91,9 +96,9 @@ Los tokens con dígitos exentos de cita MUST pertenecer a una lista cerrada y ve
 Todo número cuya procedencia sea ASSUMPTION MUST mostrarse con una marca visible que incluya su `assumption_id` en el texto web y una marca abreviada con nota al pie que liste los ids en el texto WhatsApp. La explicación estructurada MUST listar todos los supuestos usados con su estado de validación.
 
 #### Scenario: Precio supuesto en texto web
-- **GIVEN** un margen que depende de un rinde con procedencia ASSUMPTION A-ECO-02
+- **GIVEN** un margen que depende de un rinde de ejemplo con procedencia ASSUMPTION A-DEMO-06
 - **WHEN** se genera el texto web
-- **THEN** el número aparece seguido de "(supuesto A-ECO-02)"
+- **THEN** el número aparece seguido de "(supuesto A-DEMO-06)"
 
 #### Scenario: Supuestos en WhatsApp
 - **GIVEN** un resumen WhatsApp que cita dos números supuestos
@@ -166,18 +171,22 @@ Todo número en texto MUST usar coma decimal y punto de miles, con decimales fij
 - **THEN** obtiene el valor redondeado que se mostró
 
 ### Requirement: Glosario en lenguaje simple
-El sistema MUST proveer un glosario versionado con al menos: evapotranspiración, NDVI, anomalía de humedad, balance hídrico, heladas, GRACE-FO y agua subterránea, y dato satelital vs medición de campo. Cada entrada MUST tener id estable, término, definición corta (para WhatsApp), definición larga (web) y datasets relacionados.
+El sistema MUST proveer un glosario versionado con al menos: evapotranspiración, NDVI, anomalía de humedad, balance hídrico, heladas, estrés térmico, GRACE-FO y agua subterránea, y dato satelital vs medición de campo. Cada entrada MUST tener id estable, término, definición corta (para WhatsApp), definición larga (web) y datasets relacionados.
 
 #### Scenario: Glosario completo
 - **WHEN** se carga el glosario
-- **THEN** contiene las entradas `evapotranspiration`, `ndvi`, `soil_moisture_anomaly`, `water_balance`, `frost`, `grace_fo_groundwater` y `satellite_vs_field` con todos los campos completos
+- **THEN** contiene las entradas `evapotranspiration`, `ndvi`, `soil_moisture_anomaly`, `water_balance`, `frost`, `heat_stress`, `grace_fo_groundwater` y `satellite_vs_field` con todos los campos completos
 
 #### Scenario: Definición corta para WhatsApp
 - **WHEN** se valida cada definición corta
 - **THEN** ninguna supera el límite de caracteres de un mensaje WhatsApp
 
 ### Requirement: Dato satelital vs medición de campo
-La entrada `satellite_vs_field` MUST explicar resolución espacial, la diferencia entre un píxel y un lote, y la diferencia entre un sensor remoto o modelo y una muestra de campo. Las resoluciones citadas en el glosario MUST tomarse del catálogo de datasets, no escribirse a mano.
+La entrada `satellite_vs_field` MUST explicar resolución espacial, la diferencia entre un píxel y un lote, la diferencia entre un sensor remoto o modelo y una muestra de campo, y cómo combinarlos mejora la precisión (el satélite da serie larga y contexto, el campo corrige la escala del lote). Las resoluciones MUST tomarse del catálogo de datasets.
+
+#### Scenario: Combinar satélite y campo
+- **WHEN** se renderiza la entrada `satellite_vs_field`
+- **THEN** incluye un párrafo sobre cómo combinar datos satelitales y mediciones de campo (pluviómetro, napa, martillador) mejora la precisión, sin cifras inventadas
 
 #### Scenario: Resolución desde el catálogo
 - **GIVEN** que el catálogo de datasets declara la resolución de SMAP L4
@@ -216,3 +225,44 @@ El texto WhatsApp MUST resumir posición de la rotación actual, las primeras ro
 - **GIVEN** el mismo texto y el mismo límite
 - **WHEN** se particiona dos veces
 - **THEN** los cortes caen en las mismas posiciones
+
+### Requirement: Incertidumbre entre años secos y húmedos
+Para cada rotación con economía completa, la explicación MUST mostrar el rango de margen por clase anual (mínimo, esperado y máximo de DRY, NORMAL y WET) del resultado y el rango hídrico por clase de water-feasibility, citando cada número, y MUST decir que la dispersión entre años es la forma en que la herramienta expresa la incertidumbre.
+
+#### Scenario: Rango de margen citado
+- **GIVEN** una rotación con rango DRY 100 a 150 USD/ha y WET 500 a 600 USD/ha en la salida
+- **WHEN** se genera el texto web
+- **THEN** el texto menciona ambos rangos con sus citas y no solo el margen esperado
+
+#### Scenario: Rango hídrico citado
+- **GIVEN** un rango de agua a la siembra de la soja de segunda por clase en la salida
+- **WHEN** se genera el texto web
+- **THEN** el texto contrasta años secos y húmedos con esos valores citados
+
+#### Scenario: Clase vacía
+- **WHEN** el rango WET viene vacío
+- **THEN** el texto dice con una frase fija que no hubo años húmedos válidos, sin inventar valores
+
+### Requirement: Riesgo explicado como cola de márgenes
+El texto del término de riesgo MUST explicar el Riesgo como el faltante del margen en la cola de peso q de los años históricos (A-ACT-05) frente al margen medio, citando el valor del resultado, y MUST NOT describirlo como el margen de los años de clase DRY.
+
+#### Scenario: Riesgo con su definición
+- **WHEN** se explica una rotación con término de riesgo dominante
+- **THEN** el texto habla de "los peores años del registro" con la marca de supuesto A-ACT-05 y no menciona la clase DRY como definición del riesgo
+
+### Requirement: Calendarios explicados
+La explicación MUST describir el calendario de suelo desnudo de cada rotación por tramos de meses y, para la actual, la fracción observada de NDVI bajo umbral como evidencia OBSERVED; y el calendario de vulnerabilidad por cultivo con los meses de nivel MEDIUM o HIGH por evento (helada y déficit en P0, calor y lluvia extrema en P1), todo citado desde la salida.
+
+#### Scenario: Invierno desnudo en soja continua
+- **GIVEN** soja continua con días sin cultivo vivo de junio a septiembre en la salida
+- **WHEN** se genera el texto web
+- **THEN** el texto dice en qué meses el lote queda sin cultivo vivo, cita los días por mes y la evidencia NDVI observada del lote
+
+#### Scenario: Vulnerabilidad por mes
+- **GIVEN** un calendario con déficit HIGH en enero para la soja de segunda
+- **WHEN** se genera el texto web
+- **THEN** el texto menciona enero, el cultivo, el evento y la frecuencia citada
+
+#### Scenario: Calendario sin meses vulnerables
+- **WHEN** ningún mes supera el nivel LOW
+- **THEN** el texto usa una frase fija de "sin meses con vulnerabilidad media o alta registrada"

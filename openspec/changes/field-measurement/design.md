@@ -20,8 +20,8 @@ Principio físico: el impactómetro Clegg deja caer una masa con acelerómetro d
 4. **Saturación declarada**: muchos celulares tienen rango de ±8 g o ±16 g y un Clegg real registra decenas a cientos de g. Por eso se registra también la duración del pulso (menos sensible a saturación) y se marcan golpes saturados. Se documenta como limitación principal.
 5. **Almacenamiento**: `data/field/<plot_id>/<session_id>.json` con el JSON canónico de la sesión; idempotencia comparando el hash del contenido. Alternativa descartada: SQLite (innecesario para P2).
 6. **SMAP para la tarjeta**: se usa la media diaria de `sm_rootzone` de la caché; si la fecha no está, la más cercana anterior dentro de A-FLD-06. En la demo offline, la sesión de ejemplo y SMAP vienen de `data/fixtures/demo/`.
-7. **Rutas**: `POST /api/v1/plots/{id}/field-readings` y `GET /api/v1/plots/{id}/field-readings`; se agregan a la lista del change `api` como opcionales P2.
-8. **`FIELD_HAMMER` en Source** como agregado aditivo al enum de datasets de `domain-models`.
+7. **Rutas**: `POST /api/v1/plots/{id}/field-readings` y `GET /api/v1/plots/{id}/field-readings`, ya listadas en `api` como P2 con los códigos SESSION_CONFLICT y SAMPLING_RATE_TOO_LOW en su catálogo.
+8. **`FIELD_HAMMER` en Source**, ya agregado al enum de datasets de `domain-models`.
 
 ## Supuestos introducidos
 

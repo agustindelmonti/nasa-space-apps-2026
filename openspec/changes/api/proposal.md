@@ -1,6 +1,6 @@
 # Proposal: api
 
-**Prioridad:** P0 (POST /evaluate lite y completo, catálogo, perfiles, health, errores tipados, CORS para la demo del sábado); P1 (contexto del lote, glosario, supuestos, rate limit, OpenAPI pulido); P2 (métricas de latencia).
+**Prioridad:** P0 (POST /evaluate lite y completo, catálogo, perfiles, health, errores tipados, CORS para la demo del sábado); P1 (contexto del lote, glosario, supuestos, rate limit, OpenAPI pulido, POST /sensitivity, filtro por clase de año); P2 (métricas de latencia, rutas de lecturas de campo).
 
 ## Why
 
@@ -8,7 +8,8 @@ El motor es puro y no hace I/O; la web de demo y el canal WhatsApp necesitan un 
 
 ## What Changes
 
-- Se publica una API FastAPI bajo `/api/v1` con los endpoints transversales: POST /evaluate, GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate y GET /health.
+- Se publica una API FastAPI bajo `/api/v1` con los endpoints transversales: POST /evaluate, POST /sensitivity (P1, de actor-profiles), GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate, GET /health y POST/GET /plots/{plot_id}/field-readings (P2, de field-measurement).
+- Se agrega un filtro opcional por clase de año (ALL, DRY, WET) en /evaluate y /sensitivity que el motor aplica re-ponderando escenarios y declara en la salida.
 - Se define un request "lite" (lat/lon + rotación actual + actor) que la capa de aplicación resuelve contra caché y fixtures, además del request completo con `EngineInput`.
 - Se define un formato de error único `{code, message, details}` con catálogo cerrado de códigos y su estado HTTP.
 - Se garantiza idempotencia de POST /evaluate: misma entrada, misma respuesta byte a byte, con header `X-Input-Hash`.
@@ -25,7 +26,7 @@ El motor es puro y no hace I/O; la web de demo y el canal WhatsApp necesitan un 
 ## Impact
 
 - Adaptador `fieldshift.adapters.api` (FastAPI) y casos de uso en `fieldshift.application`.
-- Depende de `domain-models`, `rotation-engine`, `explanations`, `nasa-ingestion` (caché), `actor-profiles`, `economics` (parámetros con fuente y fecha) y `demo-mode` (fixtures, DEMO_MODE=1). El comportamiento conversacional de /whatsapp/webhook y /chat/simulate se especifica en `whatsapp-channel`.
+- Depende de `domain-models`, `rotation-engine`, `explanations`, `nasa-ingestion` (caché), `actor-profiles` (perfiles y sensibilidad), `economics` (parámetros con fuente y fecha), `field-measurement` (P2) y `demo-mode` (fixtures, DEMO_MODE=1). El comportamiento conversacional de /whatsapp/webhook y /chat/simulate se especifica en `whatsapp-channel`.
 - Consumidores: `web-demo` y simulador de chat. Deploy en Render o Fly (gratuito).
 - Dependencias: `fastapi`, `uvicorn`, `pydantic-settings`.
 

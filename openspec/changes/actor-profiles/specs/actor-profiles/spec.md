@@ -19,7 +19,7 @@ El sistema MUST ofrecer los perfiles OWNER, TENANT, COOP y BANK, cada uno con H,
 - **THEN** el H de OWNER es mayor que el de TENANT y ambos vienen del registro de supuestos, no del código
 
 ### Requirement: Nivel de cola del Riesgo
-El nivel q de la cola usada para el expected shortfall MUST ser un supuesto global A-ACT-05 con valor en (0, 1], común a todos los perfiles, y MUST viajar en la entrada del motor.
+El nivel q de la cola usada para el expected shortfall de márgenes MUST ser un supuesto global A-ACT-05 con valor en (0, 1], común a todos los perfiles, y MUST viajar en la entrada del motor. El Riesgo MUST NOT definirse como el margen de los años de clase DRY.
 
 #### Scenario: q fuera de rango
 - **WHEN** el registro trae q = 0
@@ -54,7 +54,7 @@ Con el lote demo y sus fixtures, MUST existir al menos un par de perfiles predef
 - **THEN** al menos dos de los cuatro rankings son distintos y el test informa qué par difiere
 
 ### Requirement: Sensibilidad en grilla determinista
-El sistema MUST ofrecer un caso de uso de sensibilidad que, dados una entrada base, un parámetro (α o λ) y una grilla [mín, máx] con n puntos equiespaciados (2 a 41, extremos incluidos, dentro de A-ACT-06), devuelva para cada valor el ranking de ids y los términos del puntaje, manteniendo fijo el resto del perfil.
+El sistema MUST ofrecer un caso de uso de sensibilidad, expuesto en `POST /api/v1/sensitivity`, que dados una entrada base, un parámetro (α o λ) y una grilla [mín, máx] con n puntos equiespaciados (2 a 41, extremos incluidos, dentro de A-ACT-06) devuelva por valor el ranking de ids y los términos del puntaje, con el resto del perfil fijo.
 
 #### Scenario: Grilla sobre λ
 - **GIVEN** la entrada demo con perfil OWNER
@@ -79,3 +79,38 @@ La sensibilidad MUST ser determinista y pura como el motor: misma entrada y gril
 #### Scenario: Repetición idéntica
 - **WHEN** se ejecuta dos veces la misma sensibilidad
 - **THEN** las salidas canónicas son idénticas byte a byte
+
+### Requirement: Pesos de prioridades del productor
+Un perfil MUST admitir pesos opcionales en [0, 1] para WATER, NITROGEN, EROSION_COVER, OM_CARBON y SUPPLEMENTAL_INCOME. NITROGEN, EROSION_COVER y OM_CARBON MUST re-ponderar w_k de ΔSuelo con A-ACT-07 y renormalizar; WATER y SUPPLEMENTAL_INCOME MUST agregar los términos documentados con A-ACT-08 y A-ACT-09. Con todo en 0 la salida MUST ser idéntica a sin prioridades.
+
+#### Scenario: Prioridades nulas no cambian nada
+- **GIVEN** la entrada demo con OWNER
+- **WHEN** se evalúa con todas las prioridades en 0 y sin prioridades
+- **THEN** puntajes, ranking y desglose son idénticos y los términos de prioridad valen 0
+
+#### Scenario: Prioridad de nitrógeno
+- **GIVEN** A-SOIL-01 de ejemplo con peso de N 0.15, A-ACT-07 = 1 y prioridad NITROGEN = 1
+- **WHEN** se calculan los pesos efectivos
+- **THEN** el peso de N es 0.30 / 1.15 antes de redondear, los pesos suman 1 y el resto baja en la misma proporción
+
+#### Scenario: Prioridad de agua
+- **GIVEN** prioridad WATER = 1, A-ACT-08 = 100 USD/ha (ejemplo) y una rotación con ajuste hídrico en una fracción ponderada 0.3
+- **WHEN** se calcula el término de agua
+- **THEN** vale −30 USD/ha y figura en el desglose con procedencia DERIVED citando A-ACT-08
+
+#### Scenario: Monotonicidad preservada
+- **GIVEN** cualquier juego de prioridades válido
+- **WHEN** se corren las propiedades de λ y α de quality
+- **THEN** ambas siguen valiendo, porque los términos de prioridad no dependen de α ni λ
+
+### Requirement: Ventanas de maquinaria del productor
+El perfil MUST admitir ventanas de maquinaria opcionales (meses 1 a 12 por operación SOWING y HARVEST) como USER_INPUT, MUST copiarlas al perfil efectivo de `EngineInput` y rotation-engine MUST aplicarlas como restricción. Sin ventanas MUST NOT haber restricción de maquinaria.
+
+#### Scenario: Ventanas en el perfil efectivo
+- **WHEN** se crea un perfil personalizado con siembra disponible en octubre y noviembre
+- **THEN** el perfil efectivo trae esas ventanas con procedencia USER_INPUT y el `input_hash` cambia respecto del perfil sin ventanas
+
+#### Scenario: Elegibilidad estable en la sensibilidad
+- **GIVEN** un perfil con ventanas de maquinaria que excluyen una candidata
+- **WHEN** se corre la sensibilidad sobre λ
+- **THEN** esa candidata sigue no elegible en todos los puntos de la grilla

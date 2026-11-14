@@ -33,6 +33,8 @@ Ver proposal.md. La API (change `api`) expone `/api/v1` con los endpoints de xcu
 10. **Simulador de chat** como componente aislado que solo hace `POST /chat/simulate` con `{session_id, message, location?}` y renderiza el texto devuelto. El `session_id` es aleatorio por pestaña (está en el front, no en el motor).
 11. **Tests**: vitest para funciones puras (snap de fecha, formato, diff de ranking); Playwright con `page.route` para mockear la API con fixtures JSON de `demo-mode` (tests deterministas) y un job aparte contra la API real en DEMO_MODE; `@axe-core/playwright` para accesibilidad; viewports 1920x1080, 1280x720 y 390x844.
 12. **Configuración**: `VITE_API_BASE_URL` en build (Vercel env); `.env.example` sin secretos. GIBS no requiere credenciales.
+13. **Calendarios y rangos**: componente `<MonthStrip>` de 12 celdas reutilizado para suelo desnudo (días por mes, con la fracción NDVI observada como fila de evidencia) y para el timeline de vulnerabilidad (una fila por cultivo y evento, nivel por texto e ícono además de color). El rango por clase se muestra como barra mín, esperado, máx por clase. Todo viene armado de la API; el front no agrega ni promedia. Alternativa descartada: gráfico con librería de charts (más peso y menos control de accesibilidad para 12 celdas).
+14. **Filtro por clase de año y prioridades (P1)**: control segmentado ALL/DRY/WET y sliders 0 a 1 por prioridad que se envían a `/evaluate` con el mismo debounce que H, α y λ; la tabla muestra el filtro efectivo que declara la respuesta.
 
 ## Risks / Trade-offs
 

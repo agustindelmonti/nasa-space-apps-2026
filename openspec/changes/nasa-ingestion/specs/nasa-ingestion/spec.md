@@ -174,3 +174,40 @@ Las agregaciones (media diaria desde 3-horario, acumulado de lluvia por ventana,
 #### Scenario: Acumulado completo
 - **WHEN** la ventana no tiene faltantes
 - **THEN** el acumulado está marcado completo y su método es `sum_daily`
+
+### Requirement: Contexto de relieve desde SRTM
+El sistema MUST obtener la elevación SRTM (30 m) en una ventana fija alrededor del lote y derivar la pendiente media (%) y la posición relativa del lote en el relieve (LOMA, MEDIA_LOMA, BAJO) como DERIVED con Source SRTM, para usarlas solo como evidencia de anegamiento y erosión. Estos valores MUST NOT ser insumo del motor.
+
+#### Scenario: Lote en un bajo
+- **GIVEN** una ventana SRTM donde la elevación del lote está en el tercio inferior de la ventana
+- **WHEN** se calcula el contexto de relieve
+- **THEN** la posición es BAJO, DERIVED con `derived_from` la elevación SRTM, y la evidencia menciona riesgo de anegamiento a revisar localmente
+
+#### Scenario: Relieve fuera del motor
+- **WHEN** se arma `EngineInput` para un lote con contexto SRTM
+- **THEN** la entrada no contiene pendiente ni posición y el `input_hash` no cambia por el contexto SRTM
+
+### Requirement: Evidencia de estrés desde ECOSTRESS
+El sistema MUST poder obtener (P2) LST y ET de ECOSTRESS para fechas con pasada sobre el lote, como OBSERVED con Source ECOSTRESS, fecha y hora de pasada, solo para el panel de evidencia. Estos valores MUST NOT ser insumo del motor y la falta de pasadas MUST quedar registrada como hueco.
+
+#### Scenario: Pasada con nubes
+- **WHEN** la pasada de una fecha está marcada como nublada en la capa de calidad
+- **THEN** el valor queda faltante con motivo `QA_REJECTED`
+
+#### Scenario: ECOSTRESS fuera del motor
+- **WHEN** se arma `EngineInput`
+- **THEN** no contiene valores de ECOSTRESS
+
+### Requirement: Muestreo al lote sin re-grillado
+Cada dataset MUST muestrearse en su resolución nativa al elemento (celda o píxel) que contiene el centroide del lote, o a una ventana fija para SRTM, sin re-grillar ni interpolar a una grilla común en el MVP, y la Source MUST registrar la celda efectiva y su tamaño. El catálogo MUST documentar la regla por dataset.
+
+#### Scenario: Celdas de distinto tamaño
+- **WHEN** se arma el contexto del lote demo con POWER, SMAP L4 e IMERG
+- **THEN** cada valor cita su propia celda efectiva con su tamaño y ninguno fue interpolado a otra grilla
+
+### Requirement: Resumen NDVI mensual del lote
+El sistema MUST derivar de la serie NDVI del píxel del lote un resumen por mes calendario con la mediana de NDVI y la fracción de compuestos válidos bajo el umbral A-SOIL-10, con período, conteo de compuestos usados y faltantes, como DERIVED, para incluirlo en `EngineInput`.
+
+#### Scenario: Mes sin compuestos válidos
+- **WHEN** todos los compuestos de julio fueron rechazados por QA
+- **THEN** el resumen de julio queda faltante con el conteo de rechazados y no se completa con meses vecinos

@@ -38,14 +38,14 @@ Un property test MUST verificar que subir α nunca empeora el rango de la candid
 - **THEN** el rango de C con α2 es menor o igual que k
 
 ### Requirement: Propiedad de permutación
-Un property test MUST verificar que permutar el orden de las candidatas y de los escenarios en la entrada no cambia el ranking ni los bytes de la salida canónica, salvo el `input_hash` si el orden forma parte del JSON canónico de la entrada.
+Un property test MUST verificar que permutar el orden de las candidatas y de los escenarios en la entrada no cambia el ranking ni los bytes de la salida canónica, incluido el `input_hash`, porque la canonicalización de domain-models ordena candidatas por id y escenarios por año.
 
 #### Scenario: Candidatas reordenadas
 - **WHEN** se evalúa la misma entrada con las candidatas en una permutación aleatoria generada por hypothesis
-- **THEN** la lista de ids rankeados y todos los resultados son idénticos
+- **THEN** la lista de ids rankeados, todos los resultados y el `input_hash` son idénticos
 
 ### Requirement: Propiedad de escala monetaria
-Un property test MUST verificar que, con α = 0 y λ = 0, multiplicar por k > 0 todos los valores monetarios de la entrada (precios, costos, flete, arrendamiento y capital máximo del actor) no cambia el orden de las candidatas, comparando puntajes sin redondear.
+Un property test MUST verificar que, con α = 0 y λ = 0, multiplicar por k > 0 todos los valores monetarios de la entrada (precios, costos, flete, arrendamiento, capital máximo y los κ de prioridades A-ACT-08 y A-ACT-09) no cambia el orden de las candidatas, comparando puntajes sin redondear.
 
 #### Scenario: Precios por k
 - **GIVEN** α = 0, λ = 0 y un factor k generado en (0.1, 10)
@@ -91,3 +91,15 @@ El workflow de GitHub Actions MUST correr en cada push y pull request ruff, mypy
 #### Scenario: Push a una rama
 - **WHEN** se hace push de un commit
 - **THEN** el workflow corre todos los jobs y su resultado queda visible en el commit sin requerir secretos
+
+### Requirement: Propiedades con prioridades del productor
+Un property test MUST verificar, para prioridades generadas en [0, 1], que las propiedades de aversión al riesgo y de peso del suelo siguen valiendo (con ΔSuelo efectivo), que ΔSuelo sigue en [-100, +100] y que con todas las prioridades en 0 la salida es idéntica byte a byte a la de una entrada sin prioridades.
+
+#### Scenario: Prioridades aleatorias
+- **GIVEN** prioridades generadas por hypothesis
+- **WHEN** λ sube manteniendo el resto fijo
+- **THEN** score(A) − score(B) no aumenta para A con mayor Riesgo que B
+
+#### Scenario: Prioridades en cero
+- **WHEN** se evalúa con todas las prioridades en 0 y sin prioridades
+- **THEN** las salidas canónicas son idénticas

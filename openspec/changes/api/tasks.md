@@ -38,3 +38,12 @@
 
 - [ ] 6.1 Deploy en Render o Fly con variables de entorno; verificar `curl <url>/api/v1/health` 200 y `X-Engine-Version` presente en /evaluate
 - [ ] 6.2 Log de latencia por endpoint sin datos personales; verificar en logs locales una línea por request con ruta, estado y duración
+
+## 7. Sensibilidad y filtro (P1)
+
+- [ ] 7.1 POST /sensitivity con unión por `mode` y caso de uso de actor-profiles; tests "Sensibilidad sobre λ", "Grilla inválida por HTTP" y "Sensibilidad idempotente" en verde
+- [ ] 7.2 Campo `year_class_filter` en /evaluate y /sensitivity copiado a `EngineInput` y código EMPTY_YEAR_CLASS; tests "Ranking solo con años secos", "Valor de filtro inválido" y "Clase sin años" en verde
+
+## 8. Lecturas de campo (P2)
+
+- [ ] 8.1 Rutas POST/GET /plots/{plot_id}/field-readings delegando en field-measurement, con SESSION_CONFLICT y SAMPLING_RATE_TOO_LOW en el catálogo; tests "Conflicto de sesión" y "Listado de sesiones" en verde y test de contrato de errores actualizado

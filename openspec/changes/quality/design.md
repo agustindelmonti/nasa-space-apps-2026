@@ -34,10 +34,10 @@ Marcadores pytest: `network` (excluido en CI con `-m "not network"`), `slow`.
 
 ### 3. Estrategias de hypothesis
 
-- `engine_inputs()`: elige 1 a 6 candidatas del catálogo, 3 a 40 escenarios con pesos uniformes y clases por estación, parámetros económicos positivos acotados, estado hídrico aleatorio por celda, perfil dentro de A-ACT-06. Todo generado en floats "amigables" (múltiplos de 0.01) para reducir ruido.
+- `engine_inputs()`: elige 1 a 6 candidatas del catálogo, 3 a 40 escenarios con pesos uniformes y clases anual y por estación, parámetros económicos positivos acotados, insumos hídricos sintéticos por escenario (series diarias cortas de lluvia, ET0 y temperaturas; el estado hídrico ya no se genera porque lo calcula el motor), perfil dentro de A-ACT-06 con prioridades opcionales. Todo generado en floats "amigables" (múltiplos de 0.01) para reducir ruido.
 - `settings(max_examples=200, deadline=None, derandomize=True)`: `derandomize` hace reproducibles las corridas en CI.
 - Propiedades sobre puntajes sin redondear (expuestos en el desglose con precisión completa en memoria); la de α excluye casos con diferencias < 0.01 USD/ha porque el desempate por Riesgo puede reordenar empates de redondeo.
-- Escala monetaria: se escalan todos los campos monetarios, incluido el capital máximo del actor; si no se escalara, el filtro de capital cambiaría la elegibilidad y la propiedad sería falsa por construcción. "Precios" en el pedido original se interpreta como todos los valores monetarios.
+- Escala monetaria: se escalan todos los campos monetarios, incluidos el capital máximo del actor y los κ de prioridades (A-ACT-08, A-ACT-09); si no se escalara, el filtro de capital cambiaría la elegibilidad y la propiedad sería falsa por construcción. "Precios" en el pedido original se interpreta como todos los valores monetarios.
 
 ### 4. Snapshots y versión
 

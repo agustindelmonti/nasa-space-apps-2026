@@ -1,6 +1,6 @@
 # Proposal: nasa-ingestion
 
-**Prioridad:** P0 para POWER, SMAP L4 y GRACE-FO del lote de demo (sábado); P1 para GPM IMERG y MODIS NDVI; P2 para HLS.
+**Prioridad:** P0 para POWER, SMAP L4 y GRACE-FO del lote de demo (sábado) y para documentar la armonización de resoluciones; P0 también MODIS NDVI del lote demo (evidencia del calendario de suelo desnudo); P1 para GPM IMERG y SRTM; P2 para HLS y ECOSTRESS.
 
 ## Why
 
@@ -12,7 +12,10 @@ El criterio "Pertinencia" pide uso profundo y central de datos NASA, y el motor 
 - Se define una caché local en parquet por dataset, punto y período, validada por esquema, idempotente y legible sin red.
 - Se define el manejo explícito de huecos: valores de relleno y faltantes quedan registrados como faltantes, nunca interpolados en silencio.
 - Se define un catálogo de metadatos por dataset (resolución espacial y temporal, cobertura, latencia, si es modelado, limitación en lenguaje simple).
-- Se definen agregaciones (media diaria desde 3-horario, acumulados por ventana, totales anuales, estadísticas de NDVI por ventana) como valores DERIVED con insumos y método.
+- Se definen agregaciones (media diaria desde 3-horario, acumulados por ventana, totales anuales, estadísticas de NDVI por ventana y resumen NDVI mensual del lote para `EngineInput`) como valores DERIVED con insumos y método.
+- SRTM (P1): pendiente y posición relativa en el relieve (loma, media loma, bajo) del lote como evidencia de contexto de anegamiento y erosión, sin entrar al motor.
+- ECOSTRESS (P2): LST y ET de alta resolución como evidencia de estrés, sin entrar al motor.
+- Se documenta la armonización de resoluciones: cada dataset se muestrea al punto o celda que contiene el lote, sin re-grillar en el MVP, y se registra la celda efectiva.
 - Se define la carga de credenciales Earthdata desde `.env` y un modo offline que solo lee caché.
 
 ## Capabilities
@@ -32,7 +35,8 @@ El criterio "Pertinencia" pide uso profundo y central de datos NASA, y el motor 
 
 ## Fuera de alcance
 
-- Datasets no listados (ECOSTRESS, Landsat crudo, SRTM, GEDI, SoilGrids): pueden sumarse después con el mismo contrato.
+- Datasets no listados (Landsat crudo, GEDI, SoilGrids): pueden sumarse después con el mismo contrato. GLDAS como alternativa a SMAP antes de 2015 queda P2 futuro (Source ya admite `GLDAS`).
+- Re-grillado a una grilla común o fusión espacial entre datasets.
 - Procesamiento de polígonos completos o promedios sobre el lote: el MVP trabaja por punto (centroide del lote).
 - Pronósticos o datos en tiempo casi real con garantías de latencia.
 - Relleno de huecos por interpolación, reanálisis propios o fusión estadística entre datasets.

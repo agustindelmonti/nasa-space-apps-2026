@@ -7,11 +7,11 @@ Garantizar que el lote de demo se pueda mostrar de punta a punta sin red ni cred
 ## ADDED Requirements
 
 ### Requirement: Lote de demo con ubicación supuesta
-El sistema MUST definir un lote de demo con id `demo-casilda`, nombre, ubicación en el sur de Santa Fe y superficie, cuya ubicación y superficie MUST tener procedencia ASSUMPTION `A-FLD-01` (placeholder a confirmar con el equipo) hasta que se reemplacen por un lote real confirmado.
+El sistema MUST definir un lote de demo con id `demo-casilda`, nombre, ubicación en el sur de Santa Fe y superficie, cuya ubicación y superficie MUST tener procedencia ASSUMPTION `A-DEMO-01` (placeholder a confirmar con el equipo) hasta que se reemplacen por un lote real confirmado.
 
 #### Scenario: Lote demo marcado como supuesto
 - **WHEN** se consulta `GET /api/v1/plots/demo-casilda/context`
-- **THEN** la ubicación del lote se devuelve con procedencia ASSUMPTION y assumption_id `A-FLD-01`
+- **THEN** la ubicación del lote se devuelve con procedencia ASSUMPTION y assumption_id `A-DEMO-01`
 
 #### Scenario: Lote demo válido
 - **WHEN** se valida el Lote `demo-casilda` contra los modelos de `domain-models`
@@ -37,7 +37,7 @@ Los fixtures MUST tener un manifiesto versionado que registre por archivo: datas
 - **THEN** falla nombrando el archivo y ambos checksums
 
 ### Requirement: Parámetros económicos de ejemplo
-El modo demo MUST proveer un archivo de parámetros económicos de ejemplo (precios, retenciones, costos, rindes por cultivo y clase de año) donde cada valor tenga procedencia ASSUMPTION con id `A-ECO-NN`, fuente citada y fecha de referencia, y MUST rotularse como ejemplo, no recomendación.
+El modo demo MUST proveer un archivo de parámetros económicos de ejemplo (precios, retenciones, costos, rindes por cultivo y clase de año) donde cada valor tenga procedencia ASSUMPTION con id del área DEMO (A-DEMO-02 a A-DEMO-06), fuente citada y fecha de referencia, y MUST rotularse como ejemplo, no recomendación.
 
 #### Scenario: Parámetro sin fuente rechazado
 - **GIVEN** un parámetro económico de ejemplo sin fuente o sin fecha
@@ -46,7 +46,7 @@ El modo demo MUST proveer un archivo de parámetros económicos de ejemplo (prec
 
 #### Scenario: Rótulo de ejemplo visible
 - **WHEN** la API responde una evaluación en modo demo
-- **THEN** los parámetros económicos aparecen con procedencia ASSUMPTION y la respuesta indica que son valores de ejemplo
+- **THEN** los parámetros económicos aparecen con procedencia ASSUMPTION A-DEMO-NN y la respuesta indica que son valores de ejemplo
 
 ### Requirement: Flag DEMO_MODE sin red ni credenciales
 Con `DEMO_MODE=1` la aplicación MUST arrancar sin credenciales de Earthdata, Twilio ni LLM y MUST resolver datos NASA, parámetros económicos y lote demo solo desde fixtures, sin abrir conexiones de red salientes.

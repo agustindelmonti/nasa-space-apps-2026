@@ -1,6 +1,6 @@
 # Proposal: explanations
 
-**Prioridad:** P0 (explicación por rotación y formato WhatsApp para la demo del sábado); P1 (resumen propietario vs arrendatario, glosario completo); P2 (pulido de redacción).
+**Prioridad:** P0 (explicación por rotación, incertidumbre entre años secos y húmedos, calendario de suelo desnudo y de vulnerabilidad de helada y déficit, formato WhatsApp para la demo del sábado); P1 (resumen propietario vs arrendatario, glosario completo, calor y lluvia extrema en el calendario); P2 (pulido de redacción).
 
 ## Why
 
@@ -9,9 +9,11 @@ El desafío pide, para cada rotación, por qué, con qué evidencia, beneficios,
 ## What Changes
 
 - Se agrega un generador de explicaciones puro (sin LLM, red ni reloj) que toma la salida del motor (`EngineOutput`) y su entrada resuelta y produce, por rotación: por qué (posición y términos dominantes del puntaje), evidencia, beneficios, faltantes y riesgos.
-- Se agrega un resumen comparativo y una sección "qué cambia si sos propietario vs arrendatario" a partir de dos evaluaciones del mismo lote.
+- Se agrega un resumen comparativo, con la diferencia contra la rotación actual tomada de `score_delta_vs_current` del motor, y una sección "qué cambia si sos propietario vs arrendatario" a partir de dos evaluaciones del mismo lote.
+- Se explica la incertidumbre con el rango entre años secos y húmedos del margen y del balance hídrico (mínimo, esperado, máximo por clase), no solo el valor esperado, y el Riesgo como lo que se pierde en los peores años (cola de peso q de los márgenes, A-ACT-05).
+- Se explican el calendario de suelo desnudo (con el NDVI histórico del lote como evidencia observada) y el calendario de vulnerabilidad por cultivo.
 - Se define la regla de trazabilidad: todo número del texto existe en la salida del motor (o en su entrada resuelta con el mismo `input_hash`) y se lista como cita con su procedencia. Un test extrae los números del texto y los busca.
-- Se define un glosario en lenguaje simple (evapotranspiración, NDVI, anomalía de humedad, balance hídrico, heladas, GRACE-FO y agua subterránea, dato satelital vs medición de campo).
+- Se define un glosario en lenguaje simple (evapotranspiración, NDVI, anomalía de humedad, balance hídrico, heladas, estrés térmico, GRACE-FO y agua subterránea, dato satelital vs medición de campo y cómo combinarlos mejora la precisión).
 - Se fijan leyendas obligatorias ("apoya, no reemplaza al agrónomo", "escenarios históricos, no predicción") y el marcado visible de supuestos.
 - Se definen tres formatos: estructurado (JSON), texto largo web y texto corto WhatsApp con partición determinista por límite de caracteres.
 - Se fija el formato numérico argentino (coma decimal, punto de miles) y el registro de español rioplatense.

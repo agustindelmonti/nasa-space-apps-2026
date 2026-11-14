@@ -7,7 +7,7 @@ Expone el motor, sus catálogos, el contexto NASA del lote, el glosario, los sup
 ## ADDED Requirements
 
 ### Requirement: Prefijo y contratos validados
-Todos los endpoints MUST servirse bajo `/api/v1` y MUST validar request y response con modelos Pydantic estrictos (extra prohibido). Los endpoints son: POST /evaluate, GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate y GET /health.
+Todos los endpoints MUST servirse bajo `/api/v1` y MUST validar request y response con modelos Pydantic estrictos (extra prohibido). Los endpoints son: POST /evaluate, POST /sensitivity, GET /rotations/catalog, GET /actors/profiles, GET /plots/{plot_id}/context, GET /glossary, GET /assumptions, POST /whatsapp/webhook, POST /chat/simulate, GET /health y POST/GET /plots/{plot_id}/field-readings (P2).
 
 #### Scenario: Campo extra en request
 - **WHEN** se envía a POST /api/v1/evaluate un body válido con un campo adicional `foo`
@@ -26,7 +26,7 @@ Toda respuesta de error MUST ser JSON `{code, message, details}`, donde `code` p
 - **THEN** la respuesta es 500 con `code` INTERNAL_ERROR, sin traza de pila, y el log interno registra la traza con un id de request
 
 ### Requirement: Catálogo de códigos de error
-El catálogo MUST incluir al menos, con su estado HTTP: VALIDATION_ERROR 422, MISSING_PARAMETER 422, UNKNOWN_ROTATION 422, UNKNOWN_ACTOR 422, OUT_OF_COVERAGE 422, PLOT_NOT_FOUND 404, NOT_FOUND 404, METHOD_NOT_ALLOWED 405, UNSUPPORTED_MEDIA_TYPE 415, PAYLOAD_TOO_LARGE 413, RATE_LIMITED 429, INVALID_SIGNATURE 403, DATA_UNAVAILABLE 503, CHANNEL_DISABLED 503, TIMEOUT 504, ENGINE_ERROR 500, INTERNAL_ERROR 500.
+El catálogo MUST incluir al menos, con su estado HTTP: VALIDATION_ERROR 422, MISSING_PARAMETER 422, UNKNOWN_ROTATION 422, UNKNOWN_ACTOR 422, OUT_OF_COVERAGE 422, EMPTY_YEAR_CLASS 422, SAMPLING_RATE_TOO_LOW 422, SESSION_CONFLICT 409, PLOT_NOT_FOUND 404, NOT_FOUND 404, METHOD_NOT_ALLOWED 405, UNSUPPORTED_MEDIA_TYPE 415, PAYLOAD_TOO_LARGE 413, RATE_LIMITED 429, INVALID_SIGNATURE 403, DATA_UNAVAILABLE 503, CHANNEL_DISABLED 503, TIMEOUT 504, ENGINE_ERROR 500, INTERNAL_ERROR 500.
 
 #### Scenario: Catálogo publicado
 - **WHEN** se consulta el esquema OpenAPI
@@ -150,7 +150,7 @@ La API MUST publicar el esquema OpenAPI en `/api/v1/openapi.json` y documentaci�
 
 #### Scenario: Esquema exportable
 - **WHEN** se pide GET /api/v1/openapi.json
-- **THEN** la respuesta es un OpenAPI válido que incluye los nueve endpoints y el esquema de error
+- **THEN** la respuesta es un OpenAPI válido que incluye todos los endpoints de la lista de contratos y el esquema de error
 
 ### Requirement: CORS para el front
 La API MUST permitir CORS solo para los orígenes configurados por variable de entorno (front desplegado y desarrollo local), solo para GET, POST y OPTIONS, sin credenciales. Un origen no configurado MUST NOT recibir headers CORS de permiso.
@@ -196,8 +196,52 @@ POST /evaluate MUST cortar el procesamiento que exceda el timeout configurado y 
 - **THEN** la respuesta es 504 con `code` TIMEOUT
 
 ### Requirement: Content type
-POST /evaluate y POST /chat/simulate MUST aceptar solo `application/json`; POST /whatsapp/webhook MUST aceptar solo `application/x-www-form-urlencoded`. Otro content type MUST responder UNSUPPORTED_MEDIA_TYPE.
+POST /evaluate, POST /sensitivity, POST /chat/simulate y POST /plots/{plot_id}/field-readings MUST aceptar solo `application/json`; POST /whatsapp/webhook MUST aceptar solo `application/x-www-form-urlencoded`. Otro content type MUST responder UNSUPPORTED_MEDIA_TYPE.
 
 #### Scenario: Evaluate con form
 - **WHEN** se envía a POST /api/v1/evaluate un body form-urlencoded
 - **THEN** la respuesta es 415 con `code` UNSUPPORTED_MEDIA_TYPE
+
+### Requirement: Sensibilidad por HTTP
+POST /sensitivity MUST aceptar el mismo `mode` lite o full que /evaluate más `parameter` (alpha o lambda), `min`, `max` y `n`, MUST delegar en el caso de uso de sensibilidad de actor-profiles y MUST responder en JSON canónico con la grilla, los rankings por punto, los quiebres exactos, el `input_hash` de la entrada base y el header `X-Input-Hash`.
+
+#### Scenario: Sensibilidad sobre λ
+- **GIVEN** DEMO_MODE=1
+- **WHEN** se envía a POST /api/v1/sensitivity un request lite del lote demo con `parameter: "lambda"`, `min: 0`, `max: 2`, `n: 5`
+- **THEN** la respuesta es 200 con los valores 0, 0.5, 1, 1.5 y 2 en orden, cada uno con su ranking, y los quiebres dentro del rango
+
+#### Scenario: Grilla inválida por HTTP
+- **WHEN** se envía `n: 1`
+- **THEN** la respuesta es 422 con `code` VALIDATION_ERROR que nombra `n`
+
+#### Scenario: Sensibilidad idempotente
+- **WHEN** se envía dos veces el mismo request de sensibilidad
+- **THEN** ambos bodies son idénticos byte a byte
+
+### Requirement: Filtro por clase de año en la API
+POST /evaluate y POST /sensitivity MUST aceptar `year_class_filter` opcional con valores ALL, DRY o WET (ALL por defecto), MUST copiarlo a `EngineInput` sin filtrar por su cuenta y la respuesta MUST declarar el filtro efectivo y los años usados que informa el motor.
+
+#### Scenario: Ranking solo con años secos
+- **GIVEN** DEMO_MODE=1
+- **WHEN** se envía un request lite con `year_class_filter: "DRY"`
+- **THEN** la respuesta declara el filtro DRY, lista los años DRY usados y su `X-Input-Hash` difiere del request sin filtro
+
+#### Scenario: Valor de filtro inválido
+- **WHEN** se envía `year_class_filter: "HOT"`
+- **THEN** la respuesta es 422 con `code` VALIDATION_ERROR y los valores permitidos
+
+#### Scenario: Clase sin años
+- **WHEN** el filtro pide WET y la entrada no tiene años WET
+- **THEN** la respuesta es 422 con `code` EMPTY_YEAR_CLASS
+
+### Requirement: Lecturas de campo por HTTP
+La API MUST exponer POST y GET /plots/{plot_id}/field-readings (P2) delegando en field-measurement, con los errores PLOT_NOT_FOUND, SESSION_CONFLICT y SAMPLING_RATE_TOO_LOW del catálogo y el límite de tamaño de los endpoints de chat. Estas rutas MUST NOT invocar al motor.
+
+#### Scenario: Conflicto de sesión
+- **WHEN** se envía a POST /api/v1/plots/demo-casilda/field-readings un id de sesión ya guardado con otro contenido
+- **THEN** la respuesta es 409 con `code` SESSION_CONFLICT
+
+#### Scenario: Listado de sesiones
+- **GIVEN** una sesión guardada para `demo-casilda`
+- **WHEN** se pide GET /api/v1/plots/demo-casilda/field-readings
+- **THEN** la respuesta es 200 con la sesión y sus limitaciones

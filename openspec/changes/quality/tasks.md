@@ -13,9 +13,10 @@
 
 ## 3. Propiedades (P1)
 
-- [ ] 3.1 Escribir estrategias `engine_inputs()` con `derandomize=True`; verificar que generan entradas válidas (100 ejemplos sin errores de validación)
+- [ ] 3.1 Escribir estrategias `engine_inputs()` con `derandomize=True`, insumos hídricos sintéticos y prioridades opcionales; verificar que generan entradas válidas (100 ejemplos sin errores de validación)
 - [ ] 3.2 Property tests de λ y α (escenarios "Más λ no favorece a la más riesgosa" y "Más α no penaliza a la que más mejora el suelo") en verde
-- [ ] 3.3 Property tests de permutación y escala monetaria (escenarios "Candidatas reordenadas" y "Precios por k") en verde
+- [ ] 3.3 Property tests de permutación (con `input_hash` invariante) y escala monetaria (escenarios "Candidatas reordenadas" y "Precios por k") en verde
+- [ ] 3.4 Property tests con prioridades del productor (escenarios "Prioridades aleatorias" y "Prioridades en cero") en verde
 
 ## 4. Snapshots, cobertura y tipos (P1)
 

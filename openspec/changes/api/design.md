@@ -24,6 +24,9 @@ Ver proposal.md. Arquitectura en capas: `adapters.api` (FastAPI) llama a casos d
 10. **CORS**: `CORSMiddleware` con `allow_origins` desde `CORS_ALLOWED_ORIGINS` (lista explícita), `allow_credentials=False`, métodos GET/POST/OPTIONS. Alternativa descartada: `*` (innecesario y mala práctica en repo público).
 11. **Configuración**: `Settings` (`pydantic-settings`) con `SecretStr` para secretos; `repr` y `model_dump` nunca exponen valores; `.env.example` con todas las claves vacías.
 12. **Comparación OWNER vs TENANT**: flag `include_owner_tenant_contrast` en el request; la aplicación corre el motor dos veces con perfiles predefinidos y devuelve `contrast_output`. El `X-Input-Hash` corresponde al actor pedido.
+13. **Filtro por clase de año**: campo opcional `year_class_filter` (ALL por defecto) en ambos modos de /evaluate y en /sensitivity. La aplicación lo copia a `EngineInput` (entra al hash) y el motor re-pondera; la API no filtra por su cuenta. Alternativa descartada: filtrar escenarios en la aplicación (quedaría fuera de la salida auditable).
+14. **POST /sensitivity**: mismo `mode` lite|full que /evaluate más `parameter`, `min`, `max`, `n`. Corre el motor una vez y recombina con el caso de uso de actor-profiles; respuesta canónica con `input_hash` de la entrada base y `X-Input-Hash`. Mismo timeout y límite de tamaño que /evaluate.
+15. **Lecturas de campo (P2)**: `POST/GET /plots/{plot_id}/field-readings` delegan en `application.field` (field-measurement); errores propios SESSION_CONFLICT y SAMPLING_RATE_TOO_LOW en el catálogo. Nunca tocan el motor.
 
 ## Risks / Trade-offs
 

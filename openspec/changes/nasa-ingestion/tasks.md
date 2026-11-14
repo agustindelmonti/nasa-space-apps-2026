@@ -22,18 +22,26 @@
 - [ ] 3.3 Implementar adaptador GRACE/GRACE-FO mascons con hueco entre misiones como `MISSION_GAP`; verificar con test sobre una serie de muestra 2016-2019
 - [ ] 3.4 Generar fixtures SMAP y GRACE-FO del lote de demo; verificar con lectura en `DEMO_MODE=1` sin red
 
-## 4. GPM IMERG y NDVI (P1)
+## 4. GPM IMERG y NDVI (P1 para IMERG; P0 para NDVI, que es evidencia del calendario de suelo desnudo)
 
 - [ ] 4.1 Implementar adaptador IMERG Final Run diario con versión en Source y faltantes `NOT_YET_PUBLISHED`; verificar con test sobre un subset de muestra
 - [ ] 4.2 Implementar adaptador MOD13Q1 con escala y filtro QA; verificar con tests "Píxel nublado" y "Escala aplicada"
 - [ ] 4.3 Generar fixtures IMERG y NDVI del lote de demo; verificar lectura offline
 
-## 5. Agregaciones, catálogo y contexto (P0 para 5.1-5.2, P1 resto)
+## 5. Agregaciones, catálogo y contexto (P0 para 5.1, 5.2, 5.4 y 5.5; P1 para 5.3)
 
 - [ ] 5.1 Implementar agregaciones DERIVED (acumulado por ventana, total anual, media diaria, estadísticos de NDVI por ventana) con conteo de usados/faltantes; verificar con tests "Acumulado de ventana con huecos" y "Acumulado completo"
 - [ ] 5.2 Implementar catálogo de metadatos por dataset con resolución y limitación; verificar con test "Consulta de limitaciones"
 - [ ] 5.3 Exponer a la aplicación un caso de uso `get_plot_context(plot)` que arma las series con procedencia para `GET /api/v1/plots/{id}/context`; verificar con test de integración en `DEMO_MODE=1` (escenario "Demo sin internet")
 
-## 6. HLS (P2)
+- [ ] 5.4 Documentar en el catálogo la regla de muestreo al lote y registrar la celda efectiva con su tamaño en cada Source; verificar con test "Celdas de distinto tamaño"
+- [ ] 5.5 Implementar el resumen NDVI mensual del lote para `EngineInput`; verificar con test "Mes sin compuestos válidos"
 
-- [ ] 6.1 Implementar adaptador HLS NDVI con Fmask bajo el mismo contrato; verificar con test sobre un recorte de muestra
+## 6. SRTM (P1)
+
+- [ ] 6.1 Implementar adaptador SRTM con ventana fija, pendiente media y posición relativa como evidencia; verificar con tests "Lote en un bajo" y "Relieve fuera del motor" sobre un recorte de muestra
+
+## 7. HLS y ECOSTRESS (P2)
+
+- [ ] 7.1 Implementar adaptador HLS NDVI con Fmask bajo el mismo contrato; verificar con test sobre un recorte de muestra
+- [ ] 7.2 Implementar adaptador ECOSTRESS LST/ET solo como evidencia; verificar con tests "Pasada con nubes" y "ECOSTRESS fuera del motor" sobre un recorte de muestra

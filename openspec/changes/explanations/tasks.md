@@ -9,9 +9,12 @@
 ## 2. Explicación por rotación (P0)
 
 - [ ] 2.1 Definir modelos Pydantic `Explanation`, `RotationExplanation`, `Citation`, `Disclaimer` (frozen, extra=forbid); test de "Hash de entrada propagado" en verde
-- [ ] 2.2 Plantillas de "por qué" (posición, actual, factibilidad, término dominante, comparación cualitativa); tests "Término dominante de suelo", "Rotación no factible" y "Comparación sin número disponible" en verde
+- [ ] 2.2 Plantillas de "por qué" (posición, actual, factibilidad, término dominante, diferencia contra la actual desde `score_delta_vs_current` o comparación cualitativa); tests "Término dominante de suelo", "Rotación no factible", "Diferencia contra la actual citada" y "Comparación sin número disponible" en verde
 - [ ] 2.3 Plantillas de evidencia (con limitación desde catálogo de datasets), beneficios, faltantes y riesgos con marca de supuesto; tests "Evidencia de humedad SMAP", "Riesgo basado en supuesto" y "Faltantes vacíos" en verde
 - [ ] 2.4 Resumen comparativo y leyendas obligatorias; tests "Rotación actual en tercer lugar" y presencia de `disclaimers` en verde
+
+- [ ] 2.5 Plantillas de incertidumbre (rango de margen y rango hídrico por clase) y de riesgo como cola de márgenes; tests "Rango de margen citado", "Rango hídrico citado", "Clase vacía" y "Riesgo con su definición" en verde
+- [ ] 2.6 Plantillas de calendario de suelo desnudo (con evidencia NDVI) y de vulnerabilidad (helada y déficit; calor y lluvia extrema cuando vengan en la salida); tests "Invierno desnudo en soja continua", "Vulnerabilidad por mes" y "Calendario sin meses vulnerables" en verde
 
 ## 3. Formatos de salida (P0)
 
@@ -21,7 +24,7 @@
 
 ## 4. Glosario (P1)
 
-- [ ] 4.1 Escribir `data/glossary.yaml` con las 7 entradas y huecos al catálogo de datasets; test "Glosario completo" y "Definición corta para WhatsApp" en verde
+- [ ] 4.1 Escribir `data/glossary.yaml` con las 8 entradas (incluidas `heat_stress` y el párrafo de combinación satélite y campo) y huecos al catálogo de datasets; tests "Glosario completo", "Combinar satélite y campo" y "Definición corta para WhatsApp" en verde
 - [ ] 4.2 Resolver huecos de resolución desde el catálogo de `nasa-ingestion`; test "Resolución desde el catálogo" en verde
 - [ ] 4.3 Remisión al glosario en la primera mención de cada término; test "Término técnico con remisión" en verde
 
