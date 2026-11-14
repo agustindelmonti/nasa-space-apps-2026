@@ -127,7 +127,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
             <h1>Rastrojo</h1>
           </div>
           <div className="lede">
-            <p className="soft">Rotaciones para tu lote medidas contra 45 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.</p>
+            <p className="soft">Rotaciones para tu lote medidas contra 41 campañas reales de datos NASA. Cambiá quién decide y mirá cómo se reordenan.</p>
             <p className="legends">
               <span>Apoya, no reemplaza al agrónomo.</span>
               <span>Escenarios históricos, no predicción.</span>

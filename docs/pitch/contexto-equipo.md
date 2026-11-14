@@ -62,7 +62,7 @@ El motor es 100 % determinista: mismos datos, mismo resultado, sin IA, sin azar 
 
 1. **Clima del punto del lote**: NASA POWER diario 1981-2025 (lluvia corregida, temperaturas, radiación, viento, humedad). La radiación falta en 1981-83, así que la serie útil arranca en 1984.
 2. **41 campañas reales** (1984 a 2024), clasificadas en seca, normal o húmeda por terciles de lluvia; cada campaña pesa lo mismo.
-3. **Balance de agua diario FAO-56** con ET0 Penman-Monteith calculada con POWER: factible, riesgoso o no factible por cultivo y campaña.
+3. **Balance de agua diario FAO-56** con ET0 Penman-Monteith calculada con POWER y humedad inicial de cada campaña desde GWETROOT: factible, riesgoso o no factible. Con estrés severo o perfil sin recargar se aplica el rinde de año seco; el estrés moderado queda como riesgo.
 4. **Calendario de vulnerabilidad**: heladas, déficit, calor en floración y lluvia extrema por mes.
 5. **Suelo**: índice ΔSuelo de -100 a +100 (cobertura, carbono, nitrógeno, malezas, raíces), meses de suelo desnudo y lluvia sobre suelo desnudo.
 6. **Economía**: margen bruto por campaña según el tipo de año; campañas con pérdida, peor año y pico de capital de trabajo.
@@ -92,13 +92,13 @@ Formal: J_u(r) = AF(i_u, H_u) · Ē(r) + α_u · ΔS(r) − λ_u · AF(i_u, H_u)
 | Cooperativa | 5 años | 8 % | 3 | 0,5 | sin tope |
 | Banco | 3 años | 10 % | 0,5 | 1,5 | 600 USD/ha |
 
-Valores de ejemplo, pendientes de validar con AFA. Resultado real del motor: propietario y cooperativa → maíz/soja; banco → soja continua; arrendatario → soja continua (las rotaciones con maíz superan su capital). Descartamos a propósito un término propio por rol y coeficientes κ de agua o ingreso: exigían inventar coeficientes sin fuente.
+Valores de ejemplo, pendientes de validar con AFA. Resultado real del motor: propietario y cooperativa → trigo/soja 2ª → maíz (maíz/soja muy cerca); banco y arrendatario → soja continua (las rotaciones con maíz superan su capital). Descartamos a propósito un término propio por rol y coeficientes κ de agua o ingreso: exigían inventar coeficientes sin fuente.
 
 ## Datos NASA
 
 | Dataset | Producto | Estado | Para qué | Resolución y limitación |
 | --- | --- | --- | --- | --- |
-| NASA POWER | Diario por punto | En el cálculo | Campañas, ET0, agua, heladas, calor, riesgo | ~0,5°; reanálisis |
+| NASA POWER | Diario por punto, incluida GWETROOT (humedad del suelo) | En el cálculo | Campañas, ET0, agua, humedad inicial de cada campaña, heladas, calor, riesgo | ~0,5°; reanálisis |
 | MODIS (GIBS) | MODIS_Terra_NDVI_8Day | Solo mapa | Cobertura y vigor | 250 m |
 | SMAP (GIBS) | SMAP_L4_Analyzed_Root_Zone_Soil_Moisture | Solo mapa | Humedad de raíces | ~9 km |
 | GPM IMERG (GIBS) | IMERG_Precipitation_Rate | Solo mapa | Lluvia | ~0,1° |
@@ -106,7 +106,7 @@ Valores de ejemplo, pendientes de validar con AFA. Resultado real del motor: pro
 | GPM IMERG | Final diario | Próximo (falta Earthdata) | Cruce con POWER, lluvia extrema | ~0,1° |
 | GRACE-FO | Mascons | Próximo (falta Earthdata) | Contexto regional de agua | ~300 km, mensual |
 
-Sin Earthdata, la humedad inicial es un supuesto (A-WAT-12) y el motor avisa INITIAL_MOISTURE_ASSUMED. Los valores del panel de factibilidad hídrica para GRACE-FO y SMAP son de ejemplo; la lluvia de verano (412 mm) es real.
+La humedad inicial de cada campaña sale de GWETROOT de NASA POWER (escalada con A-WAT-18); SMAP L4 a 9 km queda como mejora. Los valores del panel de factibilidad hídrica para GRACE-FO y SMAP son de ejemplo; la lluvia de verano (412 mm) es real.
 
 ## Qué hace y qué no hace
 
@@ -126,11 +126,11 @@ Sin Earthdata, la humedad inicial es un supuesto (A-WAT-12) y el motor avisa INI
 
 ## Supuestos y validación
 
-Unos 59 supuestos con id en `data/assumptions.yaml`, casi todos pendientes de AFA. Cada número lleva badge OBS, DER, SUP o USU. Lo más sensible: con 14 qq/ha de arriendo conviene alquilar para todos los roles; el equilibrio de maíz/soja es 11,1 qq/ha. Validación: AFA (rotaciones, ventanas, Kc, agua útil, rindes y costos), rindes de años secos contra MAGyP, precios de la BCR, SMAP L4 y datos de campo.
+Unos 59 supuestos con id en `data/assumptions.yaml`, casi todos pendientes de AFA. Cada número lleva badge OBS, DER, SUP o USU. Lo más sensible: con 14 qq/ha de arriendo conviene sembrar, con riesgo, para todos los roles; el equilibrio es 21,5 qq/ha para el propietario y 16,5 para el arrendatario. Validación: AFA (rotaciones, ventanas, Kc, agua útil, rindes y costos), rindes de años secos contra MAGyP, precios de la BCR, SMAP L4 y datos de campo.
 
 ## Arquitectura y cómo correrlo
 
-Python 3.12 + Pydantic v2 (dominio y motor), FastAPI (API), Vite + React 19 + Leaflet (web), Vercel (deploy desde main). 243 tests de Python, 32 de Vitest y 15 end-to-end en 3 tamaños de pantalla. Local: `uv sync`, `uv run pytest`, `uv run uvicorn rastrojo.adapters.api:app --port 8000`, y en `web/`: `npm ci` y `VITE_API_URL=http://localhost:8000 npm run dev`.
+Python 3.12 + Pydantic v2 (dominio y motor), FastAPI (API), Vite + React 19 + Leaflet (web), Vercel (deploy desde main). 247 tests de Python, 32 de Vitest y 15 end-to-end en 3 tamaños de pantalla. Local: `uv sync`, `uv run pytest`, `uv run uvicorn rastrojo.adapters.api:app --port 8000`, y en `web/`: `npm ci` y `VITE_API_URL=http://localhost:8000 npm run dev`.
 
 ## Diferenciales
 
@@ -138,7 +138,7 @@ Revisamos 16 repos de Field Shift y 8 de Latinoamérica. Nadie modela la tenenci
 
 ## Pitch y demo
 
-8 slides en 4:00 (deck: https://claude.ai/artifact/APHhQmfuP6TYJRSMKqCccB). Demo en vivo: abrir la web antes; propietario con 14 qq/ha (conviene alquilar, equilibrio 11,1); cambiar a 10 qq/ha (sí, con riesgo); cambiar a banco o arrendatario; si sobra tiempo, el chat.
+8 slides en 4:00 (deck: https://claude.ai/artifact/APHhQmfuP6TYJRSMKqCccB). Demo en vivo: abrir la web antes; propietario con 14 qq/ha (sí, conviene sembrar con riesgo; equilibrio 21,5); cambiar a 25 qq/ha (conviene alquilar); cambiar a banco o arrendatario; si sobra tiempo, el chat.
 
 ## Preguntas probables del jurado
 
@@ -149,7 +149,7 @@ Revisamos 16 repos de Field Shift y 8 de Latinoamérica. Nadie modela la tenenci
 | ¿Y SMAP, IMERG, GRACE-FO? | En el mapa y diseñados para el motor; falta Earthdata. |
 | ¿Precios y rindes? | Supuestos de ejemplo con id, a validar con AFA y BCR. |
 | ¿Usan IA? | Para programar (declarado). El motor y el chat son deterministas. |
-| ¿Por qué conviene alquilar? | Margen esperado ~246 USD/ha contra arriendo de 14 qq ≈ 311 USD/ha; con menos de 11,1 qq conviene sembrar. |
+| ¿Cuándo conviene alquilar? | La mejor rotación del propietario deja ~478 USD/ha por año; 14 qq ≈ 311 USD/ha. Con más de 21,5 qq conviene alquilar. |
 | ¿Qué tan preciso es para mi lote? | POWER es una grilla de ~50 km; por eso combinar con datos de campo. |
 | ¿Por qué ustedes? | Somos el equipo de PolPilot, que ya acompaña al productor del lote al camión; hacemos bots de WhatsApp para el agro; somos de Rosario. [COMPLETAR: perfiles] |
 

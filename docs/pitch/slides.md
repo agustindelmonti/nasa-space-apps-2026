@@ -40,7 +40,7 @@ Y nadie sabe cómo viene el año. Pero sí sabemos cómo vinieron los últimos 4
 La solución  
 **Elegís quién decide y te dice si conviene sembrar, y qué.**  
 
-**Notas del orador:** [0:30] PolPilot hace eso. Elegís quién decide, y arriba de todo te contesta en criollo: ¿me conviene sembrar? Acá dice que, con un arriendo de 14 quintales, al propietario le conviene más alquilar. Abajo ordena cinco rotaciones del lote, cada una con su franja mes a mes: qué cultivo está, cuándo queda el suelo desnudo y dónde hay riesgo de helada. Y a la derecha el lote visto desde el satélite. [Si hay demo en vivo: cambiar de Propietario a Banco y mostrar cómo se reordena.]
+**Notas del orador:** [0:30] PolPilot hace eso. Elegís quién decide, y arriba de todo te contesta en criollo: ¿me conviene sembrar? Acá, con un arriendo de 14 quintales, al propietario le conviene sembrar, con riesgo: deja 167 dólares por hectárea por año más que alquilar. Si el arriendo pasa los 21 quintales y medio, conviene alquilar. Abajo ordena cinco rotaciones del lote, cada una con su franja mes a mes: qué cultivo está, cuándo queda el suelo desnudo y dónde hay riesgo de helada. Y a la derecha el lote visto desde el satélite. [Si hay demo en vivo: cambiar de Propietario a Banco y mostrar cómo se reordena.]
 
 ---
 
@@ -102,18 +102,18 @@ Mismo lote, cuatro roles
 | Cooperativa | medio | medio | medio |
 | Banco | medio | bajo | alto |
 Propietario  
-Maíz / Soja  
+Trigo / Soja 2ª → Maíz  
 Mira más años y valora el suelo.  
 Cooperativa  
-Maíz / Soja  
+Trigo / Soja 2ª → Maíz  
 Banco  
 Soja continua  
-Castiga el riesgo.  
+Castiga el riesgo y limita el capital.  
 Arrendatario  
 Soja continua  
 Para lo demás no le alcanza el capital.  
 
-**Notas del orador:** [0:35] Y acá está la gracia. Mismo lote, mismos 41 años de datos. Para el propietario y la cooperativa gana maíz-soja: miran más años y valoran el suelo. Para el banco gana soja continua, porque castiga el riesgo. Y al arrendatario directamente no le alcanza el capital de trabajo para las rotaciones con maíz, así que su única opción es soja. No lo inventamos para la slide: es lo que devuelve el motor hoy, y lo pueden ver en vivo. Los pesos de cada rol son valores de ejemplo que vamos a validar con AFA.
+**Notas del orador:** [0:35] Y acá está la gracia. Mismo lote, mismos 41 años de datos. Para el propietario y la cooperativa gana trigo, soja de segunda y maíz: miran más años, valoran el suelo y aprovechan dos cosechas. Para el banco gana soja continua: castiga el riesgo y con su tope de capital las rotaciones con maíz no entran. Y al arrendatario directamente no le alcanza el capital de trabajo para las rotaciones con maíz, así que su única opción es soja. No lo inventamos para la slide: es lo que devuelve el motor hoy, y lo pueden ver en vivo. Los pesos de cada rol son valores de ejemplo que vamos a validar con AFA.
 
 ---
 
@@ -125,16 +125,16 @@ Factibilidad
 campañas reales de NASA POWER en el cálculo  
 5  
 rotaciones del lote demo comparadas  
-320  
+324  
 tests automáticos en verde (motor, API y web)  
 1  
 hash por evaluación: mismo input, mismo resultado  
 Online: web y API en rastrojo.vercel.app  
 Cada supuesto con id, a revisar con AFA  
-SMAP, IMERG y GRACE-FO: el motor avisa que faltan  
+Humedad del suelo de cada campaña: NASA POWER (GWETROOT)  
 Validación: rindes por año seco contra MAGyP  
 
-**Notas del orador:** [0:30] ¿Es real? Sí. Está online. Usa 41 campañas reales de NASA POWER, compara cinco rotaciones y tiene 320 tests automáticos. Cada evaluación lleva un hash: mismo input, mismo resultado, auditable. Y algo que nos importa: lo que no medimos, lo decimos. Cada supuesto tiene un id para revisar con AFA, y cuando falta un dato satelital, como SMAP o GRACE-FO, el motor lo avisa en vez de inventarlo. Para validar, vamos a contrastar los rindes de años secos contra los rindes departamentales del MAGyP.
+**Notas del orador:** [0:30] ¿Es real? Sí. Está online. Usa 41 campañas reales de NASA POWER, compara cinco rotaciones y tiene 324 tests automáticos. Cada evaluación lleva un hash: mismo input, mismo resultado, auditable. Y algo que nos importa: lo que no medimos, lo decimos. Cada supuesto tiene un id para revisar con AFA, la humedad del suelo al inicio de cada campaña sale de NASA POWER, y cuando falta un dato, como la napa o SMAP a 9 km, el motor lo avisa en vez de inventarlo. Para validar, vamos a contrastar los rindes de años secos contra los rindes departamentales del MAGyP.
 
 ---
 
@@ -170,7 +170,7 @@ Próximo paso: sumar SMAP, IMERG y GRACE-FO al cálculo, validar los supuestos c
 Referencias  
 | Dataset | Producto o capa | Uso | Link |
 | --- | --- | --- | --- |
-| NASA POWER | Diario por punto: PRECTOTCORR, T2M, radiación, viento, humedad | En el cálculo | power.larc.nasa.gov |
+| NASA POWER | Diario por punto: PRECTOTCORR, T2M, radiación, viento, humedad, GWETROOT (humedad del suelo) | En el cálculo | power.larc.nasa.gov |
 | NASA GIBS · MODIS | MODIS_Terra_NDVI_8Day | Mapa | gibs.earthdata.nasa.gov |
 | NASA GIBS · SMAP | SMAP_L4_Analyzed_Root_Zone_Soil_Moisture | Mapa | gibs.earthdata.nasa.gov |
 | NASA GIBS · GPM | IMERG_Precipitation_Rate | Mapa | gibs.earthdata.nasa.gov |
