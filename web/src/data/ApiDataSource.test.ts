@@ -32,9 +32,15 @@ function deferred<T>() {
 
 describe("ApiDataSource", () => {
   it("reads profiles, slider limits and catalog from the API", async () => {
-    const fetch = vi.fn(async (url: RequestInfo | URL) =>
-      String(url).endsWith("/actors/profiles") ? json(profilesBody) : json(catalogBody),
-    );
+    const assumptionsBody = {
+      assumptions: [{ assumption_id: "A-ACT-06", description: "Rangos de sliders", reference: "AFA", status: "PENDING_AFA" }],
+    };
+    const fetch = vi.fn(async (url: RequestInfo | URL) => {
+      const u = String(url);
+      if (u.endsWith("/actors/profiles")) return json(profilesBody);
+      if (u.endsWith("/assumptions")) return json(assumptionsBody);
+      return json(catalogBody);
+    });
     const src = new ApiDataSource(BASE + "/", new FixtureDataSource(), { fetch });
     const ctx = await src.getContext(PLOT);
     expect(ctx.origin).toBe("api");
@@ -42,7 +48,13 @@ describe("ApiDataSource", () => {
     expect(ctx.profiles.map((p) => p.profile_id)).toEqual(["OWNER"]);
     expect(ctx.rotations[0].rotation_id).toBe("R_SOY_COVER");
     expect(ctx.strips.strips.R_SOY_COVER).toHaveLength(24); // strips still come from the fixture
-    expect(fetch.mock.calls.map((c) => String(c[0]))).toEqual([`${BASE}/api/v1/actors/profiles`, `${BASE}/api/v1/rotations/catalog`]);
+    expect(ctx.assumptions["A-ACT-06"]).toEqual({ description: "Rangos de sliders", source: "AFA", status: "PENDING_AFA" });
+    expect(ctx.assumptions["A-AGR-01"]).toBeDefined(); // fixture texts kept for ids the API did not send
+    expect(fetch.mock.calls.map((c) => String(c[0]))).toEqual([
+      `${BASE}/api/v1/actors/profiles`,
+      `${BASE}/api/v1/rotations/catalog`,
+      `${BASE}/api/v1/assumptions`,
+    ]);
   });
 
   it("posts the lite body and maps the response, taking the hash from X-Input-Hash", async () => {

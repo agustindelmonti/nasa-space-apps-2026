@@ -30,6 +30,13 @@ interface EvaluateResponse {
   display_order: string[];
 }
 
+interface ApiAssumption {
+  assumption_id: string;
+  description: string;
+  reference?: string | null;
+  status: string;
+}
+
 interface Options {
   /** Injected for tests; defaults to the global fetch. */
   fetch?: typeof fetch;
@@ -94,16 +101,27 @@ export class ApiDataSource implements DataSource {
     const base = await this.fallback.getContext(plotId, signal);
     if (this.offline) return base;
     try {
-      const [profiles, catalog] = await Promise.all([
+      const [profiles, catalog, assumptions] = await Promise.all([
         this.request<{ profiles: ActorProfile[]; slider_limits: SliderLimits }>("/actors/profiles", { method: "GET" }, signal),
         this.request<{ rotations: Rotation[] }>("/rotations/catalog", { method: "GET" }, signal),
+        this.request<{ assumptions: ApiAssumption[] }>("/assumptions", { method: "GET" }, signal).catch((e) => {
+          if (e instanceof Unreachable) throw e;
+          return null; // tooltips keep the fixture texts
+        }),
       ]);
+      const registry = Object.fromEntries(
+        (assumptions?.body.assumptions ?? []).map((a) => [
+          a.assumption_id,
+          { description: a.description, source: a.reference ?? "pendiente AFA", status: a.status },
+        ]),
+      );
       return {
         ...base,
         origin: "api",
         profiles: profiles.body.profiles,
         slider_limits: profiles.body.slider_limits,
         rotations: catalog.body.rotations,
+        assumptions: { ...base.assumptions, ...registry },
       };
     } catch (e) {
       if (!(e instanceof Unreachable)) throw e;
