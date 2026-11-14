@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Los valores de los perfiles viven en `assumptions.yaml` (editable por AFA). `fieldshift.engine.profiles` arma PerfilActor validados (domain-models) y `fieldshift.engine.sensitivity` recombina resultados del motor. El caso de uso `application.sensitivity` lo expone a la API.
+Ver proposal.md. Los valores de los perfiles viven en `assumptions.yaml` (editable por AFA). `rastrojo.engine.profiles` arma PerfilActor validados (domain-models) y `rastrojo.engine.sensitivity` recombina resultados del motor. El caso de uso `application.sensitivity` lo expone a la API.
 
 ## Goals / Non-Goals
 

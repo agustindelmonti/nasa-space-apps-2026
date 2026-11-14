@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El motor no hace I/O: esta capa (`fieldshift.data`) resuelve todo antes y la aplicación arma `EngineInput`. Hay que llegar a la demo del sábado con el lote `demo-casilda` cacheado; el acceso a Earthdata en la sede puede fallar, así que la caché y los fixtures son la fuente operativa y la descarga es un paso previo.
+Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El motor no hace I/O: esta capa (`rastrojo.data`) resuelve todo antes y la aplicación arma `EngineInput`. Hay que llegar a la demo del sábado con el lote `demo-casilda` cacheado; el acceso a Earthdata en la sede puede fallar, así que la caché y los fixtures son la fuente operativa y la descarga es un paso previo.
 
 ## Goals / Non-Goals
 
@@ -17,7 +17,7 @@ Ver proposal.md. Depende de `domain-models` (Source, PValue, Provenance). El mot
 3. **Clave de caché**: `data/cache/<DATASET>/<lat:.4f>_<lon:.4f>_<YYYYMMDD>-<YYYYMMDD>.parquet`. Precisión 4 decimales (~11 m) muy por debajo de cualquier resolución de los datasets.
 4. **Esquemas pandera por dataset** (formato largo para series diarias: `date`, `variable`, `value`, `unit`, `is_missing`, `missing_reason`). Formato largo para que el registro de huecos sea una consulta y no una convención. Rangos físicos en el esquema (por ejemplo `sm_rootzone` 0 a 0.9, NDVI -1 a 1, T2M -40 a 60 °C).
 5. **POWER vía httpx**: `GET https://power.larc.nasa.gov/api/temporal/daily/point` con `community=AG`, `parameters=PRECTOTCORR,T2M,T2M_MIN,T2M_MAX,RH2M,WS2M,ALLSKY_SFC_SW_DWN,PS` (más `CLRSKY_SFC_SW_DWN` si se necesita Rso), `format=JSON`, partido en tramos por año para no superar límites. Valor de relleno -999 a faltante. Sin credenciales.
-6. **ET0**: primera tarea verifica si POWER publica una ET de referencia FAO-56 en la comunidad AG. Si existe, se usa como OBSERVED. Si no, se calcula Penman-Monteith FAO-56 diario (ecuación 6) con Rs = ALLSKY_SFC_SW_DWN, ea desde RH2M y T2M, presión PS, viento a 2 m WS2M, Rso desde radiación extraterrestre por latitud y día (o CLRSKY), G = 0. Implementación pura en `fieldshift.data.et0` con tests contra el ejemplo 18 de FAO-56. Alternativa descartada: Hargreaves (solo temperatura, menos preciso y no aprovecha radiación de POWER).
+6. **ET0**: primera tarea verifica si POWER publica una ET de referencia FAO-56 en la comunidad AG. Si existe, se usa como OBSERVED. Si no, se calcula Penman-Monteith FAO-56 diario (ecuación 6) con Rs = ALLSKY_SFC_SW_DWN, ea desde RH2M y T2M, presión PS, viento a 2 m WS2M, Rso desde radiación extraterrestre por latitud y día (o CLRSKY), G = 0. Implementación pura en `rastrojo.data.et0` con tests contra el ejemplo 18 de FAO-56. Alternativa descartada: Hargreaves (solo temperatura, menos preciso y no aprovecha radiación de POWER).
 7. **Earthdata con earthaccess** (`earthaccess.login(strategy="environment")`). Para limitar volumen:
    - SMAP L4 SPL4SMGP: granulos 3-horarios grandes; se usa subsetting (OPeNDAP o Harmony) para extraer solo `sm_rootzone` en la celda; para la demo se precalcula un período acotado (por ejemplo 2015 a la fecha, o las ventanas necesarias) y se guarda como fixture.
    - GPM IMERG `GPM_3IMERGDF` (Final Run diario, V07): lectura parcial con xarray de la celda.

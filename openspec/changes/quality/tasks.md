@@ -9,7 +9,7 @@
 
 - [ ] 2.1 Implementar el test AST de imports con listas de prohibidos y permitidos y detección de `now/today/utcnow`; verificar que falla con un archivo temporal que importa `random` (escenario "Import prohibido") y pasa con engine limpio
 - [ ] 2.2 Implementar determinismo en el mismo proceso para los cuatro perfiles con diff de primera ruta; test "Dos corridas iguales" en verde
-- [ ] 2.3 Implementar `fieldshift.tools.cli_eval` y el test entre procesos con `PYTHONHASHSEED` distintos; test "Semillas de hash distintas" en verde
+- [ ] 2.3 Implementar `rastrojo.tools.cli_eval` y el test entre procesos con `PYTHONHASHSEED` distintos; test "Semillas de hash distintas" en verde
 
 ## 2b. Comunicación honesta y entrega (P0)
 
@@ -31,7 +31,7 @@
 
 - [ ] 4.1 Generar snapshots del lote demo por perfil y el lock de versión con hashes; test "Cambio de fórmula sin bump" verificado con un cambio de prueba que luego se revierte
 - [ ] 4.2 Activar `--cov-fail-under=90` para engine + domain y el paso de cobertura solo engine; verificar que el job falla si se excluye un módulo de tests (escenario "Cobertura insuficiente")
-- [ ] 4.3 Activar mypy `--strict` sobre engine y domain y corregir hasta 0 errores; verificar con `uv run mypy --strict src/fieldshift/engine src/fieldshift/domain`
+- [ ] 4.3 Activar mypy `--strict` sobre engine y domain y corregir hasta 0 errores; verificar con `uv run mypy --strict src/rastrojo/engine src/rastrojo/domain`
 
 ## 5. Endurecimiento (P2)
 

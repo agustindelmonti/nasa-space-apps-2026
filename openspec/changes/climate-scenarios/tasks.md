@@ -2,7 +2,7 @@
 
 ## 1. Modelos y configuración (P0)
 
-- [ ] 1.1 Definir modelos frozen `WindowDef`, `ClassificationConfig`, `Exclusion`, `TieBreak`, `ClassificationResult` en `fieldshift.engine.climate`; verificar con test que rechaza campos extra y ventanas con inicio posterior al fin
+- [ ] 1.1 Definir modelos frozen `WindowDef`, `ClassificationConfig`, `Exclusion`, `TieBreak`, `ClassificationResult` en `rastrojo.engine.climate`; verificar con test que rechaza campos extra y ventanas con inicio posterior al fin
 - [ ] 1.2 Cargar A-CLI-01 a A-CLI-04 en `assumptions.yaml` con estado PENDING_AFA y resolverlos en la aplicación hacia `ClassificationConfig`; verificar con test "Ventana cambiada por agrónomos"
 
 ## 2. Acumulado y completitud (P0)

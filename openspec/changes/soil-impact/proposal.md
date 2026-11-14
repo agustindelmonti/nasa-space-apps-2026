@@ -28,7 +28,7 @@ El desafío pide explorar rotaciones que fortalezcan la salud del suelo, pero "m
 
 ## Impact
 
-- Módulo puro dentro de `fieldshift.engine` (sin I/O). Depende de `domain-models` (Rotación, Cultivo, Suelo, PValue) y del registro de supuestos.
+- Módulo puro dentro de `rastrojo.engine` (sin I/O). Depende de `domain-models` (Rotación, Cultivo, Suelo, PValue) y del registro de supuestos.
 - Requiere que `EngineInput` transporte los valores resueltos de los supuestos `A-SOIL-*` (cambio aditivo sobre domain-models, coordinar con su dueño). Usa la lluvia diaria por escenario que ya viaja en `EngineInput` para la lluvia sobre suelo desnudo.
 - Consumidores: `rotation-engine` (término α·ΔSuelo, desempate y calendario en el resultado), `explanations` y `web-demo` (calendario de suelo desnudo). `nasa-ingestion` provee el resumen NDVI mensual ya resuelto.
 

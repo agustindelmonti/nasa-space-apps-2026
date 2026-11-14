@@ -78,7 +78,7 @@ El CI MUST correr ruff (lint y chequeo de formato) sobre todo el código Python 
 Un test MUST analizar estáticamente (AST, sin importar módulos) todos los archivos de engine y fallar si importan módulos de red, tiempo, aleatoriedad, sistema o concurrencia, SDKs de LLM, o las capas data, application o adapters. También MUST fallar ante llamadas a `now()`, `today()` o `utcnow()`.
 
 #### Scenario: Import prohibido
-- **WHEN** un archivo de engine contiene `import random` o `from fieldshift.data import cache`
+- **WHEN** un archivo de engine contiene `import random` o `from rastrojo.data import cache`
 - **THEN** el test falla nombrando el archivo, la línea y el módulo
 
 #### Scenario: Engine limpio

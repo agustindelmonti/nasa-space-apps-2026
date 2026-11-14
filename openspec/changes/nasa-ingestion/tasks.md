@@ -13,7 +13,7 @@
 - [ ] 2.1 Verificar en la documentación/API de POWER si existe ET0 FAO-56 diaria en la comunidad AG y anotar el resultado en design.md (Open Questions); verificación: nota commiteada con la URL consultada
 - [ ] 2.2 Implementar adaptador POWER (httpx, tramos por año, relleno -999 a faltante) con normalización pura; verificar con test sobre un JSON de muestra guardado en `tests/fixtures/power/` (escenarios "Valor de relleno de POWER" y "Período anterior a 1981 rechazado")
 - [ ] 2.3 Implementar ET0 Penman-Monteith FAO-56 pura (si 2.1 da negativo) o mapeo OBSERVED (si da positivo); verificar con test contra el ejemplo 18 de FAO-56 (tolerancia 0.1 mm/día) y escenario "ET0 con insumo faltante"
-- [ ] 2.4 Ingestar POWER 1981 a la fecha para `demo-casilda` y guardarlo en `data/fixtures/demo/`; verificar con `uv run python -m fieldshift.data.cli ingest power --plot demo-casilda` y una segunda corrida sin red con el mismo hash
+- [ ] 2.4 Ingestar POWER 1981 a la fecha para `demo-casilda` y guardarlo en `data/fixtures/demo/`; verificar con `uv run python -m rastrojo.data.cli ingest power --plot demo-casilda` y una segunda corrida sin red con el mismo hash
 
 ## 3. SMAP L4 y GRACE-FO (P0)
 

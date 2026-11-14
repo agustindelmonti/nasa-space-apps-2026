@@ -27,7 +27,7 @@ La función objetivo calcula esperanza y riesgo sobre años históricos reales e
 
 ## Impact
 
-- Módulo puro `fieldshift.engine.climate` (sin I/O); la aplicación le pasa series de `nasa-ingestion`.
+- Módulo puro `rastrojo.engine.climate` (sin I/O); la aplicación le pasa series de `nasa-ingestion`.
 - Consumidores: `rotation-engine` (E[·] y Riesgo), `water-feasibility` (qué años correr el balance), `explanations` (por qué un año es seco).
 - Supuestos nuevos en `assumptions.yaml`: A-CLI-01 a A-CLI-04 y A-CLI-11.
 - Archivo de validación con los rindes departamentales MAGyP (fuente y fecha de descarga) en `data/validation/`, fuera de `EngineInput`.

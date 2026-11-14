@@ -27,7 +27,7 @@ El desafío pide comparar al menos 3 rotaciones, incluida la actual, según las 
 
 ## Impact
 
-- `fieldshift.engine` (función pública única `evaluate(EngineInput) -> EngineOutput`). Usa `economics`, `soil-impact`, el estado hídrico de `water-feasibility` y los escenarios de `climate-scenarios`.
+- `rastrojo.engine` (función pública única `evaluate(EngineInput) -> EngineOutput`). Usa `economics`, `soil-impact`, el estado hídrico de `water-feasibility` y los escenarios de `climate-scenarios`.
 - Consumidores: `application` (casos de uso), `api` (POST /api/v1/evaluate), `explanations`, `actor-profiles` (sensibilidad), `quality` (tests de determinismo y propiedades).
 - Usa los agregados acordados en domain-models: resultado con `eligible`, `exclusion_reasons`, `water_adjustments`, `score_delta_vs_current`, rango de margen y calendarios; `EngineInput` con supuestos resueltos, insumos hídricos y filtro por clase de año.
 

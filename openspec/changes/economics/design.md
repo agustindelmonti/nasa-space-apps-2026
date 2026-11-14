@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Módulo puro `fieldshift.engine.economics`. Entrada: Rotación validada, ParámetrosEconómicos (domain-models), escenarios con clase por estación (climate-scenarios), H e i del PerfilActor y los ajustes hídricos por (cultivo, posición, escenario) que rotation-engine deriva del estado de water-feasibility (NOT_SOWN o FORCE_DRY, ver rotation-engine design). Salida: matriz de márgenes, márgenes esperados, VAN y capital de trabajo.
+Ver proposal.md. Módulo puro `rastrojo.engine.economics`. Entrada: Rotación validada, ParámetrosEconómicos (domain-models), escenarios con clase por estación (climate-scenarios), H e i del PerfilActor y los ajustes hídricos por (cultivo, posición, escenario) que rotation-engine deriva del estado de water-feasibility (NOT_SOWN o FORCE_DRY, ver rotation-engine design). Salida: matriz de márgenes, márgenes esperados, VAN y capital de trabajo.
 
 ## Goals / Non-Goals
 

@@ -12,7 +12,7 @@ Repo vacío. Ver proposal.md. El resto de las capabilities importa estos modelos
 
 ## Decisions
 
-1. **Pydantic v2 con `ConfigDict(frozen=True, extra="forbid", strict=True)`** en una base común `DomainModel`. Alternativa descartada: dataclasses + validación manual (más código, sin JSON Schema gratis para el front).
+1. **Pydantic v2 con `ConfigDict(frozen=True, extra="forbid", allow_inf_nan=False)`** en una base común `DomainModel`. Ajuste de implementación: sin `strict=True` global, porque en modo Python impide cargar fixtures con enums y fechas como texto; la entrada de la API llega como JSON (validación rigurosa) y rangos y unidades se validan explícitamente. Alternativa descartada: dataclasses + validación manual (más código, sin JSON Schema gratis para el front).
 2. **`PValue` (valor con procedencia)** genérico: `value: float`, `unit: Unit (Literal)`, `provenance: Provenance`. `Provenance` es una unión discriminada por `kind` para que OBSERVED exija `source`, ASSUMPTION exija `assumption_id`, DERIVED exija `derived_from` + `method`. Alternativa descartada: un solo modelo con todos los campos opcionales (deja pasar estados inválidos).
 3. **Registro de supuestos** (`assumptions.yaml` versionado en el repo) cargado por `data/` y referenciado por id. El dominio valida el formato del id y que el área esté en {AGR, CLI, WAT, SOIL, ECO, ACT, FLD, DEMO}; la existencia del id la valida la capa de aplicación. La tabla consolidada vive en `docs/assumptions.md`. La aplicación copia a `EngineInput` el mapa id → valor de los supuestos usados, así el motor no lee archivos y el hash cambia si AFA edita un valor.
 4. **Catálogo de cultivos como `StrEnum`** (`SOY_1ST`, `SOY_2ND`, `MAIZE_EARLY`, `MAIZE_LATE`, `WHEAT`, `COVER_VETCH`, `COVER_RYE`, `COVER_OAT`) + tabla de atributos estáticos (estación, tipo, familia). Atributos agronómicos con números viven en supuestos: el calendario de siembra y cosecha es A-AGR-01 (único, compartido por water-feasibility, soil-impact y economics) y Kc es A-WAT-01.
@@ -44,4 +44,4 @@ Repo vacío. Ver proposal.md. El resto de las capabilities importa estos modelos
 
 ## Open Questions
 
-- Nombre final del paquete (`fieldshift` tentativo).
+- Resuelto: el paquete se llama `rastrojo`, como el producto.

@@ -32,7 +32,7 @@ El eje AFA es gestión hídrica: la pregunta real del productor es si le da el a
 
 ## Impact
 
-- Módulo puro `fieldshift.engine.water` (sin I/O) dentro del motor, invocado por `rotation-engine` para cada candidata; no se precalcula afuera. Su efecto en el puntaje llega por los ajustes NOT_SOWN y FORCE_DRY sobre los márgenes; el Riesgo del motor es el expected shortfall de márgenes de rotation-engine, no un término hídrico aparte.
+- Módulo puro `rastrojo.engine.water` (sin I/O) dentro del motor, invocado por `rotation-engine` para cada candidata; no se precalcula afuera. Su efecto en el puntaje llega por los ajustes NOT_SOWN y FORCE_DRY sobre los márgenes; el Riesgo del motor es el expected shortfall de márgenes de rotation-engine, no un término hídrico aparte.
 - Consumidores: `rotation-engine` (estado y ajustes), `explanations` (motivos, evidencia, calendario), `web-demo` (panel "agua invisible" y timeline de vulnerabilidad).
 - Supuestos nuevos en `assumptions.yaml`: A-WAT-01 a A-WAT-16 y A-CLI-05 a A-CLI-10 (A-WAT-17 lo define nasa-ingestion).
 

@@ -27,7 +27,7 @@ El motor es puro y no hace I/O; la web de demo y el canal WhatsApp necesitan un 
 
 ## Impact
 
-- Adaptador `fieldshift.adapters.api` (FastAPI) y casos de uso en `fieldshift.application`.
+- Adaptador `rastrojo.adapters.api` (FastAPI) y casos de uso en `rastrojo.application`.
 - Depende de `domain-models`, `rotation-engine`, `explanations`, `nasa-ingestion` (caché), `actor-profiles` (perfiles y sensibilidad), `economics` (parámetros con fuente y fecha), `field-measurement` (P2) y `demo-mode` (fixtures, DEMO_MODE=1). El comportamiento conversacional de /whatsapp/webhook y /chat/simulate se especifica en `whatsapp-channel`.
 - Consumidores: `web-demo` y simulador de chat. Deploy en Render o Fly (gratuito).
 - Dependencias: `fastapi`, `uvicorn`, `pydantic-settings`.

@@ -1,0 +1,794 @@
+{
+  "$defs": {
+    "AssumptionProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "assumption_id": {
+          "title": "Assumption Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "ASSUMPTION",
+          "default": "ASSUMPTION",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assumption_id"
+      ],
+      "title": "AssumptionProvenance",
+      "type": "object"
+    },
+    "BareSoilCalendar": {
+      "additionalProperties": false,
+      "description": "Días con suelo desnudo por mes (enero a diciembre).",
+      "properties": {
+        "days_by_month": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Days By Month",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/DerivedProvenance"
+        }
+      },
+      "required": [
+        "days_by_month",
+        "provenance"
+      ],
+      "title": "BareSoilCalendar",
+      "type": "object"
+    },
+    "Benefit": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "title": "Benefit",
+      "type": "object"
+    },
+    "Crop": {
+      "enum": [
+        "SOY_1ST",
+        "SOY_2ND",
+        "MAIZE_EARLY",
+        "MAIZE_LATE",
+        "WHEAT",
+        "COVER_VETCH",
+        "COVER_RYE",
+        "COVER_OAT"
+      ],
+      "title": "Crop",
+      "type": "string"
+    },
+    "Dataset": {
+      "enum": [
+        "NASA_POWER",
+        "SMAP_L4",
+        "GPM_IMERG",
+        "GRACE_FO",
+        "MODIS_NDVI",
+        "HLS_NDVI",
+        "SOILGRIDS",
+        "GLDAS",
+        "SRTM",
+        "ECOSTRESS",
+        "FIELD_HAMMER"
+      ],
+      "title": "Dataset",
+      "type": "string"
+    },
+    "DerivedProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "derived_from": {
+          "description": "Ids de los insumos",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Derived From",
+          "type": "array"
+        },
+        "kind": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Kind",
+          "type": "string"
+        },
+        "method": {
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "derived_from"
+      ],
+      "title": "DerivedProvenance",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {
+          "$ref": "#/$defs/Dataset"
+        },
+        "interpretation": {
+          "minLength": 1,
+          "title": "Interpretation",
+          "type": "string"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "value": {
+          "$ref": "#/$defs/PValue"
+        },
+        "variable": {
+          "minLength": 1,
+          "title": "Variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "variable",
+        "period",
+        "value",
+        "interpretation"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "ExclusionReason": {
+      "enum": [
+        "DOUBLE_CROP_NOT_ALLOWED",
+        "COVER_NOT_ALLOWED",
+        "WORKING_CAPITAL_EXCEEDED",
+        "WATER_NEVER_FEASIBLE",
+        "MACHINERY_WINDOW_CONFLICT",
+        "MISSING_PARAMETERS"
+      ],
+      "title": "ExclusionReason",
+      "type": "string"
+    },
+    "LossYears": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 1,
+          "title": "Total",
+          "type": "integer"
+        },
+        "years": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Years",
+          "type": "array"
+        }
+      },
+      "required": [
+        "count",
+        "total",
+        "years"
+      ],
+      "title": "LossYears",
+      "type": "object"
+    },
+    "MarginRange": {
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "$ref": "#/$defs/PValue"
+        },
+        "maximum": {
+          "$ref": "#/$defs/PValue"
+        },
+        "minimum": {
+          "$ref": "#/$defs/PValue"
+        },
+        "year_class": {
+          "$ref": "#/$defs/YearClass"
+        }
+      },
+      "required": [
+        "year_class",
+        "minimum",
+        "expected",
+        "maximum"
+      ],
+      "title": "MarginRange",
+      "type": "object"
+    },
+    "MissingInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "how_to_get": {
+          "minLength": 1,
+          "title": "How To Get",
+          "type": "string"
+        },
+        "item": {
+          "minLength": 1,
+          "title": "Item",
+          "type": "string"
+        },
+        "why_it_matters": {
+          "minLength": 1,
+          "title": "Why It Matters",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item",
+        "why_it_matters",
+        "how_to_get"
+      ],
+      "title": "MissingInfo",
+      "type": "object"
+    },
+    "ObservedProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "OBSERVED",
+          "default": "OBSERVED",
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "ObservedProvenance",
+      "type": "object"
+    },
+    "PValue": {
+      "additionalProperties": false,
+      "description": "Valor con unidad y procedencia. Todo número que cruza capas viaja así.",
+      "properties": {
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Provenance"
+        },
+        "unit": {
+          "enum": [
+            "mm",
+            "mm/day",
+            "degC",
+            "m3/m3",
+            "USD/ha",
+            "USD/t",
+            "USD/ha/point",
+            "t/ha",
+            "qq/ha",
+            "%",
+            "fraction",
+            "ratio",
+            "ha",
+            "m",
+            "days",
+            "year",
+            "index",
+            "count",
+            "MJ/m2/day",
+            "m/s"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "provenance"
+      ],
+      "title": "PValue",
+      "type": "object"
+    },
+    "Period": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "enum": [
+            "EVIDENCE",
+            "ASSUMPTION"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Variable de evidencia o id de supuesto",
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "risk_type": {
+          "$ref": "#/$defs/RiskType"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        }
+      },
+      "required": [
+        "risk_type",
+        "severity",
+        "description",
+        "basis",
+        "reference"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "RiskType": {
+      "enum": [
+        "WATER",
+        "FROST",
+        "HEAT_STRESS",
+        "EXTREME_RAIN",
+        "ECONOMIC",
+        "WEEDS",
+        "SOIL"
+      ],
+      "title": "RiskType",
+      "type": "string"
+    },
+    "RotationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "bare_soil_calendar": {
+          "$ref": "#/$defs/BareSoilCalendar"
+        },
+        "benefits": {
+          "items": {
+            "$ref": "#/$defs/Benefit"
+          },
+          "title": "Benefits",
+          "type": "array"
+        },
+        "breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "exclusion_reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ExclusionReason"
+          },
+          "title": "Exclusion Reasons",
+          "type": "array"
+        },
+        "is_current": {
+          "title": "Is Current",
+          "type": "boolean"
+        },
+        "loss_years": {
+          "$ref": "#/$defs/LossYears"
+        },
+        "margin_ranges": {
+          "items": {
+            "$ref": "#/$defs/MarginRange"
+          },
+          "title": "Margin Ranges",
+          "type": "array"
+        },
+        "missing": {
+          "items": {
+            "$ref": "#/$defs/MissingInfo"
+          },
+          "title": "Missing",
+          "type": "array"
+        },
+        "rain_on_bare_soil": {
+          "$ref": "#/$defs/PValue"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "rotation_id": {
+          "title": "Rotation Id",
+          "type": "string"
+        },
+        "score_delta_vs_current": {
+          "$ref": "#/$defs/PValue"
+        },
+        "soil_delta_index": {
+          "$ref": "#/$defs/PValue"
+        },
+        "vulnerability_calendar": {
+          "items": {
+            "$ref": "#/$defs/VulnerabilityEntry"
+          },
+          "title": "Vulnerability Calendar",
+          "type": "array"
+        },
+        "water_adjustments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/WaterAdjustment"
+          },
+          "title": "Water Adjustments",
+          "type": "array"
+        },
+        "water_feasibility": {
+          "$ref": "#/$defs/WaterFeasibility"
+        },
+        "worst_year": {
+          "title": "Worst Year",
+          "type": "integer"
+        },
+        "worst_year_margin": {
+          "$ref": "#/$defs/PValue"
+        }
+      },
+      "required": [
+        "rotation_id",
+        "rank",
+        "is_current",
+        "eligible",
+        "breakdown",
+        "soil_delta_index",
+        "water_feasibility",
+        "score_delta_vs_current",
+        "margin_ranges",
+        "loss_years",
+        "worst_year_margin",
+        "worst_year",
+        "rain_on_bare_soil",
+        "bare_soil_calendar",
+        "vulnerability_calendar",
+        "evidence",
+        "benefits",
+        "missing",
+        "risks"
+      ],
+      "title": "RotationResult",
+      "type": "object"
+    },
+    "ScoreBreakdown": {
+      "additionalProperties": false,
+      "description": "score = VAN + α·ΔSuelo − λ·Riesgo (todo en USD/ha).",
+      "properties": {
+        "npv": {
+          "$ref": "#/$defs/PValue"
+        },
+        "risk_term": {
+          "$ref": "#/$defs/PValue"
+        },
+        "soil_term": {
+          "$ref": "#/$defs/PValue"
+        },
+        "total": {
+          "$ref": "#/$defs/PValue"
+        }
+      },
+      "required": [
+        "npv",
+        "soil_term",
+        "risk_term",
+        "total"
+      ],
+      "title": "ScoreBreakdown",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "description": "De dónde sale un dato publicado por un tercero (o medido en campo).",
+      "properties": {
+        "dataset": {
+          "$ref": "#/$defs/Dataset"
+        },
+        "is_modeled": {
+          "description": "True si el producto sale de un modelo o reanálisis",
+          "title": "Is Modeled",
+          "type": "boolean"
+        },
+        "location_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Celda efectiva o punto muestreado, si aplica",
+          "title": "Location Note"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "spatial_resolution": {
+          "description": "Ej.: '~9 km', '0.5° x 0.625°'",
+          "minLength": 1,
+          "title": "Spatial Resolution",
+          "type": "string"
+        },
+        "temporal_resolution": {
+          "description": "Ej.: 'diaria', '3-horaria'",
+          "minLength": 1,
+          "title": "Temporal Resolution",
+          "type": "string"
+        },
+        "variable": {
+          "minLength": 1,
+          "title": "Variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "variable",
+        "period",
+        "spatial_resolution",
+        "temporal_resolution",
+        "is_modeled"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "UserInputProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "USER_INPUT",
+          "default": "USER_INPUT",
+          "title": "Kind",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "UserInputProvenance",
+      "type": "object"
+    },
+    "VulnerabilityEntry": {
+      "additionalProperties": false,
+      "description": "Frecuencia (0 a 1) de años con el evento, por mes, para un cultivo.",
+      "properties": {
+        "crop": {
+          "$ref": "#/$defs/Crop"
+        },
+        "event": {
+          "enum": [
+            "FROST",
+            "HEAT_STRESS",
+            "WATER_DEFICIT",
+            "EXTREME_RAIN"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "frequency_by_month": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Frequency By Month",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/DerivedProvenance"
+        }
+      },
+      "required": [
+        "crop",
+        "event",
+        "frequency_by_month",
+        "provenance"
+      ],
+      "title": "VulnerabilityEntry",
+      "type": "object"
+    },
+    "WaterAdjustment": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_index": {
+          "minimum": 0,
+          "title": "Campaign Index",
+          "type": "integer"
+        },
+        "crop": {
+          "$ref": "#/$defs/Crop"
+        },
+        "effect": {
+          "enum": [
+            "NOT_SOWN",
+            "FORCE_DRY",
+            "NONE"
+          ],
+          "title": "Effect",
+          "type": "string"
+        },
+        "scenario_year": {
+          "title": "Scenario Year",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/WaterFeasibility"
+        }
+      },
+      "required": [
+        "crop",
+        "campaign_index",
+        "scenario_year",
+        "status",
+        "effect"
+      ],
+      "title": "WaterAdjustment",
+      "type": "object"
+    },
+    "WaterFeasibility": {
+      "enum": [
+        "FEASIBLE",
+        "RISKY",
+        "NOT_FEASIBLE",
+        "UNKNOWN"
+      ],
+      "title": "WaterFeasibility",
+      "type": "string"
+    },
+    "YearClass": {
+      "enum": [
+        "DRY",
+        "NORMAL",
+        "WET"
+      ],
+      "title": "YearClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine_version": {
+      "minLength": 1,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/RotationResult"
+      },
+      "minItems": 1,
+      "title": "Results",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine_version",
+    "input_hash",
+    "results"
+  ],
+  "title": "EngineOutput",
+  "type": "object"
+}

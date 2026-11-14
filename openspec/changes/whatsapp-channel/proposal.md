@@ -28,7 +28,7 @@ El productor de zona núcleo vive en WhatsApp: mandar un pin y elegir de un men�
 
 ## Impact
 
-- `fieldshift.application.conversation` (motor conversacional puro) y `fieldshift.adapters.whatsapp` (Twilio, simulador, LLM opcional).
+- `rastrojo.application.conversation` (motor conversacional puro) y `rastrojo.adapters.whatsapp` (Twilio, simulador, LLM opcional).
 - Usa los casos de uso de evaluación de `api`/`application`, los textos WhatsApp y el glosario de `explanations`, y el catálogo de rotaciones y perfiles. El contrato HTTP común (errores, límites, rate limit) lo define `api`; `web-demo` hospeda la vista del simulador.
 - Dependencias: SDK o validador de firma de Twilio; cliente HTTP del proveedor LLM solo si se habilita el flag.
 - Visión futura: el mismo canal podría integrarse a PolPilot Agro; nada de su código ni endpoints se usa acá.

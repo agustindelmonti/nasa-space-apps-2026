@@ -24,7 +24,7 @@ El enunciado pide usar "SI" para traducir los datos en respuestas prácticas par
 
 ## Impact
 
-- Módulo `fieldshift.application.agent` con `tools`, `brain/scripted` y `contract`; YAML de intenciones y sinónimos versionado en el repo.
+- Módulo `rastrojo.application.agent` con `tools`, `brain/scripted` y `contract`; YAML de intenciones y sinónimos versionado en el repo.
 - Sin dependencias nuevas ni claves.
 
 ## Fuera de alcance

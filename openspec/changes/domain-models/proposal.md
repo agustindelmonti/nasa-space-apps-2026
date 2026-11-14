@@ -26,7 +26,7 @@ Todas las capas (ingesta, motor, explicaciones, API, canales) tienen que hablar 
 
 ## Impact
 
-- Paquete Python `fieldshift.domain` (nombre tentativo) del que dependen `engine`, `data`, `application` y `adapters`.
+- Paquete Python `rastrojo.domain` (nombre tentativo) del que dependen `engine`, `data`, `application` y `adapters`.
 - Esquemas JSON exportados desde Pydantic que consumen el front y el simulador de WhatsApp.
 - Dependencias: `pydantic>=2`, `pydantic-settings`.
 

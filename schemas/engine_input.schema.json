@@ -1,0 +1,1372 @@
+{
+  "$defs": {
+    "ActorProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "constraints": {
+          "$ref": "#/$defs/Constraints"
+        },
+        "discount_rate": {
+          "$ref": "#/$defs/PValue"
+        },
+        "horizon_years": {
+          "$ref": "#/$defs/PValue"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "machinery_windows": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MachineryWindows"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "priorities": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SoilPriorities"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "profile_id": {
+          "pattern": "^[A-Z][A-Z0-9_]{1,31}$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "risk_aversion_lambda": {
+          "$ref": "#/$defs/PValue"
+        },
+        "soil_weight_alpha": {
+          "$ref": "#/$defs/PValue"
+        }
+      },
+      "required": [
+        "profile_id",
+        "label",
+        "horizon_years",
+        "soil_weight_alpha",
+        "risk_aversion_lambda",
+        "discount_rate",
+        "constraints"
+      ],
+      "title": "ActorProfile",
+      "type": "object"
+    },
+    "AssumptionProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "assumption_id": {
+          "title": "Assumption Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "ASSUMPTION",
+          "default": "ASSUMPTION",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assumption_id"
+      ],
+      "title": "AssumptionProvenance",
+      "type": "object"
+    },
+    "Campaign": {
+      "additionalProperties": false,
+      "description": "Una campaña agrícola: a lo sumo un cultivo de invierno y uno de verano.",
+      "properties": {
+        "summer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Crop"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "winter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Crop"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Campaign",
+      "type": "object"
+    },
+    "ClimateScenario": {
+      "additionalProperties": false,
+      "description": "Un año histórico real, identificado por el año de inicio de campaña.",
+      "properties": {
+        "annual_class": {
+          "$ref": "#/$defs/YearClass"
+        },
+        "campaign_start_year": {
+          "maximum": 2100,
+          "minimum": 1981,
+          "title": "Campaign Start Year",
+          "type": "integer"
+        },
+        "summer_class": {
+          "$ref": "#/$defs/YearClass"
+        },
+        "summer_rain": {
+          "$ref": "#/$defs/PValue"
+        },
+        "weight": {
+          "minimum": 0,
+          "title": "Weight",
+          "type": "number"
+        },
+        "winter_class": {
+          "$ref": "#/$defs/YearClass"
+        },
+        "winter_rain": {
+          "$ref": "#/$defs/PValue"
+        }
+      },
+      "required": [
+        "campaign_start_year",
+        "annual_class",
+        "winter_class",
+        "summer_class",
+        "winter_rain",
+        "summer_rain",
+        "weight"
+      ],
+      "title": "ClimateScenario",
+      "type": "object"
+    },
+    "Constraints": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_cover_crop": {
+          "title": "Allow Cover Crop",
+          "type": "boolean"
+        },
+        "allow_double_crop": {
+          "title": "Allow Double Crop",
+          "type": "boolean"
+        },
+        "max_working_capital_usd_ha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ausente significa sin tope; nunca un número grande"
+        }
+      },
+      "required": [
+        "allow_double_crop",
+        "allow_cover_crop"
+      ],
+      "title": "Constraints",
+      "type": "object"
+    },
+    "Crop": {
+      "enum": [
+        "SOY_1ST",
+        "SOY_2ND",
+        "MAIZE_EARLY",
+        "MAIZE_LATE",
+        "WHEAT",
+        "COVER_VETCH",
+        "COVER_RYE",
+        "COVER_OAT"
+      ],
+      "title": "Crop",
+      "type": "string"
+    },
+    "CropEconomics": {
+      "additionalProperties": false,
+      "properties": {
+        "crop": {
+          "$ref": "#/$defs/Crop"
+        },
+        "direct_costs": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "export_tax": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "freight": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "harvest_cost": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "harvest_cost_mode": {
+          "$ref": "#/$defs/HarvestCostMode"
+        },
+        "marketing_cost": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "price": {
+          "$ref": "#/$defs/DatedPValue"
+        },
+        "price_basis": {
+          "$ref": "#/$defs/PriceBasis"
+        },
+        "yields": {
+          "additionalProperties": {
+            "$ref": "#/$defs/DatedPValue"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/YearClass"
+          },
+          "title": "Yields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "crop",
+        "price",
+        "price_basis",
+        "export_tax",
+        "direct_costs",
+        "harvest_cost_mode",
+        "harvest_cost",
+        "marketing_cost",
+        "freight",
+        "yields"
+      ],
+      "title": "CropEconomics",
+      "type": "object"
+    },
+    "Dataset": {
+      "enum": [
+        "NASA_POWER",
+        "SMAP_L4",
+        "GPM_IMERG",
+        "GRACE_FO",
+        "MODIS_NDVI",
+        "HLS_NDVI",
+        "SOILGRIDS",
+        "GLDAS",
+        "SRTM",
+        "ECOSTRESS",
+        "FIELD_HAMMER"
+      ],
+      "title": "Dataset",
+      "type": "string"
+    },
+    "DatedPValue": {
+      "additionalProperties": false,
+      "description": "Parámetro económico: además de procedencia, lleva su fecha de referencia.",
+      "properties": {
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Provenance"
+        },
+        "reference_date": {
+          "format": "date",
+          "title": "Reference Date",
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "mm",
+            "mm/day",
+            "degC",
+            "m3/m3",
+            "USD/ha",
+            "USD/t",
+            "USD/ha/point",
+            "t/ha",
+            "qq/ha",
+            "%",
+            "fraction",
+            "ratio",
+            "ha",
+            "m",
+            "days",
+            "year",
+            "index",
+            "count",
+            "MJ/m2/day",
+            "m/s"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "provenance",
+        "reference_date"
+      ],
+      "title": "DatedPValue",
+      "type": "object"
+    },
+    "DerivedProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "derived_from": {
+          "description": "Ids de los insumos",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Derived From",
+          "type": "array"
+        },
+        "kind": {
+          "const": "DERIVED",
+          "default": "DERIVED",
+          "title": "Kind",
+          "type": "string"
+        },
+        "method": {
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "derived_from"
+      ],
+      "title": "DerivedProvenance",
+      "type": "object"
+    },
+    "EconomicParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "crops": {
+          "items": {
+            "$ref": "#/$defs/CropEconomics"
+          },
+          "minItems": 1,
+          "title": "Crops",
+          "type": "array"
+        },
+        "rent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rent"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "crops"
+      ],
+      "title": "EconomicParameters",
+      "type": "object"
+    },
+    "FlagValue": {
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Provenance"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "value",
+        "provenance"
+      ],
+      "title": "FlagValue",
+      "type": "object"
+    },
+    "GeoPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "GeoPoint",
+      "type": "object"
+    },
+    "HarvestCostMode": {
+      "enum": [
+        "FRACTION_OF_REVENUE",
+        "USD_PER_HA"
+      ],
+      "title": "HarvestCostMode",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "MachineryWindows": {
+      "additionalProperties": false,
+      "description": "Meses calendario (1 a 12) con maquinaria disponible por operación.",
+      "properties": {
+        "HARVEST": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Harvest"
+        },
+        "SOWING": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sowing"
+        }
+      },
+      "title": "MachineryWindows",
+      "type": "object"
+    },
+    "ObservedProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "OBSERVED",
+          "default": "OBSERVED",
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "ObservedProvenance",
+      "type": "object"
+    },
+    "PValue": {
+      "additionalProperties": false,
+      "description": "Valor con unidad y procedencia. Todo número que cruza capas viaja así.",
+      "properties": {
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Provenance"
+        },
+        "unit": {
+          "enum": [
+            "mm",
+            "mm/day",
+            "degC",
+            "m3/m3",
+            "USD/ha",
+            "USD/t",
+            "USD/ha/point",
+            "t/ha",
+            "qq/ha",
+            "%",
+            "fraction",
+            "ratio",
+            "ha",
+            "m",
+            "days",
+            "year",
+            "index",
+            "count",
+            "MJ/m2/day",
+            "m/s"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "provenance"
+      ],
+      "title": "PValue",
+      "type": "object"
+    },
+    "Period": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
+    "Plot": {
+      "additionalProperties": false,
+      "properties": {
+        "area_ha": {
+          "$ref": "#/$defs/PValue"
+        },
+        "location": {
+          "$ref": "#/$defs/GeoPoint"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "plot_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+          "title": "Plot Id",
+          "type": "string"
+        },
+        "polygon": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PolygonGeometry"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "plot_id",
+        "name",
+        "location",
+        "area_ha"
+      ],
+      "title": "Plot",
+      "type": "object"
+    },
+    "PolygonGeometry": {
+      "additionalProperties": false,
+      "description": "Polígono GeoJSON simple (un anillo exterior, coordenadas [lon, lat]).",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "pattern": "^Polygon$",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "title": "PolygonGeometry",
+      "type": "object"
+    },
+    "PriceBasis": {
+      "enum": [
+        "FOB",
+        "SPOT_FAS"
+      ],
+      "title": "PriceBasis",
+      "type": "string"
+    },
+    "Rent": {
+      "additionalProperties": false,
+      "description": "Arrendamiento opcional, en una sola unidad.",
+      "properties": {
+        "soy_qq_ha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "usd_ha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatedPValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Rent",
+      "type": "object"
+    },
+    "ResolvedAssumption": {
+      "additionalProperties": false,
+      "description": "Valor de un supuesto tal como se usó en esta evaluación (copiado del registro).",
+      "properties": {
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ResolvedAssumption",
+      "type": "object"
+    },
+    "Rotation": {
+      "additionalProperties": false,
+      "properties": {
+        "campaigns": {
+          "items": {
+            "$ref": "#/$defs/Campaign"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Campaigns",
+          "type": "array"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "rotation_id": {
+          "pattern": "^[A-Z][A-Z0-9_]{1,63}$",
+          "title": "Rotation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rotation_id",
+        "name",
+        "campaigns"
+      ],
+      "title": "Rotation",
+      "type": "object"
+    },
+    "ScenarioWeather": {
+      "additionalProperties": false,
+      "description": "Series diarias completas de un año de campaña (sin huecos: los años\nincompletos se excluyen antes en climate-scenarios).",
+      "properties": {
+        "campaign_start_year": {
+          "maximum": 2100,
+          "minimum": 1981,
+          "title": "Campaign Start Year",
+          "type": "integer"
+        },
+        "et0_mm": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "title": "Et0 Mm",
+          "type": "array"
+        },
+        "imerg_rain_mm": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imerg Rain Mm"
+        },
+        "rain_mm": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "title": "Rain Mm",
+          "type": "array"
+        },
+        "sources": {
+          "$ref": "#/$defs/WeatherSources"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "t2m_max_c": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "title": "T2M Max C",
+          "type": "array"
+        },
+        "t2m_min_c": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "title": "T2M Min C",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_start_year",
+        "start_date",
+        "rain_mm",
+        "et0_mm",
+        "t2m_min_c",
+        "t2m_max_c",
+        "sources"
+      ],
+      "title": "ScenarioWeather",
+      "type": "object"
+    },
+    "Soil": {
+      "additionalProperties": false,
+      "description": "Suelo del lote. Cada campo es opcional y lleva su propia procedencia.\n\nUn campo ausente es un faltante explícito: nunca se completa con un valor por defecto.",
+      "properties": {
+        "available_water_mm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "compaction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FlagValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "organic_matter_pct": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "root_depth_m": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "texture": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextureValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "water_table_depth_m": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Soil",
+      "type": "object"
+    },
+    "SoilPriorities": {
+      "additionalProperties": false,
+      "description": "Pesos opcionales en [0, 1], uno por componente de ΔSuelo (ausente = 0).",
+      "properties": {
+        "EROSION_COVER": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Erosion Cover"
+        },
+        "NITROGEN": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nitrogen"
+        },
+        "OM_CARBON": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Om Carbon"
+        },
+        "ROOTS": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Roots"
+        },
+        "WEED_CONTROL": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weed Control"
+        }
+      },
+      "title": "SoilPriorities",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "description": "De dónde sale un dato publicado por un tercero (o medido en campo).",
+      "properties": {
+        "dataset": {
+          "$ref": "#/$defs/Dataset"
+        },
+        "is_modeled": {
+          "description": "True si el producto sale de un modelo o reanálisis",
+          "title": "Is Modeled",
+          "type": "boolean"
+        },
+        "location_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Celda efectiva o punto muestreado, si aplica",
+          "title": "Location Note"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "spatial_resolution": {
+          "description": "Ej.: '~9 km', '0.5° x 0.625°'",
+          "minLength": 1,
+          "title": "Spatial Resolution",
+          "type": "string"
+        },
+        "temporal_resolution": {
+          "description": "Ej.: 'diaria', '3-horaria'",
+          "minLength": 1,
+          "title": "Temporal Resolution",
+          "type": "string"
+        },
+        "variable": {
+          "minLength": 1,
+          "title": "Variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "variable",
+        "period",
+        "spatial_resolution",
+        "temporal_resolution",
+        "is_modeled"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "TextureClass": {
+      "enum": [
+        "SAND",
+        "LOAMY_SAND",
+        "SANDY_LOAM",
+        "LOAM",
+        "SILT_LOAM",
+        "SILT",
+        "SANDY_CLAY_LOAM",
+        "CLAY_LOAM",
+        "SILTY_CLAY_LOAM",
+        "SANDY_CLAY",
+        "SILTY_CLAY",
+        "CLAY"
+      ],
+      "title": "TextureClass",
+      "type": "string"
+    },
+    "TextureValue": {
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Provenance"
+        },
+        "value": {
+          "$ref": "#/$defs/TextureClass"
+        }
+      },
+      "required": [
+        "value",
+        "provenance"
+      ],
+      "title": "TextureValue",
+      "type": "object"
+    },
+    "UserInputProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "USER_INPUT",
+          "default": "USER_INPUT",
+          "title": "Kind",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "UserInputProvenance",
+      "type": "object"
+    },
+    "WaterInputs": {
+      "additionalProperties": false,
+      "description": "Insumos hídricos y de evidencia. El motor calcula la factibilidad desde acá.",
+      "properties": {
+        "grace_tws_anomaly": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "ndvi_monthly": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ndvi Monthly"
+        },
+        "smap_initial_rootzone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "weather": {
+          "items": {
+            "$ref": "#/$defs/ScenarioWeather"
+          },
+          "minItems": 1,
+          "title": "Weather",
+          "type": "array"
+        }
+      },
+      "required": [
+        "weather"
+      ],
+      "title": "WaterInputs",
+      "type": "object"
+    },
+    "WeatherSources": {
+      "additionalProperties": false,
+      "properties": {
+        "et0": {
+          "discriminator": {
+            "mapping": {
+              "ASSUMPTION": "#/$defs/AssumptionProvenance",
+              "DERIVED": "#/$defs/DerivedProvenance",
+              "OBSERVED": "#/$defs/ObservedProvenance",
+              "USER_INPUT": "#/$defs/UserInputProvenance"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ObservedProvenance"
+            },
+            {
+              "$ref": "#/$defs/DerivedProvenance"
+            },
+            {
+              "$ref": "#/$defs/AssumptionProvenance"
+            },
+            {
+              "$ref": "#/$defs/UserInputProvenance"
+            }
+          ],
+          "title": "Et0"
+        },
+        "imerg_rain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Source"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rain": {
+          "$ref": "#/$defs/Source"
+        },
+        "t2m_max": {
+          "$ref": "#/$defs/Source"
+        },
+        "t2m_min": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "rain",
+        "et0",
+        "t2m_min",
+        "t2m_max"
+      ],
+      "title": "WeatherSources",
+      "type": "object"
+    },
+    "YearClass": {
+      "enum": [
+        "DRY",
+        "NORMAL",
+        "WET"
+      ],
+      "title": "YearClass",
+      "type": "string"
+    },
+    "YearClassFilter": {
+      "enum": [
+        "ALL",
+        "DRY",
+        "NORMAL",
+        "WET"
+      ],
+      "title": "YearClassFilter",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/Rotation"
+      },
+      "minItems": 1,
+      "title": "Candidates",
+      "type": "array"
+    },
+    "current_rotation": {
+      "$ref": "#/$defs/Rotation"
+    },
+    "economics": {
+      "$ref": "#/$defs/EconomicParameters"
+    },
+    "plot": {
+      "$ref": "#/$defs/Plot"
+    },
+    "profile": {
+      "$ref": "#/$defs/ActorProfile"
+    },
+    "resolved_assumptions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ResolvedAssumption"
+      },
+      "title": "Resolved Assumptions",
+      "type": "object"
+    },
+    "scenarios": {
+      "items": {
+        "$ref": "#/$defs/ClimateScenario"
+      },
+      "minItems": 1,
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "soil": {
+      "$ref": "#/$defs/Soil"
+    },
+    "water_inputs": {
+      "$ref": "#/$defs/WaterInputs"
+    },
+    "year_class_filter": {
+      "$ref": "#/$defs/YearClassFilter",
+      "default": "ALL"
+    }
+  },
+  "required": [
+    "plot",
+    "soil",
+    "current_rotation",
+    "candidates",
+    "profile",
+    "economics",
+    "scenarios",
+    "resolved_assumptions",
+    "water_inputs"
+  ],
+  "title": "EngineInput",
+  "type": "object"
+}

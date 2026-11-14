@@ -26,7 +26,7 @@ La comparación de rotaciones solo es creíble si el margen se calcula con pará
 
 ## Impact
 
-- Módulo puro `fieldshift.engine.economics`. Depende de `domain-models` (ParámetrosEconómicos, Rotación, EscenarioClimático, PValue) y de la clase de año por estación que produce `climate-scenarios`.
+- Módulo puro `rastrojo.engine.economics`. Depende de `domain-models` (ParámetrosEconómicos, Rotación, EscenarioClimático, PValue) y de la clase de año por estación que produce `climate-scenarios`.
 - Consumidores: `rotation-engine` (E[Margen], VAN, Riesgo, restricción de capital), `explanations`, `actor-profiles` (arrendamiento para TENANT).
 - Usa los agregados acordados en domain-models: base de precio, modo de costo de cosecha, comercialización, flete por t y arrendamiento opcional.
 - La matriz (posición, año) también alimenta el rango de margen por clase anual que arma rotation-engine para explicar la incertidumbre.

@@ -30,7 +30,7 @@ El criterio "Pertinencia" pide uso profundo y central de datos NASA, y el motor 
 
 ## Impact
 
-- Paquete `fieldshift.data` (ingesta y caché); lo consume `fieldshift.application` y el endpoint `GET /api/v1/plots/{id}/context`.
+- Paquete `rastrojo.data` (ingesta y caché); lo consume `rastrojo.application` y el endpoint `GET /api/v1/plots/{id}/context`.
 - Archivos: `data/cache/<dataset>/...parquet` (+ metadatos), `data/fixtures/demo/` para el lote de demo, `.env.example` con variables de Earthdata.
 - Dependencias: `httpx`, `earthaccess`, `xarray`, `h5netcdf`/`netCDF4`, `pandas`, `pandera`, `pyarrow`, `pydantic-settings`.
 - Contrato con `climate-scenarios` y `water-feasibility`: series diarias y agregados con huecos explícitos.

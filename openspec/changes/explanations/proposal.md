@@ -32,7 +32,7 @@ El desafío pide, para cada rotación, por qué, con qué evidencia, beneficios,
 
 ## Impact
 
-- Módulo puro en la capa de aplicación (`fieldshift.application.explanations`, tentativo), consumido por `api` (POST /evaluate, POST /rotation-sheet, GET /glossary), `web-demo` y `whatsapp-channel`.
+- Módulo puro en la capa de aplicación (`rastrojo.application.explanations`, tentativo), consumido por `api` (POST /evaluate, POST /rotation-sheet, GET /glossary), `web-demo` y `whatsapp-channel`.
 - Depende de `domain-models` (Evidencia, Faltante, Riesgo, PValue, Provenance) y de la salida de `rotation-engine`; usa el catálogo de datasets de `nasa-ingestion` para resoluciones y limitaciones, y los nombres de perfiles de `actor-profiles`.
 - Snapshot tests de textos en `quality`.
 - Sin dependencias nuevas.

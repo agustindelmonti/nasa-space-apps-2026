@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Paquete `fieldshift.engine`, función pública `evaluate(inp: EngineInput) -> EngineOutput`. Depende solo de `fieldshift.domain` y de los submódulos puros `water` (water-feasibility), `water_adjust`, `economics`, `soil`, `risk`, `priorities` (solo pesos efectivos de ΔSuelo). La capa `application` arma el EngineInput (desde caché, fixtures y request) y es la única que hace I/O.
+Ver proposal.md. Paquete `rastrojo.engine`, función pública `evaluate(inp: EngineInput) -> EngineOutput`. Depende solo de `rastrojo.domain` y de los submódulos puros `water` (water-feasibility), `water_adjust`, `economics`, `soil`, `risk`, `priorities` (solo pesos efectivos de ΔSuelo). La capa `application` arma el EngineInput (desde caché, fixtures y request) y es la única que hace I/O.
 
 ## Goals / Non-Goals
 

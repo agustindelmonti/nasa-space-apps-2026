@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos producidas por `nasa-ingestion` (formato largo con `is_missing`). Salida: EscenarioClimático de `domain-models`. Vive en `fieldshift.engine.climate` porque es pura y la reusa el motor, pero la aplicación la invoca antes de armar `EngineInput` (el motor recibe escenarios ya resueltos).
+Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos producidas por `nasa-ingestion` (formato largo con `is_missing`). Salida: EscenarioClimático de `domain-models`. Vive en `rastrojo.engine.climate` porque es pura y la reusa el motor, pero la aplicación la invoca antes de armar `EngineInput` (el motor recibe escenarios ya resueltos).
 
 ## Goals / Non-Goals
 

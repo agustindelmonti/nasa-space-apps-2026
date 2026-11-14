@@ -29,7 +29,7 @@ El desafío pide contemplar las prioridades del productor, y el brief propone mo
 
 ## Impact
 
-- Datos de perfiles en `assumptions.yaml` (valores) y un módulo puro de perfiles y sensibilidad en `fieldshift.engine` (cálculo) más un caso de uso en `fieldshift.application`.
+- Datos de perfiles en `assumptions.yaml` (valores) y un módulo puro de perfiles y sensibilidad en `rastrojo.engine` (cálculo) más un caso de uso en `rastrojo.application`.
 - Consumidores: `api` (GET /api/v1/actors/profiles, POST /api/v1/sensitivity y robustez en POST /api/v1/evaluate), `web-demo` (sliders, prioridades, robustez y gráfico), `whatsapp-channel` (elegir actor), `explanations`.
 - Depende de `rotation-engine`, `economics`, `soil-impact` y del fixture de `demo-mode`.
 

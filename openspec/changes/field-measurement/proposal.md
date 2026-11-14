@@ -26,7 +26,7 @@ El desafío pide explicar en qué difiere el dato satelital de la medición de c
 
 ## Impact
 
-- `fieldshift.application.field` (caso de uso) y rutas `POST/GET /api/v1/plots/{id}/field-readings` en el adaptador FastAPI.
+- `rastrojo.application.field` (caso de uso) y rutas `POST/GET /api/v1/plots/{id}/field-readings` en el adaptador FastAPI.
 - Web: pantalla de captura con DeviceMotion API (requiere HTTPS y permiso de sensores en iOS) y tarjeta "campo vs satélite".
 - Almacenamiento en archivos JSON bajo `data/field/` (sin base de datos).
 - Supuestos nuevos: A-FLD-01 a A-FLD-06 (el área FLD es exclusiva de este change; el lote demo usa A-DEMO-01).

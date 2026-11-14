@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por escenario (lluvia PRECTOTCORR, ET0, T2M_MIN, T2M_MAX, IMERG opcional), escenarios de `climate-scenarios`, humedad SMAP L4 en la fecha de referencia, anomalía TWS de GRACE-FO, Suelo y Rotación de `domain-models`, y supuestos resueltos. Vive en `fieldshift.engine.water`; `rotation-engine` lo llama para cada candidata y traduce el estado por escenario en ajustes de márgenes. El déficit no entra al Riesgo de forma directa: el Riesgo es el expected shortfall de márgenes (rotation-engine).
+Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por escenario (lluvia PRECTOTCORR, ET0, T2M_MIN, T2M_MAX, IMERG opcional), escenarios de `climate-scenarios`, humedad SMAP L4 en la fecha de referencia, anomalía TWS de GRACE-FO, Suelo y Rotación de `domain-models`, y supuestos resueltos. Vive en `rastrojo.engine.water`; `rotation-engine` lo llama para cada candidata y traduce el estado por escenario en ajustes de márgenes. El déficit no entra al Riesgo de forma directa: el Riesgo es el expected shortfall de márgenes (rotation-engine).
 
 ## Goals / Non-Goals
 

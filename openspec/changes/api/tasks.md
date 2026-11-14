@@ -2,7 +2,7 @@
 
 ## 1. Esqueleto y errores (P0)
 
-- [ ] 1.1 Crear app FastAPI con router `/api/v1`, `Settings` con `pydantic-settings` y `.env.example`; verificar `uv run uvicorn fieldshift.adapters.api.main:app` y GET /api/v1/health 200 con TestClient
+- [ ] 1.1 Crear app FastAPI con router `/api/v1`, `Settings` con `pydantic-settings` y `.env.example`; verificar `uv run uvicorn rastrojo.adapters.api.main:app` y GET /api/v1/health 200 con TestClient
 - [ ] 1.2 Implementar `ErrorCode`, `ApiError` y handlers globales (validación, 404, 405, 500); tests "Campo extra en request", "Ruta inexistente" y "Error interno sin traza" en verde
 - [ ] 1.3 Implementar `CanonicalJSONResponse` con el JSON canónico de dominio; test que compara bytes con `canonical_json(model)` en verde
 

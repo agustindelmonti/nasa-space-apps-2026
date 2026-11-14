@@ -27,7 +27,7 @@ El enunciado oficial pide usar "SI" para traducir datos NASA en recomendaciones 
 
 ## Impact
 
-- Nuevo módulo `fieldshift.application.agent` y adaptadores; dependencia `anthropic` (SDK oficial de Python).
+- Nuevo módulo `rastrojo.application.agent` y adaptadores; dependencia `anthropic` (SDK oficial de Python).
 - Variables de entorno: `ANTHROPIC_API_KEY`, `AGENT_ENABLED`, `AGENT_MODEL`, `AGENT_EFFORT`, `AGENT_TIMEOUT_S`, `AGENT_MAX_TOOL_CALLS` en `.env.example` sin valores.
 - `AI_USE.md` se actualiza: el agente usa un modelo de lenguaje para conversar, nunca para calcular.
 

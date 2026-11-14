@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. El índice vive en `fieldshift.engine.soil` (puro, sin I/O). Recibe una Rotación ya validada por domain-models, el Suelo, la serie NDVI resuelta (opcional) y los supuestos `A-SOIL-*` resueltos dentro de `EngineInput`. La escala [-100, +100] por ciclo y el uso de α en USD/ha por punto vienen de xcut.md.
+Ver proposal.md. El índice vive en `rastrojo.engine.soil` (puro, sin I/O). Recibe una Rotación ya validada por domain-models, el Suelo, la serie NDVI resuelta (opcional) y los supuestos `A-SOIL-*` resueltos dentro de `EngineInput`. La escala [-100, +100] por ciclo y el uso de α en USD/ha por punto vienen de xcut.md.
 
 ## Goals / Non-Goals
 

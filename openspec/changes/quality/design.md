@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Repo Python 3.12 con uv, paquete `fieldshift`. El motor es puro (rotation-engine) y serializa con el JSON canónico de domain-models. Los fixtures del lote demo los produce demo-mode en `data/fixtures/demo/`.
+Ver proposal.md. Repo Python 3.12 con uv, paquete `rastrojo`. El motor es puro (rotation-engine) y serializa con el JSON canónico de domain-models. Los fixtures del lote demo los produce demo-mode en `data/fixtures/demo/`.
 
 ## Goals / Non-Goals
 
@@ -30,7 +30,7 @@ Marcadores pytest: `network` (excluido en CI con `-m "not network"`), `slow`.
 ### 2. Determinismo
 
 - Mismo proceso: `canonical_bytes(evaluate(inp))` dos veces por perfil; en falla, se calcula la primera ruta JSON distinta con un diff recursivo propio (sin dependencias).
-- Entre procesos: `subprocess.run([sys.executable, "-m", "fieldshift.engine.cli_eval", path], env={"PYTHONHASHSEED": s, "PATH": ...})` con s ∈ {1, 2}; el módulo `cli_eval` lee un archivo y escribe a stdout (vive fuera de engine, en `fieldshift.tools`, para no meter I/O en el motor). Se compara SHA-256 de stdout.
+- Entre procesos: `subprocess.run([sys.executable, "-m", "rastrojo.engine.cli_eval", path], env={"PYTHONHASHSEED": s, "PATH": ...})` con s ∈ {1, 2}; el módulo `cli_eval` lee un archivo y escribe a stdout (vive fuera de engine, en `rastrojo.tools`, para no meter I/O en el motor). Se compara SHA-256 de stdout.
 
 ### 3. Estrategias de hypothesis
 
@@ -45,11 +45,11 @@ syrupy con extensión JSON sobre los bytes canónicos. Test de coherencia: un ar
 
 ### 5. Test de imports (AST)
 
-Recorre `src/fieldshift/engine/**/*.py` con `ast.parse` y revisa `Import` / `ImportFrom`.
+Recorre `src/rastrojo/engine/**/*.py` con `ast.parse` y revisa `Import` / `ImportFrom`.
 
-- Prohibidos (prefijo del módulo): `socket`, `ssl`, `http`, `urllib`, `requests`, `httpx`, `aiohttp`, `ftplib`, `smtplib`, `time`, `random`, `secrets`, `uuid`, `os`, `sys`, `subprocess`, `shutil`, `pathlib`, `io`, `tempfile`, `threading`, `multiprocessing`, `asyncio`, `concurrent`, `anthropic`, `openai`, `twilio`, `earthaccess`, `pandas`, `xarray`, `fieldshift.data`, `fieldshift.application`, `fieldshift.adapters`.
+- Prohibidos (prefijo del módulo): `socket`, `ssl`, `http`, `urllib`, `requests`, `httpx`, `aiohttp`, `ftplib`, `smtplib`, `time`, `random`, `secrets`, `uuid`, `os`, `sys`, `subprocess`, `shutil`, `pathlib`, `io`, `tempfile`, `threading`, `multiprocessing`, `asyncio`, `concurrent`, `anthropic`, `openai`, `twilio`, `earthaccess`, `pandas`, `xarray`, `rastrojo.data`, `rastrojo.application`, `rastrojo.adapters`.
 - `datetime` se permite solo como `from datetime import date`; cualquier llamada a atributos `now`, `today`, `utcnow` falla.
-- Permitidos: `math`, `dataclasses`, `enum`, `typing`, `collections`, `itertools`, `functools`, `decimal`, `fractions`, `hashlib`, `json`, `fieldshift.domain`, `fieldshift.engine`.
+- Permitidos: `math`, `dataclasses`, `enum`, `typing`, `collections`, `itertools`, `functools`, `decimal`, `fractions`, `hashlib`, `json`, `rastrojo.domain`, `rastrojo.engine`.
 - Se usa lista de prohibidos + lista de permitidos: un módulo no listado falla con mensaje "agregar a una de las listas", para forzar la decisión explícita.
 
 Alternativa descartada: import-linter. Útil para capas, pero no detecta llamadas a `now()` y agrega configuración; el test AST es ~60 líneas.
@@ -70,12 +70,12 @@ Alternativa descartada: revisar a mano el pitch y la web el domingo (es justo cu
 ```
 jobs:
   lint:   uv sync --frozen; uv run ruff check .; uv run ruff format --check .
-  types:  uv run mypy --strict src/fieldshift/engine src/fieldshift/domain
-  test:   uv run pytest -m "not network" --cov=fieldshift.engine --cov=fieldshift.domain
+  types:  uv run mypy --strict src/rastrojo/engine src/rastrojo/domain
+  test:   uv run pytest -m "not network" --cov=rastrojo.engine --cov=rastrojo.domain
           --cov-branch --cov-fail-under=90
 ```
 
-El umbral de 90 % se aplica al total de engine + domain (pytest-cov no separa umbrales por paquete); un paso extra con `coverage report --include="src/fieldshift/engine/*" --fail-under=90` asegura el de engine solo. `permissions: contents: read`, sin secretos. Las acciones se fijan por versión.
+El umbral de 90 % se aplica al total de engine + domain (pytest-cov no separa umbrales por paquete); un paso extra con `coverage report --include="src/rastrojo/engine/*" --fail-under=90` asegura el de engine solo. `permissions: contents: read`, sin secretos. Las acciones se fijan por versión.
 
 ### Alternativas descartadas
 

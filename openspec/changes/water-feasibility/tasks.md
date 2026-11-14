@@ -3,7 +3,7 @@
 ## 1. Modelos e insumos (P0)
 
 - [ ] 1.1 Consumir los campos de `EngineInput` acordados en `domain-models` (series diarias por año con T2M_MAX e IMERG opcional, humedad inicial SMAP, anomalía TWS, supuestos resueltos); verificar con test de validación de un `EngineInput` de ejemplo
-- [ ] 1.2 Definir modelos frozen de salida (`WaterAssessment`, `CampaignWater`, `ScenarioWater`, `Reason`) en `fieldshift.engine.water`; verificar con test que rechaza campos extra y exige procedencia en cada número
+- [ ] 1.2 Definir modelos frozen de salida (`WaterAssessment`, `CampaignWater`, `ScenarioWater`, `Reason`) en `rastrojo.engine.water`; verificar con test que rechaza campos extra y exige procedencia en cada número
 - [ ] 1.3 Cargar A-WAT-01 a A-WAT-15 y A-CLI-05 a A-CLI-10 en `assumptions.yaml` (PENDING_AFA, fuente FAO-56 donde aplica); verificar con test que la aplicación los resuelve y el formato de id es válido
 
 ## 2. Balance diario (P0)
