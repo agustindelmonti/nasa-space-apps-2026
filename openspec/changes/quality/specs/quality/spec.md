@@ -155,3 +155,15 @@ En P1 un test MUST verificar que existe `docs/validation.md` con el reporte del 
 #### Scenario: Reporte sin fuente
 - **WHEN** `docs/validation.md` no cita la fuente MAGyP
 - **THEN** el test falla
+
+### Requirement: Tests del agente
+El cerebro por reglas MUST tener tests de determinismo (mismo mensaje y estado, mismos bytes) y de cobertura de intenciones. Para el cerebro con modelo de lenguaje MUST existir un set de evaluación versionado de al menos 20 preguntas (incluye pronóstico, decisión, inyección, cultivo fuera de catálogo e incertidumbre) con criterios de aprobación, y la guarda de anclaje MUST tener tests con borradores simulados que contengan números sin fuente.
+
+#### Scenario: Guarda con borrador simulado
+- **GIVEN** un borrador que cita un número ausente de las salidas de tools
+- **WHEN** se aplica la guarda de anclaje
+- **THEN** el borrador se rechaza y, tras la regeneración fallida, se devuelve la plantilla
+
+#### Scenario: Cerebro por reglas determinista
+- **WHEN** se corre la misma conversación de ejemplo dos veces en procesos separados
+- **THEN** las respuestas serializadas son idénticas

@@ -36,3 +36,8 @@
 ## 5. Endurecimiento (P2)
 
 - [ ] 5.1 Agregar caché de uv y fijar versiones de acciones en el workflow; verificar que el tiempo total del CI baja y sigue en verde
+
+## Agente (P1/P2)
+
+- [ ] A.1 Tests de determinismo y cobertura de intenciones del cerebro por reglas (P1)
+- [ ] A.2 Set de evaluación de 20 preguntas en `docs/agent-eval.md` y tests de la guarda de anclaje con borradores simulados (P2)

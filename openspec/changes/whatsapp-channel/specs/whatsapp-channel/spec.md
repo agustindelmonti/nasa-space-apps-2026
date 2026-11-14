@@ -242,3 +242,15 @@ Los logs MUST identificar al usuario solo por un hash con sal del número de tel
 #### Scenario: Número hasheado
 - **WHEN** el número +5493410000000 completa el flujo
 - **THEN** ningún log contiene "5493410000000" y todos los eventos de esa sesión comparten el mismo hash
+
+### Requirement: Texto libre al agente
+En cualquier estado, un mensaje que no sea una opción de menú válida MUST enviarse al agente de `ask-agent` con el estado de conversación actual, y su respuesta MUST entregarse respetando la partición de mensajes. Las opciones numeradas del menú MUST seguir funcionando igual.
+
+#### Scenario: Pregunta abierta después del resultado
+- **GIVEN** una conversación en SHOW_RESULT
+- **WHEN** el productor escribe "¿y si el año viene seco?"
+- **THEN** recibe la respuesta del agente sobre años secos y el menú sigue disponible
+
+#### Scenario: Opción numérica
+- **WHEN** el productor responde "2" en un menú
+- **THEN** se interpreta como opción de menú, no se envía al agente

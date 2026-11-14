@@ -310,3 +310,15 @@ En P2 el panel de una rotación MUST ofrecer "Descargar ficha" que llama a `POST
 #### Scenario: Descargar ficha
 - **WHEN** el usuario pide la ficha de la rotación seleccionada
 - **THEN** se envía un único pedido a `/rotation-sheet` con su `rotation_id` y el archivo descargado trae el mismo `input_hash` que la evaluación mostrada
+
+### Requirement: Panel "Preguntale a Rastrojo"
+La web MUST ofrecer un panel de chat que consulta POST /api/v1/ask, muestra las cifras citadas con su badge de procedencia, las sugerencias como botones, el modo (por reglas o con IA) y un desplegable "cómo llegué a esto" con la traza de tools. El panel MUST convivir con el simulador de WhatsApp sin duplicar la lógica conversacional.
+
+#### Scenario: Ver la traza
+- **GIVEN** una respuesta del agente en el panel
+- **WHEN** el usuario abre "cómo llegué a esto"
+- **THEN** ve las tools usadas, sus parámetros y el `input_hash` de la evaluación
+
+#### Scenario: Sugerencia como botón
+- **WHEN** el usuario toca una sugerencia
+- **THEN** se envía como nueva pregunta y la respuesta aparece en el panel

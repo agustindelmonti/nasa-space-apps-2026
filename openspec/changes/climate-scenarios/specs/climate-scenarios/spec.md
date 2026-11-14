@@ -151,3 +151,11 @@ En P1 el sistema MUST ofrecer un reporte que, para el departamento del lote demo
 #### Scenario: Validación fuera del motor
 - **WHEN** se agrega o quita el archivo de rindes MAGyP
 - **THEN** los escenarios, el `input_hash` y la salida del motor no cambian
+
+### Requirement: Comparación de enfoques estadísticos
+Como chequeo (P2) que no alimenta al motor, el sistema MUST poder agrupar los años con un método de agrupamiento determinista (semilla fija documentada) sobre lluvia de ventana, ET0 y días con helada, y MUST reportar la coincidencia con la clasificación por terciles (años en la misma clase y años que cambian), para explicar por qué el motor usa terciles.
+
+#### Scenario: Reporte de coincidencia
+- **GIVEN** la serie POWER del lote demo
+- **WHEN** se corre la comparación
+- **THEN** el reporte lista cuántos años coinciden entre ambos métodos y cuáles cambian de clase, y dos corridas dan el mismo resultado

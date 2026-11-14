@@ -67,3 +67,7 @@
 - [ ] D.2 Construir la franja de campañas como componente aislado con su leyenda y probarla con Playwright a 1920x1080 y 390x844
 - [ ] D.4 Implementar los seis momentos de movimiento de DESIGN.md (reordenamiento FLIP, cifras, capas, entrada única, chat, carga) con prefers-reduced-motion; verificar con Playwright emulando reduced motion
 - [ ] D.3 Correr `npx impeccable detect web/src` y resolver hallazgos primarios antes del domingo 13:00
+
+## Agente (P1)
+
+- [ ] A.1 Construir el panel "Preguntale a Rastrojo" con badges, sugerencias, indicador de modo y traza desplegable; test Playwright de traza y sugerencia

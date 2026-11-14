@@ -298,3 +298,14 @@ POST /rotation-sheet (P2) MUST aceptar el mismo `mode` lite o full que /evaluate
 #### Scenario: Ficha idempotente
 - **WHEN** se envía dos veces el mismo request de ficha
 - **THEN** ambos bodies son idénticos byte a byte
+
+### Requirement: Endpoint de consulta al agente
+La API MUST exponer POST /api/v1/ask con el contrato de `ask-agent` (texto, id de lote, estado de conversación, canal) y devolver texto, cifras con procedencia, traza, estado actualizado, sugerencias y `mode`. MUST aplicar el rate limit de los endpoints de chat y los límites de tamaño. Con `mode = llm` MAY transmitir la respuesta en streaming, con el mismo cuerpo final.
+
+#### Scenario: Consulta en modo por reglas
+- **WHEN** se envía "¿cuál me conviene?" para el lote demo
+- **THEN** responde 200 con `mode = scripted` y la traza incluye el `input_hash` de la evaluación
+
+#### Scenario: Texto vacío
+- **WHEN** se envía un texto vacío
+- **THEN** responde 422 con `VALIDATION_ERROR`

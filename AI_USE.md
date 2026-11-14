@@ -13,6 +13,7 @@ Declaración de transparencia para el jurado de NASA Space Apps Challenge 2026 (
 
 ## Dónde SÍ puede haber IA en el producto
 
+- **Agente "Preguntale a Rastrojo"**, en dos iteraciones. La primera (por defecto) funciona con reglas deterministas, sin modelo de lenguaje. La segunda, opcional, usa Claude (Anthropic) para entender preguntas abiertas, pero solo puede responder con lo que devuelven las tools de lectura sobre el motor; una guarda rechaza cualquier número que no venga de esas tools y, ante cualquier falla, vuelve al cerebro por reglas. Cada respuesta muestra la traza de tools usadas para poder verificarla.
 - **Capa opcional en el canal WhatsApp**, apagada por defecto, que solo reformula el texto de la plantilla para que sea más conversacional. Tiene guardas: no puede agregar ni cambiar números, cultivos ni recomendaciones; ante cualquier violación o error se usa la plantilla original.
 
 ## Datos

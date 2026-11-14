@@ -54,3 +54,7 @@
 ## 9. Ficha de rotación (P2)
 
 - [ ] 9.1 POST /rotation-sheet con unión por `mode`, `rotation_id` y `format`, delegando en `export_sheet` de explanations; tests "Ficha del lote demo", "Rotación fuera de las candidatas" y "Ficha idempotente" en verde y OpenAPI actualizado
+
+## Agente (P1)
+
+- [ ] A.1 Implementar POST /api/v1/ask sobre el contrato de `ask-agent` con rate limit; tests de contrato para modo por reglas y texto vacío

@@ -31,3 +31,7 @@
 - [ ] 5.1 Interfaz `Rephraser` con implementación nula por defecto; test "Flag apagado" (sin llamadas de red) en verde
 - [ ] 5.2 Guardas de números, cultivos, expresiones prohibidas, leyendas y largo; tests "Número agregado", "Número cambiado de formato", "Cultivo agregado" y "Recomendación agregada" en verde con un `Rephraser` falso
 - [ ] 5.3 Implementación HTTP del proveedor con timeout y fallback; test "Timeout del proveedor" con servidor falso en verde
+
+## Agente (P1)
+
+- [ ] A.1 Enrutar texto libre al agente desde cualquier estado manteniendo los menús; tests de pregunta abierta y opción numérica

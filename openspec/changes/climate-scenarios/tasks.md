@@ -27,3 +27,7 @@
 - [ ] 5.1 Descargar Estimaciones Agrícolas de MAGyP para el departamento del lote demo a `data/validation/magyp/` con URL y fecha, y cargar A-CLI-11; verificar con un test que el archivo tiene fuente y fecha
 - [ ] 5.2 Implementar el reporte de consistencia de años DRY; verificar con tests "Año seco con caída de rinde", "Año sin rinde publicado" y "Validación fuera del motor"
 - [ ] 5.3 Documentar el resultado en `docs/validation.md` (años consistentes, inconsistentes y sin dato, con fuente); verificar con el test de quality que exige el documento y sus citas
+
+## Comparación de enfoques (P2)
+
+- [ ] C.1 Implementar el agrupamiento determinista y el reporte de coincidencia con terciles en `docs/validation.md`; test de que dos corridas coinciden
