@@ -18,6 +18,7 @@ test("respuestas fuera de orden: only the latest slider value lands", async ({ p
   await page.goto("/");
   await expect(page.locator("li.row")).toHaveCount(5, { timeout: 20_000 }); // first load compiles on the Vite dev server
 
+  await page.getByRole("button", { name: /Ajustar perfil/ }).click(); // folded by default
   const slider = page.locator("#slider-lambda");
   await slider.focus();
   await page.keyboard.press("ArrowRight"); // 0.4, slow

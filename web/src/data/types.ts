@@ -67,6 +67,29 @@ export interface EvaluateRequest {
   yearClassFilter?: YearClassFilter;
   displayPreferences?: DisplayPreference[];
   currentRotationId?: string;
+  /** Rent of the field in qq of soy/ha for "¿me conviene sembrar?" (default: assumption A-ECO-05). */
+  rentQq?: number;
+}
+
+/** "¿Me conviene sembrar?" as the API decides it (`sowing` in `/evaluate`). */
+export interface SowingDecision {
+  verdict: "SOW" | "SOW_WITH_RISK" | "RENT_BETTER" | "DONT_SOW";
+  actor: string;
+  rotation_id: string | null;
+  expected_margin: PValue | null;
+  rent: PValue;
+  rent_qq: number;
+  fallow_cost: PValue;
+  vs_rent: PValue | null;
+  vs_fallow: PValue | null;
+  breakeven_rent_qq: PValue | null;
+  campaigns_below_rent: number;
+  campaigns_below_fallow: number;
+  campaigns_total: number;
+  water: WaterFeasibility | null;
+  headline: string;
+  reasons: string[];
+  assumptions: string[];
 }
 
 /** Deterministic explanation templates rendered by the API (`explanation` in `/evaluate`). */
@@ -93,6 +116,8 @@ export interface Explanation {
 export interface Evaluation {
   /** Only from the API; the fixtures carry none. */
   explanation?: Explanation;
+  /** Only from the API. */
+  sowing?: SowingDecision;
   origin: Origin;
   output: EngineOutput;
   /** rotation_id -> display name, from the API response (not from a fixed context). */

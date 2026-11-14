@@ -1,5 +1,5 @@
 import { StaleResponseError, type DataSource } from "./DataSource";
-import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, Explanation, PlotContext, Rotation, SliderLimits } from "./types";
+import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, Explanation, PlotContext, Rotation, SliderLimits, SowingDecision } from "./types";
 
 /** Typed error body of the API: `{code, message, details}`. */
 export class ApiError extends Error {
@@ -29,6 +29,7 @@ interface EvaluateResponse {
   rotation_names: Record<string, string>;
   display_order: string[];
   explanation?: Explanation;
+  sowing?: SowingDecision;
 }
 
 interface ApiAssumption {
@@ -144,6 +145,7 @@ export class ApiDataSource implements DataSource {
     if (request.yearClassFilter && request.yearClassFilter !== "ALL") body.year_class_filter = request.yearClassFilter;
     if (request.displayPreferences?.length) body.display_preferences = request.displayPreferences;
     if (request.currentRotationId) body.current_rotation_id = request.currentRotationId;
+    if (request.rentQq !== undefined) body.rent_qq_ha = request.rentQq;
 
     try {
       const { body: res, headers } = await this.request<EvaluateResponse>(
@@ -158,6 +160,7 @@ export class ApiDataSource implements DataSource {
         rotationNames: res.rotation_names,
         displayOrder: res.display_order,
         explanation: res.explanation,
+        sowing: res.sowing,
         inputHash: headers.get("X-Input-Hash") ?? res.input_hash,
       };
     } catch (e) {

@@ -26,6 +26,7 @@ test("API down: offline demo notice, fixture ranking and actor reorder still wor
 
 test("API down: sliders and options are off because the fixtures cannot re-evaluate", async ({ page }) => {
   await openOffline(page);
+  await page.getByRole("button", { name: /Ajustar perfil/ }).click(); // folded by default
   await expect(page.locator("#slider-lambda")).toBeDisabled();
   await expect(page.getByRole("button", { name: "Años secos" })).toBeDisabled();
   await expect(page.getByText("Los ajustes necesitan conexión con el motor.")).toBeVisible();

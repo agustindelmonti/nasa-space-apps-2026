@@ -33,6 +33,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
   const [overrides, setOverrides] = useState<ProfileOverrides>({});
   const [yearClass, setYearClass] = useState<YearClassFilter>("ALL");
   const [prefs, setPrefs] = useState<DisplayPreference[]>([]);
+  const [rentQq, setRentQq] = useState<number | undefined>(undefined);
   const [shown, setShown] = useState<Shown | null>(null);
   const [moves, setMoves] = useState<Record<string, number>>({});
   const [evaluationKey, setEvaluationKey] = useState(0);
@@ -60,7 +61,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
     setLoading(true);
     setError(null);
     source
-      .evaluate({ plotId: PLOT_ID, profileId, overrides, yearClassFilter: yearClass, displayPreferences: prefs }, ctrl.signal)
+      .evaluate({ plotId: PLOT_ID, profileId, overrides, yearClassFilter: yearClass, displayPreferences: prefs, rentQq }, ctrl.signal)
       .then((evaluation) => {
         if (ctrl.signal.aborted) return;
         const order = tableOrder(evaluation.output.results, evaluation.displayOrder, prefs.length > 0);
@@ -80,7 +81,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
         setLoading(false);
       });
     return () => ctrl.abort();
-  }, [source, ctx, profileId, overrides, yearClass, prefs, retry]);
+  }, [source, ctx, profileId, overrides, yearClass, prefs, rentQq, retry]);
 
   useEffect(() => () => clearTimeout(debounce.current), []);
 
@@ -163,7 +164,17 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
         {ctx && (
           <main className="viewer">
             {shown && profile ? (
-              <Verdict results={shown.evaluation.output.results} order={shown.order} names={names} actorLabel={profile.label}>
+              <Verdict
+                results={shown.evaluation.output.results}
+                order={shown.order}
+                names={names}
+                actorLabel={profile.label}
+                isTenant={profileId === "TENANT"}
+                sowing={shown.evaluation.sowing}
+                rentQq={rentQq}
+                onRentQq={setRentQq}
+                rentDisabled={exampleData}
+              >
                 <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
               </Verdict>
             ) : (

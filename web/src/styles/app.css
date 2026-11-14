@@ -73,26 +73,44 @@ header.top {
 .verdict, .evidence { grid-column: 1 / -1; }
 .main-col { min-width: 0; display: grid; gap: 16px; }
 .side { display: grid; gap: 16px; min-width: 0; position: sticky; top: 16px; }
-.evidence { position: relative; z-index: 1; background: var(--color-graphite); }
+/* Sticky only when the side column fits the screen. */
+@media (max-height: 940px) { .side { position: static; } }
 @media (max-width: 1040px) {
   .viewer { grid-template-columns: minmax(0, 1fr); }
   .side { position: static; }
   /* Phone order (DESIGN.md Layout): verdict with actor, ranking, lot image, water, profile, evidence. */
 }
 
-/* Verdict band: the answer first, with who decides */
+/* Verdict band: "¿me conviene sembrar?" answered first, with who decides */
 .verdict {
-  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px 32px; align-items: center;
-  background: var(--color-panel); border: 1px solid var(--color-rule); border-left: 3px solid var(--color-straw);
-  padding: 16px 20px;
+  --v: var(--color-straw);
+  display: grid; grid-template-columns: minmax(300px, auto) minmax(0, 1fr); gap: 16px 36px; align-items: start;
+  background: var(--color-panel); border: 1px solid var(--color-rule); border-left: 4px solid var(--v);
+  padding: 18px 22px;
 }
-.verdict-body { display: grid; gap: 8px; min-width: 0; }
-.verdict-line { font: 700 clamp(1.4rem, 2.2vw, 2rem)/1.15 var(--font-display); letter-spacing: -0.01em; color: var(--color-text); }
+.verdict.v-sow { --v: var(--color-state-feasible); }
+.verdict.v-risk { --v: var(--color-state-risky); }
+.verdict.v-no { --v: var(--color-state-not-feasible); }
+.verdict-body { display: grid; gap: 10px; min-width: 0; }
+.verdict-q { color: var(--color-text-soft); }
+.verdict-line { display: flex; gap: 12px; align-items: flex-start; font: 700 clamp(1.3rem, 1.7vw, 1.7rem)/1.2 var(--font-display); letter-spacing: -0.01em; color: var(--color-text); }
+.verdict-icon { flex: none; color: var(--v); margin-top: 2px; }
 .verdict-line em { font-style: normal; color: var(--color-straw); }
-.verdict-line .who { color: var(--color-text); }
-.verdict-facts { display: flex; flex-wrap: wrap; gap: 4px 22px; color: var(--color-text-soft); font-size: 0.98rem; }
-.verdict-facts li { display: inline-flex; align-items: center; gap: 6px; }
-.verdict-facts .fig { color: var(--color-text); }
+.verdict-reasons { display: grid; gap: 4px; color: var(--color-text-soft); font-size: 1rem; }
+.verdict-reasons li { position: relative; padding-left: 16px; }
+.verdict-reasons li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 1px; background: var(--color-text-soft); }
+.verdict-side { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.verdict-foot { display: grid; gap: 10px; border-top: 1px solid var(--color-rule); padding-top: 12px; }
+.rent { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.92rem; color: var(--color-text-soft); }
+.rent input {
+  width: 4.5em; min-height: 38px; padding: 6px 8px; text-align: right;
+  font: 500 1rem/1 var(--font-mono); color: var(--color-text);
+  background: var(--color-graphite); border: 1px solid var(--color-rule); border-radius: var(--rounded-sm);
+}
+.rent input:focus-visible { border-color: var(--color-straw); }
+.verdict-best { font-size: 0.92rem; color: var(--color-text-soft); }
+.verdict-best b { color: var(--color-text); font-weight: 700; }
+.verdict-best .fig { color: var(--color-text); }
 @media (max-width: 1240px) { .verdict { grid-template-columns: minmax(0, 1fr); } }
 
 /* Map */
@@ -120,7 +138,7 @@ header.top {
 @media (max-width: 1040px) { .leaflet-host { height: 300px; } }
 .leaflet-container.leaflet-host { font: 500 0.78rem/1.3 var(--font-mono); }
 .leaflet-container .leaflet-control-attribution.leaflet-control {
-  background: var(--float-bg); color: var(--color-text-soft); font: 400 0.75rem/1.35 var(--font-mono); padding: 4px 8px; max-width: 70%;
+  background: var(--float-bg); color: var(--color-text-soft); font: 400 0.66rem/1.3 var(--font-mono); padding: 2px 6px; max-width: 78%;
 }
 .leaflet-container .leaflet-control-attribution a { color: var(--color-text); }
 .leaflet-control-zoom.leaflet-bar { border: 1px solid var(--color-rule); border-radius: var(--rounded-sm); box-shadow: none; }
@@ -191,6 +209,7 @@ header.top {
 .chev { transition: transform var(--dur-quick) var(--ease-out); color: var(--color-text-soft); }
 .profile.is-open .chev, .ev-more[open] > summary .chev { transform: rotate(180deg); }
 .profile-body { display: grid; gap: 12px; padding: 0 16px 16px; }
+.profile-body[hidden] { display: none; }
 
 /* Profile sliders (H, α, λ) */
 .sliders { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; border-top: 1px solid var(--color-rule); padding-top: 12px; }

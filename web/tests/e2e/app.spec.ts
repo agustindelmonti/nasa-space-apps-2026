@@ -60,6 +60,7 @@ test("Propietario -> Banco changes the order as the engine ranks it, with up/dow
 
 test("moving lambda sends overrides, changes the X-Input-Hash and 'volver al perfil' restores it", async ({ page }) => {
   const initial = await open(page);
+  await page.getByRole("button", { name: /Ajustar perfil/ }).click(); // folded by default
   const slider = page.locator("#slider-lambda");
   await expect(page.locator('[data-slider="lambda"] [data-value]')).toHaveText("0,3");
 
@@ -152,6 +153,7 @@ test("provenance tooltip opens with the keyboard and shows dataset, variable, pe
   await page.keyboard.press("Escape");
   await expect(tip).toBeHidden();
 
+  await page.getByRole("button", { name: /Ajustar perfil/ }).click(); // folded by default
   const sup = page.locator(".params .badge");
   await sup.focus();
   await expect(page.locator('.params [role="tooltip"]')).toContainText("pendiente de validar con AFA");
