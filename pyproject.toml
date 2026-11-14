@@ -5,12 +5,9 @@ description = "Comparador determinista de rotaciones de cultivo con datos NASA p
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12,<3.13"
+# Núcleo liviano (motor, explicaciones, agente y API): corre sin pandas usando el snapshot de clima.
 dependencies = [
     "fastapi>=0.115,<1",
-    "httpx>=0.28.1",
-    "pandas>=3.1.1",
-    "pandera>=0.36.0",
-    "pyarrow>=26.0.1",
     "pydantic>=2.9,<3",
     "pydantic-settings>=2.5,<3",
     "pyyaml>=6.0.3",
@@ -18,6 +15,13 @@ dependencies = [
 ]
 
 [dependency-groups]
+# Ingesta de datos NASA (POWER, parquet, validación). Se instala por defecto en desarrollo.
+data = [
+    "httpx>=0.28.1",
+    "pandas>=3.1.1",
+    "pandera>=0.36.0",
+    "pyarrow>=26.0.1",
+]
 dev = [
     "pytest>=8",
     "hypothesis>=6.100",
@@ -32,6 +36,9 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv]
+default-groups = ["dev", "data"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rastrojo"]

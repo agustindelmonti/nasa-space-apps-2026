@@ -9,11 +9,10 @@ import math
 from dataclasses import dataclass
 from datetime import date, timedelta
 from functools import lru_cache
-
-import pandas as pd
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from rastrojo.application.assumptions import AssumptionRegistry, climate_config, resolve
-from rastrojo.data.power import PowerDaily, get_power_daily
 from rastrojo.domain import (
     ActorProfile,
     AssumptionProvenance,
@@ -42,12 +41,22 @@ from rastrojo.domain import (
     YearClassFilter,
 )
 from rastrojo.domain.actor import MachineryWindows, SoilPriorities
+from rastrojo.domain.base import DomainModel
 from rastrojo.domain.crops import CROP_INFO, CropKind
 from rastrojo.domain.provenance import Dataset
 from rastrojo.engine.climate import RainDay, RainSeries, build_scenarios
 from rastrojo.engine.economics import ECONOMICS_ASSUMPTIONS
 from rastrojo.engine.soil import SOIL_ASSUMPTIONS
 from rastrojo.engine.water import WATER_ASSUMPTIONS
+
+if TYPE_CHECKING:
+    import pandas as pd
+
+    from rastrojo.data.power import PowerDaily
+
+CLIMATE_SNAPSHOT = (
+    Path(__file__).resolve().parents[3] / "data" / "fixtures" / "demo" / "engine_climate.json"
+)
 
 DEMO_PLOT_ID = "demo-casilda"
 POWER_START = date(1981, 1, 1)
@@ -223,6 +232,8 @@ class ClimateBundle:
 
 
 def _rain_series(power: PowerDaily, wide: pd.DataFrame) -> RainSeries:
+    import pandas as pd
+
     src = power.source("PRECTOTCORR")
     days = tuple(
         RainDay(
@@ -236,6 +247,8 @@ def _rain_series(power: PowerDaily, wide: pd.DataFrame) -> RainSeries:
 
 
 def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBundle:
+    import pandas as pd
+
     wide = power.wide()
     et0 = power.et0().set_index("date")["value"]
     combined = build_scenarios(_rain_series(power, wide), climate_config(registry))
@@ -281,11 +294,53 @@ def build_climate(power: PowerDaily, registry: AssumptionRegistry) -> ClimateBun
     )
 
 
-@lru_cache(maxsize=4)
-def _demo_climate(lat: float, lon: float) -> ClimateBundle:
+class ClimateSnapshot(DomainModel):
+    """Clima del lote demo precalculado desde NASA POWER (escenarios y series diarias).
+
+    Permite correr la API sin pandas ni pyarrow (por ejemplo en una función serverless). Se
+    regenera con `scripts/export_demo_climate.py` y un test verifica que da el mismo input_hash.
+    """
+
+    lat: float
+    lon: float
+    source_sha256: str
+    scenarios: tuple[ClimateScenario, ...]
+    weather: tuple[ScenarioWeather, ...]
+    excluded_years: tuple[int, ...]
+
+
+def compute_climate(lat: float, lon: float) -> ClimateBundle:
+    from rastrojo.data.power import get_power_daily
+
     registry = AssumptionRegistry.load()
     power = get_power_daily(lat, lon, POWER_START, POWER_END)
     return build_climate(power, registry)
+
+
+def export_snapshot(lat: float, lon: float) -> ClimateSnapshot:
+    from rastrojo.data.power import get_power_daily
+
+    power = get_power_daily(lat, lon, POWER_START, POWER_END)
+    bundle = build_climate(power, AssumptionRegistry.load())
+    return ClimateSnapshot(
+        lat=lat,
+        lon=lon,
+        source_sha256=power.content_sha256,
+        scenarios=bundle.scenarios,
+        weather=bundle.weather,
+        excluded_years=bundle.excluded_years,
+    )
+
+
+@lru_cache(maxsize=4)
+def _demo_climate(lat: float, lon: float) -> ClimateBundle:
+    if CLIMATE_SNAPSHOT.exists():
+        snap = ClimateSnapshot.model_validate_json(CLIMATE_SNAPSHOT.read_text(encoding="utf-8"))
+        if (snap.lat, snap.lon) == (lat, lon):
+            return ClimateBundle(
+                scenarios=snap.scenarios, weather=snap.weather, excluded_years=snap.excluded_years
+            )
+    return compute_climate(lat, lon)
 
 
 def build_engine_input(

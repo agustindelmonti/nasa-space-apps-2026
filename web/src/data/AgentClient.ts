@@ -48,7 +48,8 @@ export class AgentClient {
   private readonly baseUrl: string | null;
 
   constructor(baseUrl: string | null | undefined, options: Options = {}) {
-    this.baseUrl = baseUrl ? baseUrl.replace(/\/+$/, "") : null;
+    // "/" o "" = misma origen (API y web en el mismo dominio, por ejemplo en Vercel).
+    this.baseUrl = baseUrl !== null && baseUrl !== undefined ? baseUrl.replace(/\/+$/, "") : null;
     this.fetchImpl = options.fetch ?? ((...args) => fetch(...args));
     this.timeoutMs = options.timeoutMs ?? 20_000;
   }

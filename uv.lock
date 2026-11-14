@@ -581,10 +581,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "httpx" },
-    { name = "pandas" },
-    { name = "pandera" },
-    { name = "pyarrow" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pyyaml" },
@@ -592,6 +588,12 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+data = [
+    { name = "httpx" },
+    { name = "pandas" },
+    { name = "pandera" },
+    { name = "pyarrow" },
+]
 dev = [
     { name = "httpx" },
     { name = "hypothesis" },
@@ -606,10 +608,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115,<1" },
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "pandas", specifier = ">=3.1.1" },
-    { name = "pandera", specifier = ">=0.36.0" },
-    { name = "pyarrow", specifier = ">=26.0.1" },
     { name = "pydantic", specifier = ">=2.9,<3" },
     { name = "pydantic-settings", specifier = ">=2.5,<3" },
     { name = "pyyaml", specifier = ">=6.0.3" },
@@ -617,6 +615,12 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+data = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pandas", specifier = ">=3.1.1" },
+    { name = "pandera", specifier = ">=0.36.0" },
+    { name = "pyarrow", specifier = ">=26.0.1" },
+]
 dev = [
     { name = "httpx", specifier = ">=0.27" },
     { name = "hypothesis", specifier = ">=6.100" },

@@ -1,0 +1,10 @@
+.venv
+.claude
+data/cache
+data/fixtures/demo/NASA_POWER
+tests
+openspec
+**/__pycache__
+web/node_modules
+web/test-results
+web/playwright-report

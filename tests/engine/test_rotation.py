@@ -219,3 +219,18 @@ def test_engine_does_not_touch_network(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(socket.socket, "connect", boom)
     assert evaluate(inp).results
+
+
+def test_climate_snapshot_matches_power_fixture() -> None:
+    from rastrojo.application.demo import ClimateBundle, _demo_climate, compute_climate, demo_plot
+    from tests.engine.engine_fixtures import registry
+
+    plot = demo_plot(registry())
+    snap = _demo_climate(plot.location.lat, plot.location.lon)
+    live: ClimateBundle = compute_climate(plot.location.lat, plot.location.lon)
+    assert canonical_json(
+        {"s": [s.model_dump(mode="json") for s in snap.scenarios]}
+    ) == canonical_json({"s": [s.model_dump(mode="json") for s in live.scenarios]})
+    assert canonical_json(
+        {"w": [w.model_dump(mode="json") for w in snap.weather]}
+    ) == canonical_json({"w": [w.model_dump(mode="json") for w in live.weather]})
