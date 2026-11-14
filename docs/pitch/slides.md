@@ -174,7 +174,9 @@ Referencias
 | NASA GIBS · MODIS | MODIS_Terra_NDVI_8Day | Mapa | gibs.earthdata.nasa.gov |
 | NASA GIBS · SMAP | SMAP_L4_Analyzed_Root_Zone_Soil_Moisture | Mapa | gibs.earthdata.nasa.gov |
 | NASA GIBS · GPM | IMERG_Precipitation_Rate | Mapa | gibs.earthdata.nasa.gov |
-| SMAP L4, GPM IMERG, GRACE-FO | SPL4SMGP, IMERG diario, TWS mascons | Próximo | earthdata.nasa.gov |
+| SMAP L4 | SPL4SMGP sm_rootzone, celda de 9 km del lote (OPeNDAP) | Evidencia y panel (hoy) | nsidc.org/data/spl4smgp |
+| GRACE / GRACE-FO | JPL Mascons RL06.3 CRI, lwe_thickness | Evidencia y panel | podaac.jpl.nasa.gov |
+| GPM IMERG | Final diario | Próximo | gpm.nasa.gov |
 | Imagen base (no NASA) | Sentinel-2 cloudless 2020, EOX | Mapa | s2maps.eu |
 Uso de IA. Desarrollamos con asistencia de Claude Code (Anthropic) para especificación e implementación, bajo revisión del equipo. El motor de decisión es 100 % determinista y no usa modelos de lenguaje. El chat de la demo responde por reglas, sin LLM. Detalle en AI_USE.md del repositorio.  
 
