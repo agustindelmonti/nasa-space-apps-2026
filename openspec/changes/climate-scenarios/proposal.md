@@ -12,6 +12,7 @@ La función objetivo calcula esperanza y riesgo sobre años históricos reales e
 - Se definen criterios de completitud: años con huecos por encima de la tolerancia (A-CLI-02) o campañas en curso se excluyen y quedan registrados con motivo.
 - Se fija un mínimo de años válidos para clasificar (A-CLI-03); por debajo, no hay clasificación.
 - Se fijan pesos 1/N por año, regla de desempate en límites de tercil y redondeo previo a comparar.
+- Se agrega una clase anual (terciles de la lluvia de campaña) y un escenario combinado por año con clase anual, de invierno y de verano, que es lo que consume el motor. La clase anual alimenta el filtro por clase de año y el rango de margen por clase.
 - Se define un cruce opcional de la lluvia POWER con GPM IMERG que solo advierte discrepancias (A-CLI-04), sin cambiar la clasificación.
 - La clasificación es pura: misma entrada, mismo resultado byte a byte.
 

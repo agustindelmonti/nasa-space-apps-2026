@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Paquete `fieldshift.engine`, función pública `evaluate(inp: EngineInput) -> EngineOutput`. Depende solo de `fieldshift.domain` y de los submódulos puros `economics`, `soil`, `risk`, `water_adjust`. La capa `application` arma el EngineInput (desde caché, fixtures y request) y es la única que hace I/O.
+Ver proposal.md. Paquete `fieldshift.engine`, función pública `evaluate(inp: EngineInput) -> EngineOutput`. Depende solo de `fieldshift.domain` y de los submódulos puros `water` (water-feasibility), `water_adjust`, `economics`, `soil`, `risk`, `priorities`. La capa `application` arma el EngineInput (desde caché, fixtures y request) y es la única que hace I/O.
 
 ## Goals / Non-Goals
 
@@ -15,15 +15,18 @@ Ver proposal.md. Paquete `fieldshift.engine`, función pública `evaluate(inp: E
 ### 1. Tubería
 
 ```
+scen    = apply_year_filter(inp.scenarios, inp.year_class_filter)   # re-pondera, P1
 cands   = dedupe_cyclic(inp.catalog ∪ {inp.current})           # orden por id
 for r in cands (orden por id):
-    adj   = water_adjustments(r, inp.water_status)              # NOT_SOWN / FORCE_DRY
-    eco   = economics(r, inp.econ, inp.scenarios, adj, H, i)    # o MissingEconomicParameter
-    soil  = soil_index(r, inp.soil, inp.assumptions, inp.ndvi)  # o MissingAssumptionError
+    wat   = water.assess(r, inp.water_inputs, inp.soil, scen, inp.assumptions)
+    adj   = water_adjustments(wat.state_by_scenario)            # NOT_SOWN / FORCE_DRY
+    eco   = economics(r, inp.econ, scen, adj, H, i)             # o MissingEconomicParameter
+    soil  = soil_index(r, inp.soil, inp.assumptions, inp.ndvi_summary, prio)  # o MissingAssumptionError
     risk  = expected_shortfall(eco.margins, q, i, H)
-    score = eco.npv + α·soil.delta − λ·risk
-    reasons = constraints(r, profile, eco.peak_capital, adj)
-rank(results); package(EngineOutput)
+    tprio = priority_terms(r, adj, prio, inp.assumptions)       # 0 sin prioridades, P1
+    score = eco.npv + α·soil.delta − λ·risk + tprio
+    reasons = constraints(r, profile, eco.peak_capital, adj, machinery)
+delta_vs_current(results); rank(results); package(EngineOutput)
 ```
 
 Se evalúa todo antes de filtrar para poder mostrar el puntaje de las descartadas ("te la saqué por capital, pero hubiera salido segunda").
@@ -46,6 +49,10 @@ Alternativas descartadas:
 
 Simplificación documentada: si el cultivo de invierno de una campaña doble es NOT_SOWN, el de verano conserva su propio estado y parámetros (no se reemplaza por soja de primera).
 
+### 2b. Factibilidad informada
+
+La factibilidad del resultado es el estado agregado de water-feasibility (peor campaña, con la regla GRACE-FO), salvo dos ajustes del motor: NOT_FEASIBLE si aplica WATER_NEVER_FEASIBLE, y al menos RISKY si falta el estado de algún (cultivo, escenario). Así hay una sola definición de umbrales (A-WAT-04 a A-WAT-07) y el motor no inventa otra. Alternativa descartada: una factibilidad propia del motor ("RISKY si hay algún ajuste"), que contradecía el estado de water-feasibility.
+
 ### 3. Riesgo (fórmula exacta)
 
 Para cada posición p, márgenes M_p,s con pesos w_s (suman 1). Orden ascendente por (M_p,s, año).
@@ -60,13 +67,28 @@ AF     = Σ_{t=1..H} (1+i)^−t
 
 Es CVaR al nivel q sobre la distribución histórica enumerada del margen anual de cada posición, expresado como faltante respecto de la media y llevado a horizonte con el mismo factor que el VAN (consistente con el promedio de fases de economics). q = A-ACT-05 (ejemplo 1/3, el peor tercil).
 
-Alternativa descartada: **ES sobre la clase DRY de lluvia.** La clase se define por lluvia en ventanas de invierno y verano por separado; una rotación con trigo y maíz tiene dos clasificaciones por año, y además pierde años malos por exceso hídrico o helada. La cola de la propia distribución de márgenes captura cualquier causa y es coherente (subaditiva). La salida igual informa el margen medio de los años DRY como evidencia para explanations.
+Alternativa descartada: **ES sobre la clase DRY de lluvia.** La clase se define por lluvia en ventanas de invierno y verano por separado; una rotación con trigo y maíz tiene dos clasificaciones por año, y además pierde años malos por exceso hídrico o helada. La cola de la propia distribución de márgenes captura cualquier causa y es coherente (subaditiva). La salida igual informa el rango de margen por clase anual (mín, esperado, máx) como evidencia de incertidumbre para explanations.
 
 Alternativa descartada: **varianza o desvío estándar.** Penaliza los años buenos y no tiene la lectura "cuánto perdés en los años malos" que pide BANK.
 
 ### 4. Puntaje y ranking
 
 `score = VAN + α·ΔSuelo − λ·Riesgo` (USD/ha). Clave de orden para elegibles: `(-round(score, 2), round(risk, 2), -round(delta_soil, 2), id)`. No elegibles después: primero las que tienen puntaje con la misma clave, luego las sin puntaje por id. Rango 1..N. `sorted` de Python es estable y la clave es total, por lo que no depende del orden de entrada.
+
+### 4b. Salidas para explicar
+
+- `score_delta_vs_current = score(r) − score(actual)` sin redondear, DERIVED; ausente si alguna de las dos no tiene puntaje. Es el número que explanations usa para comparar contra la actual.
+- Rango de margen por clase anual: para cada clase k, con m_s = (1/L)·Σ_p M_p,s, se informan mín, máx y media ponderada dentro de la clase. Sirve para explicar la incertidumbre entre años secos y húmedos, no entra al puntaje.
+- Calendarios: suelo desnudo de soil-impact y vulnerabilidad de water-feasibility, copiados al resultado sin recalcular.
+
+### 4c. Filtro por clase de año (P1)
+
+`year_class_filter ∈ {ALL, DRY, WET}` sobre la clase anual. Con DRY o WET se conservan los escenarios de esa clase y se re-ponderan w'_s = w_s / Σ w de los seleccionados; todo lo demás (E, Riesgo, frecuencias de water-feasibility) se calcula sobre ese conjunto. El mínimo de escenarios A-CLI-03 se controla sobre el conjunto completo, para que el filtro no deje todo RISKY por `INSUFFICIENT_SCENARIOS`. La salida declara el filtro y los años usados con advertencia YEAR_CLASS_FILTER_APPLIED. Alternativa descartada: filtrar en la aplicación antes del motor (el filtro quedaría fuera de la salida auditable).
+
+### 4d. Ventanas de maquinaria y prioridades (P1)
+
+- Si el perfil trae ventanas de maquinaria, un cultivo cuyo mes de siembra o cosecha (A-AGR-01) no está en la ventana de esa operación produce MACHINERY_WINDOW_CONFLICT. Sin ventanas, no hay restricción.
+- Los términos de prioridad y la re-ponderación de w_k los define actor-profiles; el motor los aplica y los informa en el desglose como `priority_terms_usd_ha`.
 
 ### 5. Determinismo
 
@@ -84,7 +106,8 @@ Alternativa descartada: **varianza o desvío estándar.** Penaliza los años bue
 ## Supuestos
 
 - A-ACT-05 (nivel q de la cola del Riesgo) se define en actor-profiles.
-- No se introducen otros supuestos: los ajustes hídricos reutilizan parámetros existentes.
+- A-ACT-07 a A-ACT-09 (prioridades del productor) se definen en actor-profiles.
+- No se introducen otros supuestos: los ajustes hídricos reutilizan parámetros existentes y la factibilidad usa los umbrales de water-feasibility.
 
 ## Risks / Trade-offs
 
@@ -94,4 +117,4 @@ Alternativa descartada: **varianza o desvío estándar.** Penaliza los años bue
 
 ## Open Questions
 
-- ¿El contratista (ventanas de maquinaria) entra como restricción en P2? No cambia esta spec si se agrega como nuevo motivo de exclusión.
+- Resuelta: las ventanas de maquinaria entran como restricción explícita en P1 (MACHINERY_WINDOW_CONFLICT).

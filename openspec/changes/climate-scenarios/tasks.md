@@ -15,6 +15,7 @@
 - [ ] 3.1 Implementar terciles por rango con redondeo a 0.1 mm, desempate por año, resto a NORMAL y límites DERIVED; verificar con tests "N divisible por 3", "Resto asignado a NORMAL", "Empate en el límite de tercil" y "Ruido de punto flotante"
 - [ ] 3.2 Implementar mínimo de años `INSUFFICIENT_YEARS` y pesos 1/N con frecuencia por clase; verificar con tests "Pocos años" y "Pesos de 31 años"
 - [ ] 3.3 Agregar test de propiedad (hypothesis) de permutación de la serie y snapshot de la salida canónica del lote de demo; verificar con `uv run pytest tests/engine/climate -q` en verde y con red bloqueada
+- [ ] 3.4 Implementar escenario combinado por año con clase anual por terciles de la lluvia de campaña y pesos 1/N del conjunto combinado; tests "Tres clases por año", "Año válido en una sola ventana" y "Clases independientes" en verde
 
 ## 4. Cruce IMERG e integración (P1)
 

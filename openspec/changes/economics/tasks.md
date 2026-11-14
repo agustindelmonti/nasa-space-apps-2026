@@ -2,7 +2,7 @@
 
 ## 1. Parámetros (P0)
 
-- [ ] 1.1 Extender ParámetrosEconómicos (aditivo, coordinado con domain-models) con base de precio, modo de cosecha, comercialización, flete por t y arrendamiento opcional; tests de validación (retención >= 1 rechazada, base obligatoria) en verde
+- [ ] 1.1 Consumir ParámetrosEconómicos extendidos en domain-models (tarea 5.2 de ese change) con base de precio, modo de cosecha, comercialización, flete por t y arrendamiento opcional; tests de validación (retención >= 1 rechazada, base obligatoria) en verde
 - [ ] 1.2 Agregar A-ECO-01..04 a `assumptions.yaml`; verificar con el test de carga del registro
 
 ## 2. Margen (P0)

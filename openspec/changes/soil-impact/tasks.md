@@ -17,7 +17,11 @@
 - [ ] 3.2 Test de invariancia a rotar el ciclo ("Rotación de campañas equivalente") con hypothesis sobre rotaciones válidas; `uv run pytest tests/engine/soil -q` en verde
 - [ ] 3.3 Property test de monotonicidad al agregar servicio (escenario "Centeno sobre soja continua") y test documentado del caso N negativo; en verde
 
+- [ ] 3.4 Implementar calendario mensual de suelo desnudo (sin cultivo vivo y sin cobertura) desde A-AGR-01 y A-SOIL-02; tests "Soja continua con invierno desnudo" y "Servicio cubre el invierno" en verde
+
 ## 4. NDVI como evidencia (P1)
 
-- [ ] 4.1 Implementar cobertura observada desde NDVI resuelto, Evidencia y Faltante por discrepancia o ausencia; tests "Discrepancia entre modelo y satélite" y "Sin serie NDVI" en verde
+- [ ] 4.1 Implementar cobertura observada desde el resumen NDVI resuelto, Evidencia y Faltante por discrepancia o ausencia; tests "Discrepancia entre modelo y satélite" y "Sin serie NDVI" en verde
 - [ ] 4.2 Documentar en `docs/soil-index.md` la fórmula y la tabla de supuestos, y verificar con un test que cada id A-SOIL citado en el doc existe en `assumptions.yaml`
+- [ ] 4.3 Adjuntar al calendario la fracción mensual observada de NDVI bajo A-SOIL-10 para la actual; tests "Evidencia NDVI de la actual" y "Sin resumen NDVI" en verde (P0 si el resumen NDVI está cacheado para la demo)
+- [ ] 4.4 Aceptar pesos efectivos por prioridades con validación; test "Prioridad de carbono" en verde

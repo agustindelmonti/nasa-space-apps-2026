@@ -12,7 +12,9 @@ Todas las capas (ingesta, motor, explicaciones, API, canales) tienen que hablar 
 - Se define un tipo de valor con procedencia (`valor + unidad + procedencia`) que usan todos los números que cruzan capas.
 - Se define el sobre de entrada y salida del motor (`EngineInput`, `EngineOutput`) con hash SHA-256 de la entrada canónica y versión del motor.
 - Se define la serialización JSON canónica (claves ordenadas, redondeo declarado) que habilita comparar salidas byte a byte.
-- Se fija un catálogo cerrado de cultivos para el MVP.
+- Se fija un catálogo cerrado de cultivos para el MVP, con calendario único de siembra y cosecha (A-AGR-01).
+- Se fija la regla de procedencia: productos de modelos externos (SMAP L4, POWER/MERRA-2, SoilGrids, GLDAS, GRACE-FO) son OBSERVED con `is_modeled=true`; DERIVED es solo lo que calcula el sistema.
+- Agregados acordados en la reconciliación: datasets FIELD_HAMMER, SRTM, ECOSTRESS y GLDAS; área DEMO en ids de supuestos; insumos hídricos y supuestos resueltos en `EngineInput`; clase anual y por estación en el escenario; resultado con elegibilidad, ajustes hídricos, diferencia contra la actual, rango de margen por clase y calendarios mensuales; parámetros económicos con base de precio, modo de cosecha, flete y arrendamiento; perfil con capital opcional, prioridades y ventanas de maquinaria; `input_hash` independiente del orden de listas.
 
 ## Capabilities
 

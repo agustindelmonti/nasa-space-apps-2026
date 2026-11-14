@@ -96,7 +96,7 @@ La salida MUST incluir ΔSuelo como valor con procedencia DERIVED que lista los 
 - **THEN** la suma de las contribuciones por componente es igual al índice redondeado a 2 decimales
 
 ### Requirement: NDVI como evidencia de cobertura observada
-El NDVI histórico MUST NOT ser entrada del índice. Cuando la entrada traiga la serie NDVI del lote, el sistema MUST calcular la fracción de días con NDVI sobre un umbral supuesto (A-SOIL-10) como cobertura observada de la rotación actual, emitirla como Evidencia OBSERVED/DERIVED y, si difiere de la cobertura modelada más que una tolerancia supuesta (A-SOIL-11), emitir un Faltante.
+El NDVI histórico MUST NOT ser entrada del índice. Cuando la entrada traiga el resumen NDVI mensual del lote, el sistema MUST calcular la fracción de días con NDVI sobre un umbral supuesto (A-SOIL-10) como cobertura observada de la rotación actual, emitirla como Evidencia OBSERVED/DERIVED y, si difiere de la cobertura modelada más que una tolerancia supuesta (A-SOIL-11), emitir un Faltante.
 
 #### Scenario: Discrepancia entre modelo y satélite
 - **GIVEN** una rotación actual declarada como soja continua y una serie NDVI que muestra verde en invierno todos los años
@@ -106,3 +106,33 @@ El NDVI histórico MUST NOT ser entrada del índice. Cuando la entrada traiga la
 #### Scenario: Sin serie NDVI
 - **WHEN** la entrada no trae NDVI
 - **THEN** el índice se calcula igual y se registra un Faltante de baja severidad sobre cobertura observada
+
+### Requirement: Calendario mensual de suelo desnudo
+Para cada rotación el sistema MUST calcular, por mes calendario (1 a 12), los días sin cultivo vivo y los días sin cultivo vivo ni rastrojo persistente, promediados sobre las campañas del ciclo, con las fechas de A-AGR-01 y la persistencia de A-SOIL-02, como DERIVED. Para la rotación actual MUST adjuntar como evidencia OBSERVED la fracción mensual de compuestos NDVI del lote bajo A-SOIL-10.
+
+#### Scenario: Soja continua con invierno desnudo
+- **GIVEN** soja de primera sola con fechas de A-AGR-01
+- **WHEN** se calcula el calendario
+- **THEN** los meses de junio a septiembre (ejemplo según A-AGR-01) tienen todos sus días sin cultivo vivo
+
+#### Scenario: Servicio cubre el invierno
+- **GIVEN** la misma rotación con centeno de servicio
+- **WHEN** se calcula el calendario
+- **THEN** ningún mes tiene más días sin cultivo vivo que en soja continua
+
+#### Scenario: Evidencia NDVI de la actual
+- **GIVEN** la rotación actual y un resumen NDVI mensual del lote
+- **WHEN** se calcula el calendario
+- **THEN** cada mes trae la fracción observada de compuestos bajo A-SOIL-10 con su período y Source, y las alternativas no la traen
+
+#### Scenario: Sin resumen NDVI
+- **WHEN** la entrada no trae resumen NDVI
+- **THEN** el calendario se calcula igual y se emite un Faltante de baja severidad sobre suelo desnudo observado
+
+### Requirement: Pesos efectivos de componentes
+El sistema MUST aceptar los pesos w_k efectivos que provee actor-profiles cuando el perfil trae prioridades, MUST validar que sean no negativos y sumen 1 y MUST informar en la salida los pesos usados y si difieren de A-SOIL-01. Los componentes MUST NOT cambiar por las prioridades.
+
+#### Scenario: Prioridad de carbono
+- **GIVEN** pesos efectivos con mayor peso de carbono que A-SOIL-01
+- **WHEN** se calcula ΔSuelo
+- **THEN** los componentes son iguales a los calculados con A-SOIL-01, el índice sigue en [-100, +100] y la salida declara los pesos efectivos

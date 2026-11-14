@@ -17,3 +17,16 @@
 - [ ] 3.3 Implementar PerfilActor, ParámetrosEconómicos y EscenarioClimático; tests de H inválido, precio sin fecha y pesos en verde
 - [ ] 3.4 Implementar resultado de evaluación, Evidencia, Faltante, Riesgo, `EngineInput` y `EngineOutput`; test de desglose consistente en verde
 - [ ] 3.5 Exportar JSON Schema de `EngineInput`/`EngineOutput` a `schemas/` y verificar con un script que regenera sin diff
+
+## 4. Agregados de la reconciliación (P0)
+
+- [ ] 4.1 Ampliar `Source.dataset` con FIELD_HAMMER, SRTM, ECOSTRESS y GLDAS, validar áreas de supuesto (incluida DEMO) y la regla OBSERVED con `is_modeled=true` para productos externos; tests "Dato de SoilGrids marcado como modelado", "Dataset nuevo admitido", "Área de supuesto desconocida" y "Humedad SMAP L4 tal cual se publica" en verde
+- [ ] 4.2 Agregar a `EngineInput` supuestos resueltos, insumos hídricos por escenario, SMAP inicial, TWS, resumen NDVI y filtro por clase de año; tests "Estado hídrico precalculado rechazado", "Insumo opcional ausente" y "Supuestos resueltos en la entrada" en verde
+- [ ] 4.3 Canonicalizar `input_hash` ordenando candidatas por id y escenarios por año; test "Orden de listas irrelevante para el hash" en verde
+- [ ] 4.4 Agregar clases anual, de invierno y de verano a EscenarioClimático y A-AGR-01 al catálogo; tests "Clases por estación y anual" y "Calendario desde un único supuesto" en verde
+- [ ] 4.5 Ampliar el resultado por rotación (elegibilidad, motivos, ajustes hídricos, `score_delta_vs_current`, rango de margen por clase, calendarios mensuales, términos de prioridad); tests "Diferencia contra la actual", "Rango de margen por clase" y "Calendarios de 12 meses" en verde
+
+## 5. Agregados de perfil y economía (P1)
+
+- [ ] 5.1 PerfilActor con capital opcional, pesos de prioridad y ventanas de maquinaria; tests "Sin tope de capital", "Peso de prioridad fuera de rango" y "Mes de maquinaria inválido" en verde
+- [ ] 5.2 ParámetrosEconómicos con base de precio, modo de cosecha, flete por t y arrendamiento opcional; tests "Precio sin base" y "Arrendamiento con dos unidades" en verde

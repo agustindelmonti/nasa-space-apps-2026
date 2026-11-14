@@ -77,7 +77,7 @@ Todo en float, sumas con `math.fsum` en orden de lista estable, redondeo solo en
 | A-ECO-03 | mes de inicio del año de campaña (ejemplo: julio) y mes de pago del arrendamiento | mes | pendiente AFA; práctica de contratos de arrendamiento |
 | A-ECO-04 | conversión de quintales de soja a USD con precio neto de soja del mismo set | USD/qq | convención 1 qq = 100 kg; pendiente AFA para el precio de referencia |
 
-Los rindes por clase, precios, retenciones y costos del lote demo son parámetros con su propia procedencia en el fixture (USER_INPUT o ASSUMPTION con ids que define demo-mode); economics no introduce valores.
+Los rindes por clase, precios, retenciones y costos del lote demo son parámetros con su propia procedencia en el fixture (USER_INPUT o ASSUMPTION A-DEMO-02 a A-DEMO-06, definidos en demo-mode); economics no introduce valores. El calendario de siembra y cosecha que usa A-ECO-01 es A-AGR-01 (domain-models).
 
 ## Risks / Trade-offs
 

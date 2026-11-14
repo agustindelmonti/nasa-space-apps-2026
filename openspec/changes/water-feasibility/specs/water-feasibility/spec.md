@@ -58,7 +58,7 @@ El sistema MUST usar el agua útil (mm) informada en el Suelo. Si falta, MUST us
 - **THEN** el balance usa el valor de A-WAT-14 para esa textura, el resultado incluye `SOIL_AWC_ASSUMED` y un Faltante "agua útil del perfil"
 
 ### Requirement: Evaluación por escenario histórico
-Cada campaña de la rotación MUST evaluarse con el clima diario real de cada escenario recibido (año de campaña), partiendo de la misma agua inicial. Un escenario sin lluvia o ET0 completas para el período de la campaña MUST excluirse con motivo y año, sin interpolar, y los pesos MUST renormalizarse a 1/N' entre los restantes.
+Cada campaña de la rotación MUST evaluarse con el clima diario real de cada escenario recibido (año de campaña), partiendo de la misma agua inicial actual y sin encadenar años (A-WAT-15). Un escenario sin lluvia o ET0 completas para el período de la campaña MUST excluirse con motivo y año, sin interpolar, y los pesos MUST renormalizarse a 1/N' entre los restantes.
 
 #### Scenario: Resultado por año
 - **WHEN** se evalúa trigo/soja de segunda sobre 30 escenarios
@@ -160,7 +160,7 @@ El resultado por rotación y campaña MUST incluir: estado, motivos codificados 
 - **THEN** la salida lista al menos A-WAT-01, A-WAT-02, A-WAT-03 y los umbrales de estado usados, con su estado de validación
 
 ### Requirement: Evaluación pura y determinista
-La evaluación MUST ser pura: recibe series, Suelo, rotación, escenarios y supuestos ya resueltos; no usa red, reloj, aleatoriedad ni archivos. La misma entrada MUST producir la misma salida canónica byte a byte. Las sumas MUST hacerse en orden cronológico estable.
+La evaluación MUST ser pura y correr dentro del motor, invocada por rotation-engine: recibe series, Suelo, rotación, escenarios y supuestos ya resueltos desde `EngineInput`; no usa red, reloj, aleatoriedad ni archivos. La misma entrada MUST producir la misma salida canónica byte a byte. Las sumas MUST hacerse en orden cronológico estable.
 
 #### Scenario: Repetición idéntica
 - **GIVEN** la entrada del lote de demo
@@ -170,3 +170,50 @@ La evaluación MUST ser pura: recibe series, Suelo, rotación, escenarios y supu
 #### Scenario: Sin red
 - **WHEN** se evalúa con la red bloqueada
 - **THEN** la evaluación termina sin errores y con el mismo resultado
+
+### Requirement: Estado por cultivo y escenario para el motor
+Para cada (cultivo, posición, escenario) el sistema MUST entregar a rotation-engine un estado: NOT_FEASIBLE si el escenario es SEVERE para ese cultivo; RISKY si es MODERATE o si es el cultivo de verano de una campaña doble o con servicio y su agua a la siembra queda bajo A-WAT-08; FEASIBLE en otro caso. GRACE-FO y napa MUST NOT cambiar este estado.
+
+#### Scenario: Soja de segunda en un año severo
+- **WHEN** en 2008 la soja de segunda tiene índice de estrés sobre A-WAT-05
+- **THEN** su estado para (SOY_2ND, posición, 2008) es NOT_FEASIBLE
+
+#### Scenario: Perfil seco a la siembra
+- **WHEN** en 2011 el agua a la siembra de la soja tras centeno queda bajo A-WAT-08 y el estrés del ciclo no supera A-WAT-04
+- **THEN** su estado para ese escenario es RISKY
+
+#### Scenario: Escenario excluido
+- **WHEN** 1982 se excluye por `MISSING_WEATHER`
+- **THEN** no hay estado para ese escenario y rotation-engine lo trata como estado ausente
+
+### Requirement: Calendario mensual de vulnerabilidad
+Por cultivo de la rotación y mes calendario dentro de su ciclo (A-AGR-01), el sistema MUST informar la frecuencia ponderada de escenarios con helada (T2M_MIN <= A-CLI-05 en la ventana A-CLI-06) y con déficit hídrico (índice de estrés del mes > A-WAT-04), y su nivel según A-CLI-07. Los meses fuera del ciclo MUST marcarse NOT_IN_FIELD.
+
+#### Scenario: Déficit en enero para la soja de segunda
+- **GIVEN** A-WAT-04 = 0.15 (ejemplo) y 30 escenarios
+- **WHEN** en 12 escenarios el índice de estrés de enero de la soja de segunda supera 0.15
+- **THEN** el calendario marca enero con frecuencia 0.4, nivel según A-CLI-07 y la lista de años
+
+#### Scenario: Mes fuera del ciclo
+- **WHEN** se arma el calendario del trigo
+- **THEN** los meses posteriores a su cosecha según A-AGR-01 figuran como NOT_IN_FIELD
+
+#### Scenario: Calendario determinista
+- **WHEN** se arma el calendario dos veces con la misma entrada
+- **THEN** las salidas canónicas son idénticas byte a byte
+
+### Requirement: Estrés térmico y lluvia extrema en el calendario
+El calendario MUST incluir, por cultivo de renta y mes, estrés térmico (algún día con T2M_MAX >= A-CLI-08 dentro de la floración A-CLI-09) y lluvia extrema (algún día con lluvia IMERG >= el percentil A-CLI-10 de los días con lluvia de la serie IMERG del lote). Sin IMERG MUST emitir un Faltante y omitir solo ese evento.
+
+#### Scenario: Calor en floración del maíz
+- **GIVEN** A-CLI-08 = 35 °C y floración del maíz temprano en enero (ejemplos)
+- **WHEN** 9 de 30 escenarios tienen un día de enero con T2M_MAX >= 35 °C
+- **THEN** el calendario marca enero del maíz con estrés térmico de frecuencia 0.3
+
+#### Scenario: Años sin IMERG
+- **WHEN** solo 24 de 30 escenarios tienen IMERG
+- **THEN** la frecuencia de lluvia extrema se calcula sobre esos 24 con pesos renormalizados y la salida lo declara
+
+#### Scenario: Sin IMERG en la entrada
+- **WHEN** la entrada no trae lluvia IMERG
+- **THEN** el calendario no tiene evento de lluvia extrema y se emite un Faltante que explica cómo conseguirla

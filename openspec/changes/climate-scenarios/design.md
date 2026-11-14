@@ -16,10 +16,11 @@ Ver proposal.md. Entrada: series diarias de lluvia con faltantes explícitos pro
 2. **Redondeo a 0.1 mm antes de comparar** con `round()` de Python sobre la suma `math.fsum` de los días. La resolución práctica de la lluvia diaria es de décimas de mm; el redondeo absorbe ruido de orden de suma.
 3. **Resto a NORMAL.** Con N mod 3 != 0 los años sobrantes caen en NORMAL para que DRY y WET sean simétricas.
 4. **Pesos 1/N por año** (frecuencia empírica), coherentes con xcut. La probabilidad de clase es la frecuencia (aprox. 1/3). Alternativa descartada: pesos por clase 1/3 repartidos dentro de cada clase (equivale salvo por el resto y complica la explicación).
-5. **Dos clasificaciones independientes (invierno y verano).** Un año puede ser DRY en invierno y WET en verano. `rotation-engine` decide qué clasificación usa cada campaña según su cultivo crítico. Alternativa descartada: una ventana anual única (mezcla el riesgo del trigo con el de la soja).
+5. **Dos clasificaciones independientes (invierno y verano).** Un año puede ser DRY en invierno y WET en verano. economics usa la clase de la estación de cada cultivo. Alternativa descartada: usar solo una ventana anual (mezcla el riesgo del trigo con el de la soja); la clase anual se agrega además de las estacionales (decisión 9), no en su lugar.
 6. **Fuente por defecto POWER PRECTOTCORR** por cobertura desde 1981 (más años, terciles más estables). IMERG (0.1°, más fino) solo como cruce y advertencia. Alternativa descartada: clasificar con IMERG (menos años, 2000+) o promediar ambos (mezcla de fuentes poco trazable).
 7. **Tolerancia de faltantes como supuesto** (A-CLI-02) con valor de ejemplo 0 días: preferimos excluir años antes que completar lluvia inventada. Si deja muy pocos años, el equipo puede subirla con justificación.
 8. **API interna**: `classify_years(series: RainSeries, window: WindowDef, cfg: ClassificationConfig) -> ClassificationResult`, todo modelos frozen. Sin acceso a `assumptions.yaml`: la aplicación resuelve los valores de A-CLI-01..04 y los pasa en `cfg` con su procedencia.
+9. **Escenario combinado y clase anual**: los años válidos en ambas ventanas forman el conjunto que entra a `EngineInput`; la clase anual usa terciles de la lluvia de campaña sobre ese conjunto. Pesos 1/N del conjunto combinado. economics usa la clase estacional de cada cultivo; el filtro por clase de año y el rango de margen usan la anual. Alternativa descartada: derivar la clase anual de las dos estacionales (no hay regla natural para DRY + WET).
 
 ## Supuestos introducidos
 

@@ -25,7 +25,7 @@ s_k = 2·x_k − 1                               para weed, root (x_k ∈ [0, 1]
 
 Componentes brutos:
 
-- **Cobertura.** Para cada campaña p, `Cov_p = |∪_{c ∈ C_p} [siembra_c, cosecha_c + persist_c]| / 365` sobre un calendario de 365 días que empieza en el mes 1 de campaña (julio); los intervalos que cruzan el fin de campaña se recortan y el excedente se suma a la campaña siguiente del ciclo (módulo L). `x_cov = (1/L)·Σ_p Cov_p`. Ventanas: supuestos A-AGR de cultivo (dueño: water-feasibility / catálogo). `persist_c`: A-SOIL-02. `ref_cov`, `scale_cov`: A-SOIL-03.
+- **Cobertura.** Para cada campaña p, `Cov_p = |∪_{c ∈ C_p} [siembra_c, cosecha_c + persist_c]| / 365` sobre un calendario de 365 días que empieza en el mes 1 de campaña (julio); los intervalos que cruzan el fin de campaña se recortan y el excedente se suma a la campaña siguiente del ciclo (módulo L). `x_cov = (1/L)·Σ_p Cov_p`. Fechas de siembra y cosecha: A-AGR-01 (calendario único de domain-models). `persist_c`: A-SOIL-02. `ref_cov`, `scale_cov`: A-SOIL-03.
 - **Carbono.** `x_carb = (1/L)·Σ_p Σ_{c ∈ C_p} Caporte_c` en kg C/ha/año (A-SOIL-04). `ref_carb` (mantenimiento) y `scale_carb`: A-SOIL-05.
 - **Nitrógeno.** `x_n = (1/L)·Σ_p Σ_{c ∈ C_p} Nbal_c` en kg N/ha/año (A-SOIL-06, signo dado por el supuesto). `ref_n = 0` por definición (balance neutro) y `scale_n`: A-SOIL-07.
 - **Malezas.** `D` = especies distintas (soja, maíz, trigo, vicia, centeno, avena), `f_w` = fracción de campañas con cultivo de invierno. `x_weed = β·min(1, (D−1)/(D_max−1)) + (1−β)·f_w`, con `D_max` y `β ∈ [0,1]` en A-SOIL-08.
@@ -41,7 +41,15 @@ Agregar un cultivo de servicio c* a una campaña sin invierno: la unión de inte
 
 ### 3. NDVI: evidencia, no entrada
 
-El NDVI del lote describe la rotación actual, no las alternativas: usarlo como entrada favorecería o castigaría solo a la actual y rompería la comparación contrafactual. Se usa para (a) Evidencia de cobertura observada (fracción de compuestos MODIS 16 días o HLS con NDVI > umbral A-SOIL-10 por campaña) y (b) chequeo de consistencia contra `Cov_p` modelado de la rotación actual, con tolerancia A-SOIL-11. La serie llega ya resuelta en EngineInput (nasa-ingestion), el motor no la busca.
+El NDVI del lote describe la rotación actual, no las alternativas: usarlo como entrada favorecería o castigaría solo a la actual y rompería la comparación contrafactual. Se usa para (a) Evidencia de cobertura observada (fracción de compuestos MODIS 16 días o HLS con NDVI > umbral A-SOIL-10 por campaña) y (b) chequeo de consistencia contra `Cov_p` modelado de la rotación actual, con tolerancia A-SOIL-11. El resumen mensual llega ya resuelto en EngineInput (nasa-ingestion), el motor no lo busca.
+
+### 3b. Calendario de suelo desnudo
+
+Con los mismos intervalos de la cobertura, por mes calendario m (1 a 12): `bare_m` = días del mes sin cultivo vivo y `uncovered_m` = días sin cultivo vivo ni rastrojo persistente (A-SOIL-02), ambos promediados sobre las L campañas del ciclo. La evidencia observada sale del resumen NDVI mensual del lote: fracción de compuestos válidos con NDVI < A-SOIL-10 por mes, solo para la rotación actual. No se agregan supuestos. Alternativa descartada: calendario por campaña de julio a junio (menos legible para el productor que meses calendario).
+
+### 3c. Pesos efectivos por prioridades
+
+soil-impact recibe los w_k efectivos ya re-ponderados por actor-profiles (A-ACT-07) y verifica que sumen 1. La re-ponderación no toca los componentes, así que cotas y monotonicidad de componentes se mantienen.
 
 ### 4. Errores
 
@@ -74,7 +82,7 @@ El NDVI del lote describe la rotación actual, no las alternativas: usarlo como 
 
 - [Coeficientes inventados parecen verdad] → todos con `validation_status` visible en la salida y en el README; los valores de ejemplo solo en fixtures de demo.
 - [Índice domina o desaparece según α] → actor-profiles expone sensibilidad sobre α; explanations muestra el término en USD/ha.
-- [Ventanas de cultivo duplicadas entre módulos] → única fuente: supuestos A-AGR del catálogo, compartidos con water-feasibility.
+- [Ventanas de cultivo duplicadas entre módulos] → única fuente: A-AGR-01, compartido con water-feasibility y economics.
 
 ## Open Questions (para AFA)
 

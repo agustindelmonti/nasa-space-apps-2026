@@ -2,7 +2,7 @@
 
 ## Context
 
-Ver proposal.md. Insumos: series diarias por escenario de `nasa-ingestion` (lluvia PRECTOTCORR, ET0, T2M_MIN), escenarios de `climate-scenarios`, humedad SMAP L4 en la fecha de referencia, anomalía TWS de GRACE-FO, Suelo y Rotación de `domain-models`, y valores de supuestos resueltos por la aplicación desde `assumptions.yaml`. Vive en `fieldshift.engine.water`; `rotation-engine` lo llama para cada rotación candidata y usa el estado como restricción y el déficit como insumo de Riesgo.
+Ver proposal.md. Insumos, todos dentro de `EngineInput`: series diarias por escenario (lluvia PRECTOTCORR, ET0, T2M_MIN, T2M_MAX, IMERG opcional), escenarios de `climate-scenarios`, humedad SMAP L4 en la fecha de referencia, anomalía TWS de GRACE-FO, Suelo y Rotación de `domain-models`, y supuestos resueltos. Vive en `fieldshift.engine.water`; `rotation-engine` lo llama para cada candidata y traduce el estado por escenario en ajustes de márgenes. El déficit no entra al Riesgo de forma directa: el Riesgo es el expected shortfall de márgenes (rotation-engine).
 
 ## Goals / Non-Goals
 
@@ -14,15 +14,17 @@ Ver proposal.md. Insumos: series diarias por escenario de `nasa-ingestion` (lluv
 
 1. **Balde diario de una capa con Ks de FAO-56** (cap. 8): ETa = Ks·Kc·ET0, Ks = (AU − D)/((1 − p)·AU) cuando D > p·AU. Paso diario porque POWER y la ET0 son diarias y la lluvia no se suaviza. Alternativas descartadas: paso decádico (pierde lluvias grandes y su drenaje), modelo multicapa o AquaCrop (demasiado para el tiempo y difícil de explicar).
 2. **Kc en tres etapas (ini, mid, end) con rampas lineales** y duraciones por cultivo, todo en A-WAT-01 tomado de FAO-56 Tablas 11 y 12 como punto de partida. Barbecho con un Kc constante de evaporación (simplificación declarada; FAO-56 tiene un método de evaporación de suelo desnudo más fino que se descarta por tiempo).
-3. **Fechas de siembra y cosecha** se toman de la fecha representativa de cada cultivo en el catálogo (supuesto de calendario del catálogo de cultivos, gestionado fuera de este change). La terminación del servicio es la siembra siguiente menos A-WAT-09.
-4. **Cada campaña se evalúa por separado desde la misma agua inicial (SMAP de referencia)** con el clima de cada año histórico; dentro de la campaña el balance es continuo (invierno, barbecho, verano). Responde la pregunta de decisión "con el perfil de hoy, qué pasa en cada tipo de año". Alternativa descartada: encadenar campañas con secuencias históricas consecutivas (multiplica combinaciones y mezcla años de distinto tipo sin criterio claro).
+3. **Fechas de siembra y cosecha** se toman de la fecha representativa de cada cultivo en el catálogo (A-AGR-01, calendario único definido en domain-models). La terminación del servicio es la siembra siguiente menos A-WAT-09.
+4. **Cada campaña se evalúa por separado desde la misma agua inicial (SMAP de referencia), sin encadenar años (A-WAT-15, simplificación MVP)** con el clima de cada año histórico; dentro de la campaña el balance es continuo (invierno, barbecho, verano). Responde la pregunta de decisión "con el perfil de hoy, qué pasa en cada tipo de año". Alternativa descartada: encadenar campañas con secuencias históricas consecutivas (multiplica combinaciones y mezcla años de distinto tipo sin criterio claro).
 5. **Período de la campaña**: del inicio de la ventana de invierno (A-CLI-01) al fin de la ventana de verano, con el año del escenario. El estado se agrega con los pesos recibidos, renormalizados si hay exclusiones.
 6. **Umbrales de estado por frecuencia de años severos** (A-WAT-04 a A-WAT-07): fácil de decir en el pitch ("en 9 de 30 años la soja de segunda sufre estrés severo"). Alternativa descartada: umbral sobre el déficit medio (esconde la cola seca, que es lo que le importa al banco y al arrendatario).
 7. **GRACE-FO solo escala FEASIBLE a RISKY.** Resolución ~300 km frente a un lote de 100 ha: sirve para decir "la región viene con reservas bajas", no para decidir. "Meses recientes de referencia" y umbral (por ejemplo percentil de la propia serie o cm de anomalía) en A-WAT-10.
 8. **Napa solo como atenuante textual.** Sin datos de napa confiables por lote ni tiempo para un modelo de ascenso capilar; sumar agua inventada sería peor que no sumarla. Se puede revisar con AFA.
 9. **Helada aquí y no en otro change**: usa los mismos escenarios y series POWER y produce un Riesgo de tipo helada para `rotation-engine` y `explanations`. No toca el estado hídrico para no mezclar conceptos.
 10. **Motivos codificados** (`SEVERE_STRESS_FREQUENT`, `MODERATE_STRESS`, `PROFILE_NOT_RECHARGED_AT_SOWING`, `GRACE_REGIONAL_DEFICIT`, `SHALLOW_WATER_TABLE_MITIGATES`, `INITIAL_MOISTURE_ASSUMED`, `SOIL_AWC_ASSUMED`, `SCENARIOS_EXCLUDED`, `INSUFFICIENT_SCENARIOS`, `MISSING_WEATHER`) con parámetros numéricos; las plantillas de `explanations` los traducen a texto.
-11. **Agregado en domain-models**: `EngineInput` necesita `daily_weather_by_year` (lluvia, ET0, T2M_MIN como PValue o series con Source), `initial_soil_moisture` (SMAP) y `tws_anomaly` (GRACE-FO). Cambio aditivo a coordinar con el dueño de `domain-models`.
+11. **Agregado en domain-models (acordado)**: `EngineInput` trae series diarias por año (lluvia, ET0, T2M_MIN, T2M_MAX, IMERG opcional), humedad inicial SMAP y anomalía TWS. El módulo corre dentro del motor; no se aceptan estados precalculados.
+12. **Estado por (cultivo, posición, escenario) para el motor**: NOT_FEASIBLE si el escenario es SEVERE para ese cultivo; RISKY si es MODERATE o si es el cultivo de verano de una campaña doble o con servicio y el agua a su siembra queda bajo A-WAT-08; FEASIBLE en otro caso. GRACE-FO y napa no tocan el estado por escenario. El estado agregado de la rotación (peor campaña, con GRACE-FO) es la factibilidad informada en el resultado. Alternativa descartada: pasar solo el estado agregado (rotation-engine no podría ajustar año por año).
+13. **Calendario mensual de vulnerabilidad**: por cultivo, mes calendario y evento (helada, déficit, calor en floración, lluvia extrema), frecuencia ponderada de escenarios con el evento dentro del ciclo del cultivo y nivel según A-CLI-07. El percentil de lluvia extrema se calcula por rango más cercano sobre los días con lluvia de la propia serie IMERG del lote (determinista). Alternativa descartada: un change `climate-risk` separado (duplica insumos y escenarios).
 
 ## Supuestos introducidos
 
@@ -42,9 +44,13 @@ Ver proposal.md. Insumos: series diarias por escenario de `nasa-ingestion` (lluv
 | A-WAT-12 | Fracción de agua útil inicial cuando falta SMAP | 0.5 | criterio del equipo |
 | A-WAT-13 | θ de capacidad de campo y marchitez por clase textural | tabla por textura | FAO-56 Tabla 19, pendiente AFA |
 | A-WAT-14 | Agua útil del perfil por clase textural y valor genérico | tabla por textura | pendiente AFA (INTA cartas de suelo) |
+| A-WAT-15 | Cada campaña se evalúa desde la misma humedad inicial actual, sin encadenar años (simplificación MVP) | n/a | criterio del equipo, pendiente AFA |
 | A-CLI-05 | Umbral de T2M_MIN para helada | 0 °C a 2 m | criterio del equipo, pendiente AFA |
 | A-CLI-06 | Ventanas sensibles a helada por cultivo | trigo: espigazón-floración; soja y maíz: emergencia | pendiente AFA |
-| A-CLI-07 | Frecuencias para severidad LOW, MEDIUM, HIGH del riesgo de helada | 0.1 y 0.3 | criterio del equipo |
+| A-CLI-07 | Frecuencias para severidad LOW, MEDIUM, HIGH del riesgo de helada y de cada evento del calendario de vulnerabilidad | 0.1 y 0.3 | criterio del equipo |
+| A-CLI-08 | Umbral de T2M_MAX para estrés térmico en floración | 35 °C a 2 m | pendiente AFA |
+| A-CLI-09 | Ventanas de floración por cultivo de renta | maíz temprano: enero (ejemplo) | pendiente AFA |
+| A-CLI-10 | Percentil de lluvia diaria IMERG que define lluvia extrema | p95 de los días con lluvia | criterio del equipo, pendiente AFA |
 
 ## Risks / Trade-offs
 
@@ -62,7 +68,9 @@ Ver proposal.md. Insumos: series diarias por escenario de `nasa-ingestion` (lluv
 - Qué frecuencia de años malos aceptaría un socio para considerar el doble cultivo "riesgoso" o "no factible".
 - Si la napa en la zona hoy está a profundidades que aportan y cómo la miden.
 - Umbral de helada y ventanas críticas que usan.
+- Umbral de temperatura y ventana de floración que consideran críticos para el maíz y la soja.
+- Si les sirve evaluar cada campaña desde la humedad actual (A-WAT-15) o prefieren encadenar años.
 
 ## Open Questions
 
-- Nombre y forma exacta del agregado en `EngineInput` (decisión 11), a acordar con el dueño de `domain-models`; no cambia este spec.
+- Ninguna que cambie el spec: la forma del agregado en `EngineInput` quedó acordada en domain-models.

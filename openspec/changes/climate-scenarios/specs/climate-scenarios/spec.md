@@ -114,3 +114,19 @@ Si se provee lluvia IMERG para los años en común (desde 2000), el sistema MUST
 #### Scenario: Sin IMERG
 - **WHEN** no se provee IMERG
 - **THEN** la clasificación es idéntica y el resultado indica que el cruce no se realizó
+
+### Requirement: Clase anual y escenario combinado por año
+El sistema MUST armar un EscenarioClimático por año válido en ambas ventanas, con clase de invierno, clase de verano y clase anual. La clase anual MUST salir de terciles, con la misma regla de orden y desempate, de la lluvia de campaña (suma de ambas ventanas) sobre esos años. Cada escenario combinado MUST pesar 1/N con N los años del conjunto combinado.
+
+#### Scenario: Tres clases por año
+- **GIVEN** 30 años válidos en invierno y en verano
+- **WHEN** se arman los escenarios combinados
+- **THEN** cada año trae clase de invierno, de verano y anual, hay 10 años DRY anuales y cada peso es 1/30
+
+#### Scenario: Año válido en una sola ventana
+- **WHEN** 1995 se excluye en invierno por `MISSING_DAYS` y es válido en verano
+- **THEN** 1995 no forma parte de los escenarios combinados y el registro de exclusiones lo explica
+
+#### Scenario: Clases independientes
+- **WHEN** un año es DRY en invierno y WET en verano
+- **THEN** su clase anual se calcula con la lluvia de campaña y puede ser cualquiera de las tres
