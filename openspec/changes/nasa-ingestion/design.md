@@ -82,6 +82,6 @@ Temporalmente, todo se lleva a paso diario o a ventanas de campaña con agregaci
 
 ## Open Questions
 
-- ¿POWER publica ET0 FAO-56 en la comunidad AG para el endpoint diario? Se resuelve en la tarea 2.1; el spec cubre ambos caminos.
+- Resuelto el 14/11: el endpoint diario de POWER (comunidad AG, fuentes MERRA2/SYN1DEG/POWER) responde desde el entorno con PRECTOTCORR, T2M_MIN, T2M_MAX, ALLSKY_SFC_SW_DWN, RH2M y WS2M para el lote demo, pero no publica una ET0 FAO-56 lista para usar. Se sigue el camino de calcular Penman-Monteith FAO-56 (DERIVED).
 - Versión exacta de los mascons GRACE-FO a usar (JPL RL06.1 o RL06.3) y su short name en PO.DAAC.
 - Servicio de subset para MOD13Q1 (ORNL o lectura de tile), según qué funcione desde la red de la sede.
