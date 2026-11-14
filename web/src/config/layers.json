@@ -1,0 +1,71 @@
+{
+  "verified": "Identificadores verificados contra GetCapabilities de GIBS epsg3857/best el 14/11/2026 (docs/gibs-layers.md).",
+  "base": {
+    "id": "s2cloudless",
+    "label": "Color natural",
+    "icon": "satellite",
+    "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg",
+    "maxNativeZoom": 16,
+    "dataset": "Sentinel-2 cloudless 2020",
+    "resolution": "10 m",
+    "limitation": "Mosaico anual sin nubes, no es una fecha puntual.",
+    "attribution": "Sentinel-2 cloudless · s2maps.eu by EOX IT Services GmbH (contiene datos Copernicus Sentinel 2020 modificados)",
+    "attributionShort": "EOX · Copernicus"
+  },
+  "overlays": [
+    {
+      "id": "smap",
+      "gibsLayer": "SMAP_L4_Analyzed_Root_Zone_Soil_Moisture",
+      "label": "SMAP raíces",
+      "icon": "droplets",
+      "tileMatrixSet": "GoogleMapsCompatible_Level6",
+      "maxNativeZoom": 6,
+      "format": "png",
+      "date": "2026-11-10",
+      "granularity": "diaria",
+      "unit": "m³/m³",
+      "dataset": "SMAP L4 humedad de la zona de raíces",
+      "resolution": "~9 km",
+      "limitation": "Modelo asimilado: describe la zona, no mide el lote."
+    },
+    {
+      "id": "ndvi",
+      "gibsLayer": "MODIS_Terra_NDVI_8Day",
+      "label": "NDVI MODIS",
+      "icon": "scan-line",
+      "tileMatrixSet": "GoogleMapsCompatible_Level9",
+      "maxNativeZoom": 9,
+      "format": "png",
+      "date": "2026-11-09",
+      "granularity": "8 días",
+      "unit": "índice",
+      "dataset": "MODIS Terra NDVI compuesto de 8 días",
+      "resolution": "250 m",
+      "limitation": "A nivel lote son pocos píxeles: sirve para ver cobertura, no detalle."
+    },
+    {
+      "id": "imerg",
+      "gibsLayer": "IMERG_Precipitation_Rate",
+      "label": "Lluvia IMERG",
+      "icon": "cloud-rain",
+      "tileMatrixSet": "GoogleMapsCompatible_Level6",
+      "maxNativeZoom": 6,
+      "format": "png",
+      "date": "2026-11-13",
+      "granularity": "diaria",
+      "unit": "mm/h",
+      "dataset": "GPM IMERG tasa de precipitación",
+      "resolution": "~10 km",
+      "limitation": "Es una tasa instantánea, no la lluvia acumulada del día."
+    }
+  ],
+  "gibsTemplate": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/{layer}/default/{time}/{tileMatrixSet}/{z}/{y}/{x}.{ext}",
+  "staticFallback": {
+    "url": "/demo/lote-demo-s2cloudless.jpg",
+    "bounds": [
+      [-33.10112, -61.14899],
+      [-33.05497, -61.08421]
+    ],
+    "boundsNote": "Bordes aproximados, calculados desde la escala de la lámina (125 px = 1 km); revisar con el recorte original."
+  }
+}

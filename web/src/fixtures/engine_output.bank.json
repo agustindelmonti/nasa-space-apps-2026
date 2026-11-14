@@ -1,0 +1,2233 @@
+{
+  "engine_version": "fixture-web-0.1.0 (ejemplo)",
+  "input_hash": "1a908e3052898c52d4f635214a5bd80b7c0ac8fdf1a6e5dec5073434b848dd33",
+  "results": [
+    {
+      "rotation_id": "R_MAIZE_SOY",
+      "rank": 1,
+      "is_current": false,
+      "eligible": true,
+      "exclusion_reasons": [],
+      "breakdown": {
+        "npv": {
+          "value": 388.5,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN de márgenes esperados en el horizonte del actor (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-DEMO-02",
+              "A-DEMO-04",
+              "A-DEMO-06",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        "soil_term": {
+          "value": 16.5,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "α · ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-01",
+              "A-SOIL-01"
+            ]
+          }
+        },
+        "risk_term": {
+          "value": 50,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "λ · expected shortfall de márgenes (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-05"
+            ]
+          }
+        },
+        "total": {
+          "value": 355,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN + α·ΔSuelo − λ·Riesgo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "npv",
+              "soil_term",
+              "risk_term"
+            ]
+          }
+        }
+      },
+      "soil_delta_index": {
+        "value": 11,
+        "unit": "index",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "índice ΔSuelo de 5 componentes (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-SOIL-01",
+            "A-SOIL-02",
+            "A-SOIL-04",
+            "A-SOIL-06"
+          ]
+        }
+      },
+      "water_feasibility": "FEASIBLE",
+      "water_adjustments": [],
+      "score_delta_vs_current": {
+        "value": 6,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "diferencia de puntaje contra la rotación actual (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "total"
+          ]
+        }
+      },
+      "margin_ranges": [
+        {
+          "year_class": "DRY",
+          "minimum": {
+            "value": -188,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 120,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 260,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "NORMAL",
+          "minimum": {
+            "value": 230,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 412,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 520,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "WET",
+          "minimum": {
+            "value": 330,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 468,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 590,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        }
+      ],
+      "loss_years": {
+        "count": 4,
+        "total": 45,
+        "years": [
+          1988,
+          2008,
+          2017,
+          2022
+        ]
+      },
+      "worst_year_margin": {
+        "value": -188,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "margen bruto del peor año del registro (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-DEMO-02",
+            "A-DEMO-06"
+          ]
+        }
+      },
+      "worst_year": 2008,
+      "rain_on_bare_soil": {
+        "value": 241,
+        "unit": "mm",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "lluvia mediana caída en meses con suelo desnudo (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "NASA_POWER.PRECTOTCORR",
+            "A-AGR-01"
+          ]
+        }
+      },
+      "bare_soil_calendar": {
+        "days_by_month": [
+          0,
+          0,
+          0,
+          15,
+          31,
+          30,
+          31,
+          31,
+          30,
+          15.5,
+          0,
+          0
+        ],
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "días sin cultivo vivo por mes según el calendario (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-AGR-01",
+            "A-SOIL-02"
+          ]
+        }
+      },
+      "vulnerability_calendar": [
+        {
+          "crop": "MAIZE_EARLY",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.27,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.2
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "MEDIUM"
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012
+            ]
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        {
+          "crop": "SOY_1ST",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.22,
+            0.18,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013
+            ],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "dataset": "NASA_POWER",
+          "variable": "PRECTOTCORR",
+          "period": {
+            "start": "1981-07-01",
+            "end": "2026-06-30"
+          },
+          "value": {
+            "value": 412,
+            "unit": "mm",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "NASA_POWER",
+                "variable": "PRECTOTCORR",
+                "period": {
+                  "start": "1981-07-01",
+                  "end": "2026-06-30"
+                },
+                "spatial_resolution": "0.5° x 0.625°",
+                "temporal_resolution": "diaria",
+                "is_modeled": true,
+                "location_note": "celda que contiene el lote demo"
+              }
+            }
+          },
+          "interpretation": "Mediana de lluvia de noviembre a marzo en 45 campañas; los años secos son el tercio con menos lluvia (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "SMAP_L4",
+          "variable": "sm_rootzone",
+          "period": {
+            "start": "2026-11-01",
+            "end": "2026-11-10"
+          },
+          "value": {
+            "value": 0.27,
+            "unit": "m3/m3",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "SMAP_L4",
+                "variable": "sm_rootzone",
+                "period": {
+                  "start": "2026-11-01",
+                  "end": "2026-11-10"
+                },
+                "spatial_resolution": "~9 km",
+                "temporal_resolution": "3-horaria",
+                "is_modeled": true,
+                "location_note": "celda EASE-Grid de ~9 km"
+              }
+            }
+          },
+          "interpretation": "Humedad de la zona de raíces al inicio del balance; describe la celda, no mide el lote (valor de ejemplo del fixture web, no es salida del motor)."
+        }
+      ],
+      "benefits": [
+        {
+          "description": "El rastrojo de maíz cubre el suelo y aporta carbono (texto de ejemplo).",
+          "value": {
+            "value": 11,
+            "unit": "index",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "índice ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-SOIL-01",
+                "A-SOIL-04"
+              ]
+            }
+          }
+        }
+      ],
+      "missing": [],
+      "risks": [
+        {
+          "risk_type": "ECONOMIC",
+          "severity": "MEDIUM",
+          "description": "Mayor costo directo del maíz en años secos (texto de ejemplo).",
+          "basis": "ASSUMPTION",
+          "reference": "A-DEMO-04"
+        }
+      ]
+    },
+    {
+      "rotation_id": "R_SOY_MONO",
+      "rank": 2,
+      "is_current": true,
+      "eligible": true,
+      "exclusion_reasons": [],
+      "breakdown": {
+        "npv": {
+          "value": 422.5,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN de márgenes esperados en el horizonte del actor (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-DEMO-02",
+              "A-DEMO-04",
+              "A-DEMO-06",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        "soil_term": {
+          "value": -13.5,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "α · ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-01",
+              "A-SOIL-01"
+            ]
+          }
+        },
+        "risk_term": {
+          "value": 60,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "λ · expected shortfall de márgenes (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-05"
+            ]
+          }
+        },
+        "total": {
+          "value": 349,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN + α·ΔSuelo − λ·Riesgo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "npv",
+              "soil_term",
+              "risk_term"
+            ]
+          }
+        }
+      },
+      "soil_delta_index": {
+        "value": -9,
+        "unit": "index",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "índice ΔSuelo de 5 componentes (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-SOIL-01",
+            "A-SOIL-02",
+            "A-SOIL-04",
+            "A-SOIL-06"
+          ]
+        }
+      },
+      "water_feasibility": "FEASIBLE",
+      "water_adjustments": [],
+      "score_delta_vs_current": {
+        "value": 0,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "diferencia de puntaje contra la rotación actual (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "total"
+          ]
+        }
+      },
+      "margin_ranges": [
+        {
+          "year_class": "DRY",
+          "minimum": {
+            "value": -142,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 96,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 210,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "NORMAL",
+          "minimum": {
+            "value": 180,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 318,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 402,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "WET",
+          "minimum": {
+            "value": 260,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 371,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 455,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        }
+      ],
+      "loss_years": {
+        "count": 3,
+        "total": 45,
+        "years": [
+          1988,
+          2008,
+          2017
+        ]
+      },
+      "worst_year_margin": {
+        "value": -142,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "margen bruto del peor año del registro (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-DEMO-02",
+            "A-DEMO-06"
+          ]
+        }
+      },
+      "worst_year": 2008,
+      "rain_on_bare_soil": {
+        "value": 286,
+        "unit": "mm",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "lluvia mediana caída en meses con suelo desnudo (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "NASA_POWER.PRECTOTCORR",
+            "A-AGR-01"
+          ]
+        }
+      },
+      "bare_soil_calendar": {
+        "days_by_month": [
+          0,
+          0,
+          0,
+          0,
+          31,
+          30,
+          31,
+          31,
+          30,
+          31,
+          0,
+          0
+        ],
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "días sin cultivo vivo por mes según el calendario (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-AGR-01",
+            "A-SOIL-02"
+          ]
+        }
+      },
+      "vulnerability_calendar": [
+        {
+          "crop": "SOY_1ST",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.22,
+            0.18,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013
+            ],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "dataset": "NASA_POWER",
+          "variable": "PRECTOTCORR",
+          "period": {
+            "start": "1981-07-01",
+            "end": "2026-06-30"
+          },
+          "value": {
+            "value": 412,
+            "unit": "mm",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "NASA_POWER",
+                "variable": "PRECTOTCORR",
+                "period": {
+                  "start": "1981-07-01",
+                  "end": "2026-06-30"
+                },
+                "spatial_resolution": "0.5° x 0.625°",
+                "temporal_resolution": "diaria",
+                "is_modeled": true,
+                "location_note": "celda que contiene el lote demo"
+              }
+            }
+          },
+          "interpretation": "Mediana de lluvia de noviembre a marzo en 45 campañas; los años secos son el tercio con menos lluvia (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "SMAP_L4",
+          "variable": "sm_rootzone",
+          "period": {
+            "start": "2026-11-01",
+            "end": "2026-11-10"
+          },
+          "value": {
+            "value": 0.27,
+            "unit": "m3/m3",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "SMAP_L4",
+                "variable": "sm_rootzone",
+                "period": {
+                  "start": "2026-11-01",
+                  "end": "2026-11-10"
+                },
+                "spatial_resolution": "~9 km",
+                "temporal_resolution": "3-horaria",
+                "is_modeled": true,
+                "location_note": "celda EASE-Grid de ~9 km"
+              }
+            }
+          },
+          "interpretation": "Humedad de la zona de raíces al inicio del balance; describe la celda, no mide el lote (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "MODIS_NDVI",
+          "variable": "NDVI",
+          "period": {
+            "start": "2001-01-01",
+            "end": "2025-12-31"
+          },
+          "value": {
+            "value": 0.58,
+            "unit": "fraction",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "MODIS_NDVI",
+                "variable": "NDVI 16 días",
+                "period": {
+                  "start": "2001-01-01",
+                  "end": "2025-12-31"
+                },
+                "spatial_resolution": "250 m",
+                "temporal_resolution": "16 días",
+                "is_modeled": false,
+                "location_note": "píxeles dentro del contorno del lote"
+              }
+            }
+          },
+          "interpretation": "Fracción de meses de mayo a octubre con NDVI bajo el umbral de suelo cubierto (A-SOIL-10): el lote pasa el invierno descubierto (valor de ejemplo del fixture web, no es salida del motor)."
+        }
+      ],
+      "benefits": [
+        {
+          "description": "Es la rotación que el productor ya conoce: menor capital de trabajo y logística simple (texto de ejemplo)."
+        }
+      ],
+      "missing": [
+        {
+          "item": "Profundidad de napa",
+          "why_it_matters": "Una napa a menos de 2 m puede aportar agua en años secos y cambiar la factibilidad (texto de ejemplo).",
+          "how_to_get": "Freatímetro en el lote o registro del productor."
+        }
+      ],
+      "risks": [
+        {
+          "risk_type": "SOIL",
+          "severity": "HIGH",
+          "description": "Siete meses por año con suelo desnudo: erosión y pérdida de carbono (texto de ejemplo).",
+          "basis": "EVIDENCE",
+          "reference": "NDVI"
+        },
+        {
+          "risk_type": "WEEDS",
+          "severity": "MEDIUM",
+          "description": "Barbecho largo favorece malezas resistentes (texto de ejemplo).",
+          "basis": "ASSUMPTION",
+          "reference": "A-SOIL-08"
+        }
+      ]
+    },
+    {
+      "rotation_id": "R_MAIZE_SOY_COVER",
+      "rank": 3,
+      "is_current": false,
+      "eligible": true,
+      "exclusion_reasons": [],
+      "breakdown": {
+        "npv": {
+          "value": 365,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN de márgenes esperados en el horizonte del actor (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-DEMO-02",
+              "A-DEMO-04",
+              "A-DEMO-06",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        "soil_term": {
+          "value": 36,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "α · ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-01",
+              "A-SOIL-01"
+            ]
+          }
+        },
+        "risk_term": {
+          "value": 70,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "λ · expected shortfall de márgenes (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-05"
+            ]
+          }
+        },
+        "total": {
+          "value": 331,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN + α·ΔSuelo − λ·Riesgo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "npv",
+              "soil_term",
+              "risk_term"
+            ]
+          }
+        }
+      },
+      "soil_delta_index": {
+        "value": 24,
+        "unit": "index",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "índice ΔSuelo de 5 componentes (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-SOIL-01",
+            "A-SOIL-02",
+            "A-SOIL-04",
+            "A-SOIL-06"
+          ]
+        }
+      },
+      "water_feasibility": "UNKNOWN",
+      "water_adjustments": [],
+      "score_delta_vs_current": {
+        "value": -18,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "diferencia de puntaje contra la rotación actual (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "total"
+          ]
+        }
+      },
+      "margin_ranges": [
+        {
+          "year_class": "DRY",
+          "minimum": {
+            "value": -205,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 104,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 250,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "NORMAL",
+          "minimum": {
+            "value": 240,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 446,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 548,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "WET",
+          "minimum": {
+            "value": 340,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 489,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 610,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        }
+      ],
+      "loss_years": {
+        "count": 5,
+        "total": 45,
+        "years": [
+          1988,
+          2008,
+          2009,
+          2017,
+          2022
+        ]
+      },
+      "worst_year_margin": {
+        "value": -205,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "margen bruto del peor año del registro (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-DEMO-02",
+            "A-DEMO-06"
+          ]
+        }
+      },
+      "worst_year": 2008,
+      "rain_on_bare_soil": {
+        "value": 98,
+        "unit": "mm",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "lluvia mediana caída en meses con suelo desnudo (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "NASA_POWER.PRECTOTCORR",
+            "A-AGR-01"
+          ]
+        }
+      },
+      "bare_soil_calendar": {
+        "days_by_month": [
+          0,
+          0,
+          0,
+          15,
+          15.5,
+          15,
+          15.5,
+          15.5,
+          15,
+          15.5,
+          0,
+          0
+        ],
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "días sin cultivo vivo por mes según el calendario (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-AGR-01",
+            "A-SOIL-02"
+          ]
+        }
+      },
+      "vulnerability_calendar": [
+        {
+          "crop": "MAIZE_EARLY",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.27,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.2
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "MEDIUM"
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012
+            ]
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        {
+          "crop": "SOY_1ST",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.27,
+            0.2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018
+            ],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "dataset": "NASA_POWER",
+          "variable": "PRECTOTCORR",
+          "period": {
+            "start": "1981-07-01",
+            "end": "2026-06-30"
+          },
+          "value": {
+            "value": 412,
+            "unit": "mm",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "NASA_POWER",
+                "variable": "PRECTOTCORR",
+                "period": {
+                  "start": "1981-07-01",
+                  "end": "2026-06-30"
+                },
+                "spatial_resolution": "0.5° x 0.625°",
+                "temporal_resolution": "diaria",
+                "is_modeled": true,
+                "location_note": "celda que contiene el lote demo"
+              }
+            }
+          },
+          "interpretation": "Mediana de lluvia de noviembre a marzo en 45 campañas; los años secos son el tercio con menos lluvia (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "SMAP_L4",
+          "variable": "sm_rootzone",
+          "period": {
+            "start": "2026-11-01",
+            "end": "2026-11-10"
+          },
+          "value": {
+            "value": 0.27,
+            "unit": "m3/m3",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "SMAP_L4",
+                "variable": "sm_rootzone",
+                "period": {
+                  "start": "2026-11-01",
+                  "end": "2026-11-10"
+                },
+                "spatial_resolution": "~9 km",
+                "temporal_resolution": "3-horaria",
+                "is_modeled": true,
+                "location_note": "celda EASE-Grid de ~9 km"
+              }
+            }
+          },
+          "interpretation": "Humedad de la zona de raíces al inicio del balance; describe la celda, no mide el lote (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "GRACE_FO",
+          "variable": "lwe_thickness",
+          "period": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          },
+          "value": {
+            "value": -38,
+            "unit": "mm",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "GRACE_FO",
+                "variable": "lwe_thickness",
+                "period": {
+                  "start": "2026-08-01",
+                  "end": "2026-08-31"
+                },
+                "spatial_resolution": "~300 km",
+                "temporal_resolution": "mensual",
+                "is_modeled": true,
+                "location_note": "mascon regional"
+              }
+            }
+          },
+          "interpretation": "Anomalía regional de agua total: contexto de déficit, no decide sola (A-WAT-10) (valor de ejemplo del fixture web, no es salida del motor)."
+        }
+      ],
+      "benefits": [
+        {
+          "description": "La vicia cubre el invierno, fija nitrógeno y frena malezas (texto de ejemplo).",
+          "value": {
+            "value": 24,
+            "unit": "index",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "índice ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-SOIL-01",
+                "A-SOIL-06"
+              ]
+            }
+          }
+        }
+      ],
+      "missing": [
+        {
+          "item": "Profundidad de napa",
+          "why_it_matters": "Sin napa no se sabe si la vicia deja agua suficiente para la soja: la factibilidad queda Desconocida (texto de ejemplo).",
+          "how_to_get": "Freatímetro en el lote o registro del productor."
+        }
+      ],
+      "risks": [
+        {
+          "risk_type": "WATER",
+          "severity": "MEDIUM",
+          "description": "El consumo de agua del cultivo de servicio depende de la fecha de secado (texto de ejemplo).",
+          "basis": "ASSUMPTION",
+          "reference": "A-WAT-09"
+        }
+      ]
+    },
+    {
+      "rotation_id": "R_WHEAT_SOY2_MAIZE",
+      "rank": 4,
+      "is_current": false,
+      "eligible": true,
+      "exclusion_reasons": [],
+      "breakdown": {
+        "npv": {
+          "value": 361,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN de márgenes esperados en el horizonte del actor (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-DEMO-02",
+              "A-DEMO-04",
+              "A-DEMO-06",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        "soil_term": {
+          "value": 27,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "α · ΔSuelo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-01",
+              "A-SOIL-01"
+            ]
+          }
+        },
+        "risk_term": {
+          "value": 90,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "λ · expected shortfall de márgenes (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "A-ACT-05"
+            ]
+          }
+        },
+        "total": {
+          "value": 298,
+          "unit": "USD/ha",
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "VAN + α·ΔSuelo − λ·Riesgo (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "npv",
+              "soil_term",
+              "risk_term"
+            ]
+          }
+        }
+      },
+      "soil_delta_index": {
+        "value": 18,
+        "unit": "index",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "índice ΔSuelo de 5 componentes (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-SOIL-01",
+            "A-SOIL-02",
+            "A-SOIL-04",
+            "A-SOIL-06"
+          ]
+        }
+      },
+      "water_feasibility": "RISKY",
+      "water_adjustments": [],
+      "score_delta_vs_current": {
+        "value": -51,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "diferencia de puntaje contra la rotación actual (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "total"
+          ]
+        }
+      },
+      "margin_ranges": [
+        {
+          "year_class": "DRY",
+          "minimum": {
+            "value": -236,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 88,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 240,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "NORMAL",
+          "minimum": {
+            "value": 250,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 431,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 560,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        },
+        {
+          "year_class": "WET",
+          "minimum": {
+            "value": 360,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto mínimo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "expected": {
+            "value": 502,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto ponderado de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          },
+          "maximum": {
+            "value": 640,
+            "unit": "USD/ha",
+            "provenance": {
+              "kind": "DERIVED",
+              "method": "margen bruto máximo de la clase (valor de ejemplo del fixture web, no es salida del motor)",
+              "derived_from": [
+                "A-DEMO-02",
+                "A-DEMO-06"
+              ]
+            }
+          }
+        }
+      ],
+      "loss_years": {
+        "count": 7,
+        "total": 45,
+        "years": [
+          1988,
+          1995,
+          2008,
+          2009,
+          2011,
+          2017,
+          2022
+        ]
+      },
+      "worst_year_margin": {
+        "value": -236,
+        "unit": "USD/ha",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "margen bruto del peor año del registro (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-DEMO-02",
+            "A-DEMO-06"
+          ]
+        }
+      },
+      "worst_year": 2008,
+      "rain_on_bare_soil": {
+        "value": 132,
+        "unit": "mm",
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "lluvia mediana caída en meses con suelo desnudo (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "NASA_POWER.PRECTOTCORR",
+            "A-AGR-01"
+          ]
+        }
+      },
+      "bare_soil_calendar": {
+        "days_by_month": [
+          0,
+          0,
+          0,
+          15,
+          31,
+          15,
+          15.5,
+          15.5,
+          15,
+          0,
+          0,
+          0
+        ],
+        "provenance": {
+          "kind": "DERIVED",
+          "method": "días sin cultivo vivo por mes según el calendario (valor de ejemplo del fixture web, no es salida del motor)",
+          "derived_from": [
+            "A-AGR-01",
+            "A-SOIL-02"
+          ]
+        }
+      },
+      "vulnerability_calendar": [
+        {
+          "crop": "WHEAT",
+          "event": "FROST",
+          "frequency_by_month": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.31,
+            0.2,
+            0,
+            0,
+            0,
+            0
+          ],
+          "in_field_by_month": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "level_by_month": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "HIGH",
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null
+          ],
+          "years_by_month": [
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018,
+              2020,
+              2021
+            ],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012
+            ],
+            [],
+            [],
+            [],
+            []
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-CLI-05) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        {
+          "crop": "SOY_2ND",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.4,
+            0.29,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+          ],
+          "level_by_month": [
+            "HIGH",
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              1999,
+              2003,
+              2006,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018,
+              2020,
+              2021,
+              2022,
+              2023
+            ],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018,
+              2020
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        },
+        {
+          "crop": "MAIZE_EARLY",
+          "event": "WATER_DEFICIT",
+          "frequency_by_month": [
+            0.27,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.2
+          ],
+          "in_field_by_month": [
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
+          ],
+          "level_by_month": [
+            "MEDIUM",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "MEDIUM"
+          ],
+          "years_by_month": [
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012,
+              2013,
+              2017,
+              2018
+            ],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+              1988,
+              1989,
+              1995,
+              1996,
+              2003,
+              2008,
+              2009,
+              2011,
+              2012
+            ]
+          ],
+          "provenance": {
+            "kind": "DERIVED",
+            "method": "frecuencia de años históricos con el evento por mes (A-WAT-04) (valor de ejemplo del fixture web, no es salida del motor)",
+            "derived_from": [
+              "NASA_POWER.T2M_MIN",
+              "NASA_POWER.PRECTOTCORR"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "dataset": "NASA_POWER",
+          "variable": "PRECTOTCORR",
+          "period": {
+            "start": "1981-07-01",
+            "end": "2026-06-30"
+          },
+          "value": {
+            "value": 412,
+            "unit": "mm",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "NASA_POWER",
+                "variable": "PRECTOTCORR",
+                "period": {
+                  "start": "1981-07-01",
+                  "end": "2026-06-30"
+                },
+                "spatial_resolution": "0.5° x 0.625°",
+                "temporal_resolution": "diaria",
+                "is_modeled": true,
+                "location_note": "celda que contiene el lote demo"
+              }
+            }
+          },
+          "interpretation": "Mediana de lluvia de noviembre a marzo en 45 campañas; los años secos son el tercio con menos lluvia (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "SMAP_L4",
+          "variable": "sm_rootzone",
+          "period": {
+            "start": "2026-11-01",
+            "end": "2026-11-10"
+          },
+          "value": {
+            "value": 0.27,
+            "unit": "m3/m3",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "SMAP_L4",
+                "variable": "sm_rootzone",
+                "period": {
+                  "start": "2026-11-01",
+                  "end": "2026-11-10"
+                },
+                "spatial_resolution": "~9 km",
+                "temporal_resolution": "3-horaria",
+                "is_modeled": true,
+                "location_note": "celda EASE-Grid de ~9 km"
+              }
+            }
+          },
+          "interpretation": "Humedad de la zona de raíces al inicio del balance; describe la celda, no mide el lote (valor de ejemplo del fixture web, no es salida del motor)."
+        },
+        {
+          "dataset": "NASA_POWER",
+          "variable": "T2M_MIN",
+          "period": {
+            "start": "1981-07-01",
+            "end": "2026-06-30"
+          },
+          "value": {
+            "value": 14,
+            "unit": "count",
+            "provenance": {
+              "kind": "OBSERVED",
+              "source": {
+                "dataset": "NASA_POWER",
+                "variable": "T2M_MIN",
+                "period": {
+                  "start": "1981-07-01",
+                  "end": "2026-06-30"
+                },
+                "spatial_resolution": "0.5° x 0.625°",
+                "temporal_resolution": "diaria",
+                "is_modeled": true,
+                "location_note": null
+              }
+            }
+          },
+          "interpretation": "Campañas con helada en julio durante el macollaje del trigo, según el umbral A-CLI-05 (valor de ejemplo del fixture web, no es salida del motor)."
+        }
+      ],
+      "benefits": [
+        {
+          "description": "Tres cultivos en dos años: más ingreso y menos meses de suelo desnudo (texto de ejemplo)."
+        }
+      ],
+      "missing": [],
+      "risks": [
+        {
+          "risk_type": "WATER",
+          "severity": "HIGH",
+          "description": "En años secos el trigo deja el perfil con poca agua para la soja de segunda (texto de ejemplo).",
+          "basis": "ASSUMPTION",
+          "reference": "A-WAT-08"
+        },
+        {
+          "risk_type": "FROST",
+          "severity": "MEDIUM",
+          "description": "Heladas de julio y agosto sobre el trigo (texto de ejemplo).",
+          "basis": "EVIDENCE",
+          "reference": "T2M_MIN"
+        }
+      ]
+    }
+  ]
+}

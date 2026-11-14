@@ -1,0 +1,61 @@
+/* Tokens from the DESIGN.md frontmatter (normative). Do not add colors that are not there:
+   `npm run check:tokens` fails on any hex in web/src missing from DESIGN.md. */
+:root {
+  /* Surfaces */
+  --color-graphite: #121517;
+  --color-panel: #1a1e21;
+  --color-panel-2: #22282c;
+  --color-rule: #2f363b;
+  --color-map-ground: #0b0d0e;
+  /* Text */
+  --color-text: #ece8e0;
+  --color-text-soft: #a7aeb2;
+  --color-text-faint: #7f878c;
+  /* Brand and water */
+  --color-straw: #d8b46a;
+  --color-water: #5fb4d0;
+  /* Water states (always with a word or pattern) */
+  --color-state-feasible: #79c27a;
+  --color-state-risky: #e8913f;
+  --color-state-not-feasible: #ee6650;
+  --color-state-unknown: #9aa1a6;
+  /* Crop series */
+  --color-crop-soy: #8dbf5a;
+  --color-crop-maize: #e6c34a;
+  --color-crop-wheat: #c98d4b;
+  --color-crop-vetch: #a88bc9;
+  --color-crop-rye-oat: #5fa894;
+  --color-bare-soil: #2c3236;
+  --color-bare-hatch: #3e464b;
+
+  /* Typography */
+  --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Radii */
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --rounded-pill: 999px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 14px;
+  --space-lg: 24px;
+  --space-xl: 36px;
+  --space-xxl: 56px;
+
+  /* Motion */
+  --dur-instant: 120ms;
+  --dur-quick: 200ms;
+  --dur-move: 300ms;
+  --dur-story: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Elevation: only floating things (tooltips, lot label) */
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --float-bg: color-mix(in srgb, var(--color-graphite) 85%, transparent);
+
+  color-scheme: dark;
+}
