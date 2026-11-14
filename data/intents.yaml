@@ -1,0 +1,37 @@
+# Intenciones del agente por reglas. Prioridad menor gana en empate. Texto normalizado (minúsculas, sin tildes).
+- intent: scope
+  priority: 0
+  phrases: ["va a llover", "pronostico", "pronóstico", "el ano que viene", "el año que viene", "que precio va", "dolar", "dólar"]
+- intent: describe_situation
+  priority: 1
+  phrases: ["alquilo", "arriendo", "soy arrendatario", "soy propietario", "soy dueno", "soy dueño", "el campo es mio", "contrato", "no me puedo dar el lujo", "soy del banco", "cooperativa"]
+- intent: what_if_dry
+  priority: 2
+  phrases: ["viene seco", "seco", "ano seco", "año seco", "anos secos", "años secos", "si viene seco", "sequia", "sequía", "seca"]
+- intent: why
+  priority: 3
+  phrases: ["por que", "porque", "por qué", "como llegaste", "explica", "explicame"]
+- intent: compare_actors
+  priority: 4
+  phrases: ["propietario y arrendatario", "dueno y arrendatario", "comparar actores", "cambia segun", "y si soy", "para el banco"]
+- intent: risk
+  priority: 5
+  phrases: ["riesgo", "seguro es", "que tan seguro", "incertidumbre", "perder plata", "pierdo", "ano malo", "año malo"]
+- intent: water
+  priority: 6
+  phrases: ["agua", "humedad", "doble cultivo", "napa", "grace", "smap", "balance hidrico", "balance hídrico"]
+- intent: bare_soil
+  priority: 7
+  phrases: ["desnudo", "cobertura", "cubierto", "rastrojo", "erosion", "erosión"]
+- intent: vulnerability
+  priority: 8
+  phrases: ["helada", "calor", "vulnerable", "mes", "meses"]
+- intent: glossary
+  priority: 9
+  phrases: ["que es", "qué es", "que significa", "glosario", "ndvi", "evapotranspiracion", "evapotranspiración"]
+- intent: assumptions
+  priority: 10
+  phrases: ["supuesto", "supuestos", "de donde sale", "fuente", "afa"]
+- intent: ranking
+  priority: 11
+  phrases: ["conviene", "mejor", "ranking", "rinde mas", "rinde más", "que siembro", "qué siembro", "recomenda", "rotacion", "rotación", "cual elijo"]

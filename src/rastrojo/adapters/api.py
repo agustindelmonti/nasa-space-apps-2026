@@ -15,6 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from rastrojo import __version__
+from rastrojo.application.agent import AskRequest, respond
 from rastrojo.application.assumptions import AssumptionRegistry
 from rastrojo.application.demo import (
     CATALOG,
@@ -325,6 +326,27 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
                 "slider_limits": reg.value("A-ACT-06"),
             }
         )
+
+    @app.post(f"{API_PREFIX}/ask")
+    async def ask(req: AskRequest) -> Response:
+        try:
+            resp = await asyncio.wait_for(
+                asyncio.to_thread(respond, req), timeout=cfg.engine_timeout_s
+            )
+        except TimeoutError as exc:
+            raise ApiError(
+                ErrorCode.TIMEOUT, f"la consulta superó {cfg.engine_timeout_s} s"
+            ) from exc
+        return canonical_response(resp.model_dump(mode="json"))
+
+    @app.post(f"{API_PREFIX}/chat/simulate")
+    async def chat_simulate(req: AskRequest) -> Response:
+        resp = await asyncio.to_thread(respond, req.model_copy(update={"channel": "whatsapp"}))
+        from rastrojo.application.explanations import partition
+
+        body = resp.model_dump(mode="json")
+        body["messages"] = partition(resp.text, tail=())
+        return canonical_response(body)
 
     @app.get(f"{API_PREFIX}/glossary")
     async def glossary() -> Response:
