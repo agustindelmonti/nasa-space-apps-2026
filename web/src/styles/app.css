@@ -497,3 +497,34 @@ header.top {
 
 .rank-title { display: grid; gap: 2px; }
 .rank-note { font-size: 0.8rem; color: var(--color-text-soft); max-width: 70ch; }
+
+/* ¿Hay algo mejor fuera de estas 5? (rotation-search) */
+.search { border: 1px solid var(--color-rule); background: var(--color-panel); padding: 14px 16px; display: grid; gap: 10px; }
+.search-head { display: grid; gap: 4px; }
+.search-head p { margin: 0; font-size: 0.9rem; max-width: none; }
+.search-verdict { margin: 0; max-width: none; }
+.search-verdict .fig-inline .fig { font-size: 1rem; }
+.search-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.search-item {
+  display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: center;
+  padding: 8px 0; border-top: 1px solid var(--color-rule);
+}
+.search-item[data-catalog] { background: color-mix(in srgb, var(--color-straw) 6%, transparent); }
+.search-rank { font-variant-numeric: tabular-nums; color: var(--color-text-soft); }
+.search-name { display: grid; gap: 4px; min-width: 0; }
+.search-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.search-tags .tag { font-size: 0.75rem; padding: 1px 6px; border: 1px solid var(--color-rule); color: var(--color-text-soft); }
+.search-tags .tag-pareto { border-color: var(--color-straw); color: var(--color-straw); }
+.search-tags [data-water="FEASIBLE"] { color: var(--color-state-feasible); }
+.search-tags [data-water="RISKY"] { color: var(--color-state-risky); }
+.search-tags [data-water="NOT_FEASIBLE"] { color: var(--color-state-not-feasible); }
+.search-figs { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: end; min-width: 0; }
+.search { min-width: 0; overflow-wrap: anywhere; }
+.search-figs > span { display: grid; justify-items: end; }
+.search-figs small { font-size: 0.72rem; color: var(--color-text-faint); }
+.search-note { margin: 0; font-size: 0.8rem; color: var(--color-text-soft); max-width: none; }
+@media (max-width: 720px) {
+  .search-item { grid-template-columns: 2.2rem minmax(0, 1fr); }
+  .search-figs { grid-column: 2; justify-content: start; }
+  .search-figs > span { justify-items: start; }
+}

@@ -1,4 +1,5 @@
-# Refresca a diario los datos NASA del lote demo (SMAP L4, GRACE-FO y GPM IMERG) y los commitea a main.
+# Refresca a diario los datos NASA del lote demo (SMAP L4, GRACE-FO y GPM IMERG), recalcula la
+# búsqueda exhaustiva de rotaciones con esos datos y commitea todo a main.
 # Vercel redespliega con el commit, así producción nunca consulta a Earthdata en vivo.
 #
 # Requiere el secret de repositorio EARTHDATA_TOKEN (token de urs.earthdata.nasa.gov).
@@ -20,7 +21,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,6 +66,10 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Recalcular la búsqueda exhaustiva de rotaciones (16 búsquedas)
+        if: steps.diff.outputs.changed == 'true'
+        run: uv run python scripts/precompute_search.py --workers "$(nproc)"
+
       - name: Tests
         if: steps.diff.outputs.changed == 'true'
         run: uv run pytest -q -p no:warnings
@@ -75,6 +80,6 @@ jobs:
           DAY=$(python3 -c "import json,glob;print(json.load(open(glob.glob('data/fixtures/demo/SMAP_L4/*.json')[0]))['date'])")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/fixtures/demo/SMAP_L4 data/fixtures/demo/GRACE_FO data/fixtures/demo/GPM_IMERG data/fixtures/demo/engine_climate.json
+          git add data/fixtures/demo/SMAP_L4 data/fixtures/demo/GRACE_FO data/fixtures/demo/GPM_IMERG data/fixtures/demo/engine_climate.json data/fixtures/demo/search
           git commit -m "chore(data): refresh NASA data for the demo lot (SMAP L4 $DAY, GRACE-FO, GPM IMERG)"
           git push origin HEAD:main

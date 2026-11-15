@@ -7,6 +7,10 @@ Prioridad de validación con AFA: **alta** = cambia el ranking o la factibilidad
 | Id | Descripción | Valor ejemplo / rango | Unidad | Fuente | Change que lo define | Prioridad AFA |
 |---|---|---|---|---|---|---|
 | A-AGR-01 | Calendario de cultivos: fecha representativa de siembra y de cosecha por cultivo del catálogo | soja de segunda: siembra mediados de diciembre (ejemplo) | fecha (día del año) | pendiente AFA | domain-models | alta |
+| A-AGR-02 | Búsqueda de rotaciones: el doble cultivo de verano (soja de segunda, maíz tardío) solo después de trigo, nunca después de un servicio | solo después de trigo | regla | criterio del equipo, pendiente AFA | rotation-search | media |
+| A-AGR-03 | Búsqueda de rotaciones: un servicio de invierno solo antes de soja de primera o maíz temprano; sin campañas de solo invierno | servicio antes de cultivo de primera | regla | criterio del equipo, pendiente AFA | rotation-search | media |
+| A-AGR-04 | Búsqueda de rotaciones: largo máximo del ciclo | 3 | campañas | criterio del equipo, pendiente AFA | rotation-search | baja |
+| A-AGR-05 | Búsqueda de rotaciones: cada ciclo con al menos una gramínea y la misma especie de verano a lo sumo 2 campañas seguidas (ciclo circular) | gramínea obligatoria; máximo 2 seguidas | regla | criterio del equipo, pendiente AFA | rotation-search | alta |
 | A-CLI-01 | Límites de las ventanas de invierno y verano de la campaña | invierno 1/5 a 31/10; verano 1/11 a 31/3 | fecha | pendiente AFA | climate-scenarios | alta |
 | A-CLI-02 | Máximo de días faltantes de lluvia por ventana para incluir un año | 0 | días | criterio del equipo, pendiente AFA | climate-scenarios | baja |
 | A-CLI-03 | Mínimo de años válidos para clasificar una ventana (por debajo, water-feasibility informa UNKNOWN y nunca FEASIBLE ni NOT_FEASIBLE) | 15 | años | convención de climatologías cortas, pendiente AFA | climate-scenarios | media |

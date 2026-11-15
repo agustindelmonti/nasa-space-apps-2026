@@ -100,6 +100,34 @@
   reference: valores de referencia del equipo, pendiente AFA
   status: PENDING_AFA
 
+- assumption_id: A-AGR-02
+  description: Búsqueda de rotaciones. El doble cultivo de verano (soja de segunda, maíz tardío) solo se siembra después de trigo en la misma campaña, nunca después de un servicio; y después de trigo solo va doble cultivo (la cosecha del trigo es posterior a la siembra de soja de primera y maíz temprano según A-AGR-01)
+  value: {double_crop_after: [WHEAT]}
+  unit: regla
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-AGR-03
+  description: Búsqueda de rotaciones. Un servicio de invierno solo antecede a un cultivo de verano de primera (soja de primera o maíz temprano); no se generan campañas de solo invierno
+  value: {cover_before: [SOY_1ST, MAIZE_EARLY], allow_winter_only: false}
+  unit: regla
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-AGR-04
+  description: Búsqueda de rotaciones. Largo máximo del ciclo, en campañas
+  value: 3
+  unit: campañas
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
+- assumption_id: A-AGR-05
+  description: Búsqueda de rotaciones. Reglas de ciclo; cada ciclo incluye al menos una gramínea (maíz, trigo, centeno o avena) y ningún cultivo de verano de la misma especie se repite más campañas seguidas que el máximo, contando el ciclo como circular
+  value: {require_grass: true, max_consecutive_same_summer_species: 2}
+  unit: regla
+  reference: criterio del equipo, pendiente AFA
+  status: PENDING_AFA
+
 - assumption_id: A-WAT-01
   description: Coeficientes de cultivo Kc (ini, mid, end), fracciones del ciclo por etapa (inicial, desarrollo, media, final) y Kc de barbecho
   value:

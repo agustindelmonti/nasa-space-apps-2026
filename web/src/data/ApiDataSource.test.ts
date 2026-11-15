@@ -67,6 +67,19 @@ describe("ApiDataSource", () => {
     ]);
   });
 
+  it("reads the precomputed search and returns null when it is missing", async () => {
+    const searchBody = { profile_id: "OWNER", year_class_filter: "DRY", ranking: [] };
+    const fetch = vi.fn(async (url: RequestInfo | URL) =>
+      String(url).includes("actor=OWNER")
+        ? json(searchBody)
+        : json({ code: "SEARCH_NOT_PRECOMPUTED", message: "x", details: null }, 404),
+    );
+    const src = new ApiDataSource(BASE, new FixtureDataSource(), { fetch });
+    expect(await src.search("OWNER", "DRY")).toEqual(searchBody);
+    expect(String(fetch.mock.calls[0][0])).toBe(`${BASE}/api/v1/rotations/search?actor=OWNER&year_class_filter=DRY`);
+    expect(await src.search("BANK", "ALL")).toBeNull();
+  });
+
   it("posts the lite body and maps the response, taking the hash from X-Input-Hash", async () => {
     const fetch = vi.fn(async () => json(evalBody("body-hash"), 200, { "X-Input-Hash": "header-hash" }));
     const src = new ApiDataSource(BASE, new FixtureDataSource(), { fetch });

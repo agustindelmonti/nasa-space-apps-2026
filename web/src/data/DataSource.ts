@@ -1,4 +1,4 @@
-import type { EvaluateRequest, Evaluation, PlotContext } from "./types";
+import type { EvaluateRequest, Evaluation, PlotContext, ProfileId, RotationSearch, YearClassFilter } from "./types";
 
 /**
  * Everything the components read goes through this interface. It is backed by the API
@@ -10,6 +10,8 @@ export interface DataSource {
   readonly kind: "fixture" | "api";
   getContext(plotId: string, signal?: AbortSignal): Promise<PlotContext>;
   evaluate(request: EvaluateRequest, signal?: AbortSignal): Promise<Evaluation>;
+  /** Precomputed exhaustive search; null when there is none (offline, or not precomputed). */
+  search?(profileId: ProfileId, yearClass: YearClassFilter, signal?: AbortSignal): Promise<RotationSearch | null>;
 }
 
 /** Thrown when a newer evaluation superseded this one; callers ignore it. */
