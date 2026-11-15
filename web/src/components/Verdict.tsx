@@ -13,12 +13,6 @@ interface Props {
   actorLabel: string;
   isTenant: boolean;
   sowing?: SowingDecision;
-  /** Rent the user typed (qq/ha); undefined = the assumption A-ECO-05. */
-  rentQq?: number;
-  onRentQq: (qq: number | undefined) => void;
-  rentDisabled?: boolean;
-  /** The actor selector: changing who decides is the main move. */
-  children: ReactNode;
 }
 
 const VERDICT = {
@@ -28,7 +22,7 @@ const VERDICT = {
   DONT_SOW: { Icon: CircleX, cls: "v-no" },
 } as const;
 
-/** Wraps the rotation name inside the API's headline so it stands out; the text itself is the API's. */
+/** Wraps the rotation name inside the API's sentence so it stands out; the text itself is the API's. */
 function emphasize(text: string, name: string | undefined) {
   if (!name || !text.includes(name)) return text;
   const [a, ...rest] = text.split(name);
@@ -53,75 +47,31 @@ function Stat({ label, children, note }: { label: string; children: ReactNode; n
   );
 }
 
-/** The answer first. "¿Me conviene sembrar?" (or, for a tenant, "¿sigo arrendando?") as the API decides
- *  it, with its figures as stat tiles. Only restates figures that come from the API. */
-export function Verdict({ results, order, names, actorLabel, isTenant, sowing, rentQq, onRentQq, rentDisabled, children }: Props) {
+/** The answer to "¿Me conviene sembrar?" (for a tenant, "¿sigo arrendando?") as the API decides it.
+ *  It sits beside the ranking so changing who decides moves both in the same view.
+ *  Only restates figures that come from the API. */
+export function Verdict({ results, order, names, actorLabel, isTenant, sowing }: Props) {
   const rows = orderRows(results, order);
   const top = rows.find((r) => r.eligible) ?? null;
   const current = results.find((r) => r.is_current) ?? null;
   const name = (r: RotationResult) => names[r.rotation_id] ?? r.rotation_id;
   const delta = top && !top.is_current ? top.score_delta_vs_current : null;
-  const [draft, setDraft] = useState<string>("");
-  const shownRent = sowing ? formatNumber(sowing.rent_qq, 1) : "";
-  useEffect(() => setDraft(rentQq === undefined ? shownRent : formatNumber(rentQq, 1)), [rentQq, shownRent]);
   const v = sowing ? VERDICT[sowing.verdict] : null;
   const alt = isTenant ? "devolver el campo" : "alquilar";
-
-  const commit = () => {
-    const n = Number(draft.replace(",", "."));
-    if (draft.trim() === "" || !Number.isFinite(n) || n < 0 || n > 60) {
-      setDraft(rentQq === undefined ? shownRent : formatNumber(rentQq, 1));
-      return;
-    }
-    if (rentQq === undefined && sowing && Math.abs(n - sowing.rent_qq) < 1e-9) return;
-    onRentQq(n);
-  };
+  const question = isTenant ? "¿Me conviene seguir arrendando?" : "¿Me conviene sembrar?";
 
   return (
-    <section className={`verdict${v ? ` ${v.cls}` : ""}`} aria-labelledby="h-verdict">
-      <div className="verdict-bar">
-        {children}
-        {sowing && (
-          <label className="rent">
-            <span className="label">{isTenant ? "Arriendo que pagás" : "Arriendo que te pagarían"}</span>
-            <span className="rent-field">
-              <input
-                type="text"
-                inputMode="decimal"
-                value={draft}
-                disabled={rentDisabled}
-                aria-describedby="rent-help"
-                onChange={(e) => setDraft(e.target.value)}
-                onBlur={commit}
-                onKeyDown={(e) => e.key === "Enter" && (e.currentTarget as HTMLInputElement).blur()}
-              />
-              <span className="unit">qq soja/ha</span>
-              {rentQq === undefined ? (
-                <ProvenanceBadge provenance={{ kind: "ASSUMPTION", assumption_id: "A-ECO-05" }} />
-              ) : (
-                <button type="button" className="btn-secondary btn-sm" onClick={() => onRentQq(undefined)}>
-                  Usar el de referencia
-                </button>
-              )}
-            </span>
-            <span id="rent-help" className="sr-only">
-              Cambiá el arriendo y el motor vuelve a decidir si conviene sembrar.
-            </span>
-          </label>
-        )}
-      </div>
-
+    <section className={`verdict${v ? ` ${v.cls}` : ""}`} aria-label={question}>
       <div className="verdict-body" aria-live="polite">
-        <p className="label verdict-q">{isTenant ? "¿Me conviene seguir arrendando?" : "¿Me conviene sembrar?"}</p>
         {sowing && v ? (
           <>
-          <h2 id="h-verdict" className="verdict-line" data-verdict={sowing.verdict}>
-            <v.Icon className="verdict-icon" size={34} strokeWidth={1.75} aria-hidden="true" />
-            <span>{sowing.headline}</span>
-          </h2>
-          {sowing.detail && (
-            <p className="verdict-detail">{emphasize(sowing.detail, sowing.rotation_id ? names[sowing.rotation_id] : undefined)}</p>
-          )}
+            <h2 id="h-verdict" className="verdict-line" data-verdict={sowing.verdict}>
+              <v.Icon className="verdict-icon" size={30} strokeWidth={1.75} aria-hidden="true" />
+              <span>{sowing.headline}</span>
+            </h2>
+            {sowing.detail && (
+              <p className="verdict-detail">{emphasize(sowing.detail, sowing.rotation_id ? names[sowing.rotation_id] : undefined)}</p>
+            )}
           </>
         ) : (
           <h2 id="h-verdict" className="verdict-line">
@@ -136,13 +86,10 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
         )}
       </div>
 
-      {sowing && sowing.vs_rent && sowing.vs_fallow && (
+      {sowing && sowing.vs_rent && (
         <dl className="stats">
-          <Stat label={`Diferencia con ${alt}`} note="USD/ha por año">
+          <Stat label={`Frente a ${alt}`} note="USD/ha por año">
             <span className={sowing.vs_rent.value >= 0 ? "pos-val" : "neg-val"}>{formatSigned(sowing.vs_rent.value)}</span>
-          </Stat>
-          <Stat label="Diferencia con barbecho" note="USD/ha por año">
-            <span className={sowing.vs_fallow.value >= 0 ? "pos-val" : "neg-val"}>{formatSigned(sowing.vs_fallow.value)}</span>
           </Stat>
           <Stat label={`Campañas peor que ${alt}`} note={`de ${sowing.campaigns_total}`}>
             {sowing.campaigns_below_rent}
@@ -153,7 +100,7 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
             </Stat>
           )}
           {sowing.water && (
-            <Stat label="Agua">
+            <Stat label="Agua de esa rotación">
               <WaterState state={sowing.water} />
             </Stat>
           )}
@@ -161,16 +108,14 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
       )}
 
       <p className="verdict-foot small soft">
-        {top && (
+        {sowing?.vs_fallow && (
           <>
-            Mejor rotación para el {actorLabel.toLowerCase()}: <b>{name(top)}</b>
-            {delta && current && (
-              <>
-                {" "}
-                ({formatSigned(delta.value)} USD/ha de puntaje frente a {name(current)}, la actual)
-              </>
-            )}
-            .{" "}
+            Frente a dejarlo en barbecho: <b>{formatSigned(sowing.vs_fallow.value)} USD/ha por año</b>.{" "}
+          </>
+        )}
+        {top && delta && current && (
+          <>
+            {name(top)} suma {formatSigned(delta.value)} USD/ha de puntaje frente a {name(current)}, la actual.{" "}
           </>
         )}
         {sowing?.expected_margin && (
@@ -180,5 +125,65 @@ export function Verdict({ results, order, names, actorLabel, isTenant, sowing, r
         )}
       </p>
     </section>
+  );
+}
+
+interface RentProps {
+  isTenant: boolean;
+  sowing?: SowingDecision;
+  /** Rent the user typed (qq/ha); undefined = the assumption A-ECO-05. */
+  rentQq?: number;
+  onRentQq: (qq: number | undefined) => void;
+  disabled?: boolean;
+}
+
+/** The rent the verdict compares against. Editable: the engine decides again with the new value. */
+export function RentField({ isTenant, sowing, rentQq, onRentQq, disabled }: RentProps) {
+  const [draft, setDraft] = useState<string>("");
+  const [invalid, setInvalid] = useState(false);
+  const shownRent = sowing ? formatNumber(sowing.rent_qq, 1) : "";
+  useEffect(() => setDraft(rentQq === undefined ? shownRent : formatNumber(rentQq, 1)), [rentQq, shownRent]);
+  if (!sowing) return null;
+
+  const commit = () => {
+    const n = Number(draft.replace(",", "."));
+    if (draft.trim() === "" || !Number.isFinite(n) || n < 0 || n > 60) {
+      setInvalid(true);
+      setDraft(rentQq === undefined ? shownRent : formatNumber(rentQq, 1));
+      return;
+    }
+    setInvalid(false);
+    if (rentQq === undefined && Math.abs(n - sowing.rent_qq) < 1e-9) return;
+    onRentQq(n);
+  };
+
+  return (
+    <label className="rent">
+      <span className="label">{isTenant ? "Arriendo que pagás" : "Arriendo que te pagarían"}</span>
+      <span className="rent-field">
+        <input
+          type="text"
+          inputMode="decimal"
+          value={draft}
+          disabled={disabled}
+          aria-describedby="rent-help"
+          aria-invalid={invalid || undefined}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => e.key === "Enter" && (e.currentTarget as HTMLInputElement).blur()}
+        />
+        <span className="unit">qq soja/ha</span>
+        {rentQq === undefined ? (
+          <ProvenanceBadge provenance={{ kind: "ASSUMPTION", assumption_id: "A-ECO-05" }} />
+        ) : (
+          <button type="button" className="btn-secondary btn-sm" onClick={() => onRentQq(undefined)}>
+            Usar el de referencia
+          </button>
+        )}
+      </span>
+      <span id="rent-help" className={invalid ? "rent-error" : "sr-only"} role={invalid ? "alert" : undefined}>
+        {invalid ? "El arriendo va de 0 a 60 qq de soja por hectárea; volvió al valor anterior." : "Cambiá el arriendo y el motor vuelve a decidir si conviene sembrar."}
+      </span>
+    </label>
   );
 }

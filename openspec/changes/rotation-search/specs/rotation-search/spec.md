@@ -40,8 +40,16 @@ La búsqueda MUST descartar las rotaciones generadas que no incluyan una gramín
 - **WHEN** se aplican las reglas de ciclo
 - **THEN** se descarta por no tener gramínea, salvo que sea la actual o del catálogo
 
+### Requirement: Solo compiten rotaciones con agua factible o riesgosa
+La búsqueda MUST rankear solo las rotaciones elegibles cuya factibilidad hídrica sea factible o riesgosa, MUST informar cuántas elegibles quedaron afuera por agua no factible o desconocida, y la mejor del catálogo MUST elegirse con el mismo criterio.
+
+#### Scenario: Rotación no factible por agua
+- **GIVEN** una rotación elegible para el actor con factibilidad hídrica no factible
+- **WHEN** se arma el ranking de la búsqueda
+- **THEN** no aparece en el ranking ni en el frente de Pareto y se cuenta en las excluidas por agua
+
 ### Requirement: Búsqueda exhaustiva con el motor
-La búsqueda MUST evaluar todas las candidatas en una sola llamada al motor y MUST devolver el ranking de elegibles, el frente de Pareto en (margen esperado, ΔSuelo, riesgo) y la diferencia de puntaje entre la mejor encontrada y la mejor del catálogo. El resultado MUST ser idéntico para la misma entrada.
+La búsqueda MUST evaluar todas las candidatas en una sola llamada al motor y MUST devolver el ranking de elegibles, el frente de Pareto en (margen esperado, ΔSuelo, riesgo) y la diferencia de puntaje entre la mejor encontrada y la mejor del catálogo, ambas dentro del criterio de agua. El resultado MUST ser idéntico para la misma entrada.
 
 #### Scenario: La mejor encontrada no puede ser peor que la del catálogo
 - **GIVEN** un actor y un filtro de año

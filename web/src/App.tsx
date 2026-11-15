@@ -7,8 +7,8 @@ import { LotMap } from "./components/LotMap";
 import { WaterPanel } from "./components/WaterPanel";
 import { ActorSelector } from "./components/ActorSelector";
 import { ProfilePanel } from "./components/ProfilePanel";
-import { Verdict } from "./components/Verdict";
-import { EvaluationOptions } from "./components/EvaluationOptions";
+import { RentField, Verdict } from "./components/Verdict";
+import { DisplayPreferences, YearClassSelector } from "./components/EvaluationOptions";
 import { RankingTable } from "./components/RankingTable";
 import { SearchPanel } from "./components/SearchPanel";
 import { EvidencePanel } from "./components/EvidencePanel";
@@ -97,6 +97,23 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
 
   useEffect(() => () => clearTimeout(debounce.current), []);
 
+  // Picking a rotation shows its evidence where the user is looking: if the evidence is off
+  // screen, bring it into view (instantly with reduced motion).
+  const [jump, setJump] = useState(0);
+  const selectRotation = useCallback((id: string) => {
+    setSelectedId(id);
+    setJump((n) => n + 1);
+  }, []);
+  useEffect(() => {
+    if (!jump) return;
+    const el = document.getElementById("h-evid");
+    if (!el) return;
+    const { top, bottom } = el.getBoundingClientRect();
+    if (top >= 0 && bottom <= window.innerHeight) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }, [jump]);
+
   const changeActor = useCallback((id: ProfileId) => {
     clearTimeout(debounce.current);
     setDraft({});
@@ -166,7 +183,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
 
         {error && (
           <p className="warn" role="alert">
-            No se pudo cargar la evaluación: {error}.{" "}
+            No se pudo cargar la evaluación. Revisá la conexión y probá de nuevo.{" "}
             <button type="button" className="btn-secondary" onClick={() => setRetry((n) => n + 1)}>
               Reintentar
             </button>
@@ -175,7 +192,18 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
 
         {ctx && (
           <main className="viewer">
-            {shown && profile ? (
+            <section className="decide" aria-label="Qué se compara">
+              <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
+              <YearClassSelector value={yearClass} onChange={setYearClass} disabled={exampleData} />
+              <RentField
+                isTenant={profileId === "TENANT"}
+                sowing={shown?.evaluation.sowing}
+                rentQq={rentQq}
+                onRentQq={setRentQq}
+                disabled={exampleData}
+              />
+            </section>
+            {shown && profile && (
               <Verdict
                 results={shown.evaluation.output.results}
                 order={shown.order}
@@ -183,16 +211,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                 actorLabel={profile.label}
                 isTenant={profileId === "TENANT"}
                 sowing={shown.evaluation.sowing}
-                rentQq={rentQq}
-                onRentQq={setRentQq}
-                rentDisabled={exampleData}
-              >
-                <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
-              </Verdict>
-            ) : (
-              <section className="verdict">
-                <ActorSelector profiles={ctx.profiles} value={profileId} onChange={changeActor} />
-              </section>
+              />
             )}
             <div className="main-col" id="ranking">
               {shown && (
@@ -205,18 +224,13 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                   moves={moves}
                   evaluationKey={evaluationKey}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={selectRotation}
                   loading={loading}
                   animateEntry={animateEntry}
                   inputHash={shown.evaluation.inputHash}
                   horizon={draft.horizon_years ?? profile?.horizon_years.value}
-                  toolbar={
-                    <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
-                  }
+                  toolbar={<DisplayPreferences value={prefs} onChange={setPrefs} disabled={exampleData} />}
                 />
-              )}
-              {search && profile && search.profile_id === profileId && search.year_class_filter === yearClass && (
-                <SearchPanel search={search} actorLabel={profile.label} customProfile={Object.keys(overrides).length > 0} />
               )}
             </div>
             <aside className="side" aria-label="Lote, agua y perfil">
@@ -239,6 +253,9 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                 name={names[selected.rotation_id] ?? selected.rotation_id}
                 card={evaluation?.explanation?.rotations.find((c) => c.rotation_id === selected.rotation_id)}
               />
+            )}
+            {search && profile && search.profile_id === profileId && search.year_class_filter === yearClass && (
+              <SearchPanel search={search} actorLabel={profile.label} customProfile={Object.keys(overrides).length > 0} />
             )}
           </main>
         )}

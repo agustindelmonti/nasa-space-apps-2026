@@ -16,3 +16,8 @@
 - [x] 3.1 `GET /api/v1/rotations/search` con `SEARCH_NOT_PRECOMPUTED`; test "Pedido a la API"
 - [x] 3.2 Web: sección "¿Hay algo mejor fuera de estas 5?" con nota de perfil predefinido; vitest y Playwright en verde
 - [x] 3.3 Vercel `includeFiles` y workflow diario con el precálculo
+
+## 4. Ajustes tras la crítica de UX
+
+- [x] 4.1 Solo compiten rotaciones con agua factible o riesgosa; conteo de excluidas por agua; test "Rotación no factible por agua"
+- [x] 4.2 Web: panel plegado debajo de la evidencia, cifras enteras y estado hídrico con ícono y palabra

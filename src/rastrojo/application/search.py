@@ -30,7 +30,7 @@ from rastrojo.domain.crops import (
     Season,
 )
 from rastrojo.domain.engine_io import EngineInput, EngineOutput
-from rastrojo.domain.results import RotationResult
+from rastrojo.domain.results import RotationResult, WaterFeasibility
 from rastrojo.engine.rotation import ENGINE_VERSION, canonical_key, evaluate
 
 GENERATOR_VERSION = "1"
@@ -66,6 +66,8 @@ SHORT_LABEL: dict[Crop, str] = {
 }
 
 ROW_DIGITS = 4
+# Only rotations with water rated feasible or risky compete in the search (spec rotation-search).
+WATER_OK = frozenset({WaterFeasibility.FEASIBLE, WaterFeasibility.RISKY})
 RULE_NO_GRASS = "NO_GRASS_IN_CYCLE"
 RULE_SUMMER_REPEAT = "SUMMER_SPECIES_REPEAT"
 
@@ -332,7 +334,8 @@ def _row(
 def summarize(
     out: EngineOutput, generated: Generated, candidates: Sequence[Rotation]
 ) -> dict[str, Any]:
-    eligible = [r for r in out.results if r.eligible and r.breakdown is not None]
+    scored = [r for r in out.results if r.eligible and r.breakdown is not None]
+    eligible = [r for r in scored if r.water_feasibility in WATER_OK]
     front = set(pareto_front(eligible))
     campaigns_by_id = {r.rotation_id: r.campaigns for r in candidates}
     ranking = [
@@ -366,7 +369,12 @@ def summarize(
         "profile_id": out.profile_id,
         "year_class_filter": out.year_class_filter.value,
         "rules": list(SEARCH_ASSUMPTIONS),
-        "counts": {**generated.counts, "eligible": len(eligible), "pareto": len(front)},
+        "counts": {
+            **generated.counts,
+            "eligible": len(eligible),
+            "water_excluded": len(scored) - len(eligible),
+            "pareto": len(front),
+        },
         "best_found": best["rotation_id"] if best else None,
         "best_catalog": best_catalog["rotation_id"] if best_catalog else None,
         "gain_vs_catalog": gain,

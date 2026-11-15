@@ -57,7 +57,7 @@ test("the evidence panel shows the five-section card of the selected rotation", 
   await expect(card).toBeVisible();
   for (const s of ["Por qué", "Evidencia", "Beneficios", "Qué falta saber", "Riesgos"]) {
     // The three that matter are up front; "Evidencia" and "Beneficios" live in the detail.
-    await expect(page.locator(`.evidence [data-section="${s}"] h4`)).toHaveText(s);
+    await expect(page.locator(`.evidence [data-section="${s}"] h3`)).toHaveText(s);
   }
   await page.locator('li[data-id="R_SOY_COVER"] .name-btn').click();
   await expect(card).toHaveAttribute("data-rotation", "R_SOY_COVER");

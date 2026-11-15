@@ -1,10 +1,12 @@
+import { ChevronDown } from "lucide-react";
 import type { PValue, RotationSearch, SearchColumn, SearchRow } from "../data/types";
-import { WATER_LABEL } from "../lib/labels";
-import { formatNumber } from "../lib/format";
+import { formatNumber, formatSigned } from "../lib/format";
 import { Figure } from "./Figure";
+import { WaterState } from "./WaterState";
 
 const TOP = 5;
 
+/** Rebuilds a figure with the unit and provenance declared once for its column. */
 function pv(search: RotationSearch, col: SearchColumn, value: number | null): PValue | null {
   if (value === null) return null;
   const meta = search.columns[col];
@@ -18,94 +20,87 @@ interface Props {
   customProfile: boolean;
 }
 
-/** "¿Hay algo mejor fuera de estas 5?": exhaustive search precomputed with the predefined profile. */
+/** One sentence that answers the section's question; it is also the folded summary. */
+function answer(search: RotationSearch): string {
+  const { ranking, counts } = search;
+  if (!ranking.length) return "Ninguna rotación con agua factible o riesgosa cumple las restricciones de este perfil.";
+  const catalogBest = ranking.find((r) => r.rotation_id === search.best_catalog);
+  const gain = search.gain_vs_catalog?.value ?? 0;
+  if (!catalogBest) return `Ninguna de las 5 entra con agua factible o riesgosa; la mejor encontrada es ${ranking[0].name}.`;
+  if (counts.eligible === 1) return `No: ${catalogBest.name} es la única que pasa el filtro de agua.`;
+  if (search.best_found === search.best_catalog || gain < 0.5)
+    return `No: ${catalogBest.name} también es la mejor de las ${formatNumber(counts.eligible)} que pasan el filtro de agua.`;
+  return `Sí: ${ranking[0].name} suma ${formatSigned(gain)} USD/ha de puntaje más que ${catalogBest.name}, que queda en el puesto ${catalogBest.rank} de ${formatNumber(counts.eligible)}.`;
+}
+
+/** "¿Hay algo mejor fuera de estas 5?": exhaustive search precomputed with the predefined profile,
+ *  folded under the evidence so it does not compete with the ranking the sliders drive. */
 export function SearchPanel({ search, actorLabel, customProfile }: Props) {
   const { counts, ranking } = search;
-  const top = ranking.slice(0, TOP);
-  const catalogBest = ranking.find((r) => r.rotation_id === search.best_catalog) ?? null;
-  const gain = search.gain_vs_catalog;
-  const pruned = Object.values(counts.pruned_by_rule).reduce((a, b) => a + b, 0);
-  const better = gain !== null && gain.value > 0.5 && search.best_found !== search.best_catalog;
-
+  const actor = actorLabel.toLowerCase();
   return (
-    <section className="search" aria-labelledby="h-search">
-      <header className="search-head">
+    <details className="search">
+      <summary>
+        <ChevronDown className="chev" size={18} strokeWidth={1.5} aria-hidden="true" />
         <h2 id="h-search" className="h-title">¿Hay algo mejor fuera de estas 5?</h2>
-        <p className="soft">
-          Probamos todas las rotaciones de 1 a 3 campañas que arman los cultivos del catálogo:{" "}
-          {formatNumber(counts.generated)} combinaciones, {formatNumber(counts.evaluated)} evaluadas con el mismo motor
-          después de descartar las que rompen reglas agronómicas (A-AGR-02 a A-AGR-05, pendientes AFA).{" "}
-          {formatNumber(counts.eligible)} cumplen las restricciones de {actorLabel.toLowerCase()}.
+        <span className="search-sum">{answer(search)}</span>
+      </summary>
+      <div className="search-body">
+        <p className="search-caveat">
+          {customProfile && <strong>Tus ajustes no aplican acá. </strong>}
+          Calculado con el perfil predefinido de {actor} y precios de ejemplo; los sliders y el arriendo no cambian esta búsqueda.
         </p>
-      </header>
-      {ranking.length === 0 ? (
-        <p className="soft">Ninguna rotación cumple las restricciones de este perfil con este filtro de años.</p>
-      ) : (
-        <>
-          <p className="search-verdict">
-            {better && gain && catalogBest ? (
-              <>
-                Sí: la mejor encontrada supera a <strong>{catalogBest.name}</strong> (la mejor de las 5) por{" "}
-                <Figure value={gain} signed className="fig-inline" />. Esa quedó #{catalogBest.rank} de {formatNumber(counts.eligible)}.
-              </>
-            ) : catalogBest ? (
-              <>
-                No: <strong>{catalogBest.name}</strong>, la mejor de las 5, es también la mejor de las {formatNumber(counts.eligible)}.
-              </>
-            ) : (
-              <>Ninguna de las 5 del catálogo cumple las restricciones; abajo, las mejores encontradas.</>
-            )}
-          </p>
+        <p className="soft">
+          Probamos todas las rotaciones de 1 a 3 campañas que arman los cultivos del catálogo ({formatNumber(counts.generated)}), descartamos{" "}
+          {formatNumber(counts.generated - counts.kept_by_rules)} por reglas agronómicas pendientes de validar con AFA y evaluamos{" "}
+          {formatNumber(counts.evaluated)} con el mismo motor. Compiten solo las que tienen agua factible o riesgosa:{" "}
+          {formatNumber(counts.eligible)} para {actor}
+          {counts.water_excluded ? `, ${formatNumber(counts.water_excluded)} quedaron afuera por agua` : ""}.
+        </p>
+        {ranking.length > 0 && (
           <ol className="search-list">
-            {top.map((r) => (
+            {ranking.slice(0, TOP).map((r) => (
               <SearchItem key={r.rotation_id} row={r} search={search} />
             ))}
           </ol>
-        </>
-      )}
-      <p className="search-note">
-        {customProfile ? <strong>Los sliders no aplican acá. </strong> : null}
-        Calculado con el perfil predefinido de {actorLabel.toLowerCase()} y precios de ejemplo; los sliders y el arriendo no
-        cambian esta búsqueda. "Pareto": ninguna otra la supera a la vez en margen, suelo y riesgo
-        ({formatNumber(counts.pareto)} de {formatNumber(counts.eligible)}). {pruned > 0 && `Reglas: ${formatNumber(counts.generated - counts.kept_by_rules)} descartadas.`}
-      </p>
-    </section>
+        )}
+        <p className="search-note">
+          "Pareto": ninguna otra la supera a la vez en margen, suelo y riesgo ({formatNumber(counts.pareto)} de {formatNumber(counts.eligible)}). En
+          dorado, las que están entre las 5 del ranking.
+        </p>
+      </div>
+    </details>
   );
 }
 
 function SearchItem({ row, search }: { row: SearchRow; search: RotationSearch }) {
   const score = pv(search, "score", row.score);
   const margin = pv(search, "expected_annual_margin", row.expected_annual_margin);
-  const soil = pv(search, "soil_delta_index", row.soil_delta_index);
   return (
     <li className="search-item" data-catalog={row.in_catalog || undefined}>
-      <span className="search-rank">#{row.rank}</span>
+      <span className="search-rank">{row.rank}</span>
       <span className="search-name">
-        {row.name}
+        <span>
+          {row.name}
+          {row.is_current && " (actual)"}
+        </span>
         <span className="search-tags">
-          {row.in_catalog && <span className="tag">de las 5</span>}
-          {row.is_current && <span className="tag">actual</span>}
-          {row.pareto && <span className="tag tag-pareto">Pareto</span>}
-          {row.water_feasibility && <span className="tag" data-water={row.water_feasibility}>agua: {WATER_LABEL[row.water_feasibility].toLowerCase()}</span>}
+          {row.water_feasibility && <WaterState state={row.water_feasibility} />}
+          {row.soil_delta_index !== null && <span>ΔSuelo {formatSigned(row.soil_delta_index)}</span>}
+          {row.pareto && <span>Pareto</span>}
         </span>
       </span>
       <span className="search-figs">
         {score && (
           <span>
             <small>puntaje</small>
-            <Figure value={score} badge={false} />
+            <Figure value={{ ...score, value: Math.round(score.value) }} badge={false} />
           </span>
         )}
         {margin && (
           <span>
-            <small>margen/año</small>
-            <Figure value={margin} badge={false} />
-          </span>
-        )}
-        {soil && (
-          <span>
-            <small>ΔSuelo</small>
-            <Figure value={soil} signed badge={false} />
+            <small>margen por año</small>
+            <Figure value={{ ...margin, value: Math.round(margin.value) }} badge={false} />
           </span>
         )}
       </span>

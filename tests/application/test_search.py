@@ -124,6 +124,17 @@ def test_search_best_not_worse_than_catalog_and_deterministic(tmp_path: Path) ->
     _assert_pareto(ranking)
 
 
+def test_water_not_feasible_does_not_compete(tmp_path: Path) -> None:
+    reg = _small_registry(tmp_path)
+    inp = build_engine_input(
+        actor_profile(reg, "OWNER"), year_class_filter=YearClassFilter.DRY, registry=reg
+    )
+    a = run_search(inp, reg)
+    assert all(r["water_feasibility"] in {"FEASIBLE", "RISKY"} for r in a["ranking"])
+    assert a["counts"]["water_excluded"] >= 0
+    assert a["counts"]["eligible"] == len(a["ranking"])
+
+
 def _assert_pareto(ranking: list[dict[str, object]]) -> None:
     def obj(r: dict[str, object]) -> tuple[float, float, float]:
         return (float(r["expected_annual_margin"]), float(r["soil_delta_index"]), -float(r["risk"]))  # type: ignore[arg-type]
@@ -157,6 +168,7 @@ def test_precomputed_fixture_is_fresh(reg: AssumptionRegistry, actor: str, flt: 
     assert data["input_hash"] == inp.model_copy(update={"candidates": gen.candidates}).input_hash()
     assert data["profile_id"] == actor and data["year_class_filter"] == flt
     ranking = data["ranking"]
+    assert all(r["water_feasibility"] in {"FEASIBLE", "RISKY"} for r in ranking)
     if ranking:
         best_catalog = next(r for r in ranking if r["in_catalog"])
         assert ranking[0]["score"] >= best_catalog["score"]

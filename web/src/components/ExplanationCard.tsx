@@ -25,7 +25,7 @@ export function ExplanationCard({ card, part }: { card: RotationExplanation; par
           const short = primary && title === "Qué falta saber";
           return (
             <section key={title} className="card5-sec" data-section={title}>
-              <h4>{title}</h4>
+              <h3>{title}</h3>
               {lines.length ? (
                 <ul className={short ? "plain dots" : "plain"}>
                   {lines.map((l, i) => (
@@ -40,7 +40,7 @@ export function ExplanationCard({ card, part }: { card: RotationExplanation; par
         })}
         {extras.map(([title, lines]) => (
           <section key={title} className="card5-sec">
-            <h4>{title}</h4>
+            <h3>{title}</h3>
             <ul className="plain">
               {lines.map((l, i) => (
                 <li key={i}>{l}</li>

@@ -163,6 +163,8 @@ export interface RotationSearch {
     kept_by_rules: number;
     evaluated: number;
     eligible: number;
+    /** Eligible rotations left out because their water is not feasible or unknown. */
+    water_excluded?: number;
     pareto: number;
   };
   best_found: string | null;
