@@ -152,6 +152,12 @@ def _smap_available() -> bool:
     return any(SMAP_DIR.glob("sm_rootzone_*.json"))
 
 
+def _imerg_available() -> bool:
+    from rastrojo.application.demo import IMERG_DIR
+
+    return any(IMERG_DIR.glob("precip_*.json"))
+
+
 def _grace_available() -> bool:
     from rastrojo.application.demo import GRACE_DIR
 
@@ -325,7 +331,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
                 "datasets": {
                     "NASA_POWER": "FIXTURE",
                     "SMAP_L4": "FIXTURE" if _smap_available() else "EMPTY",
-                    "GPM_IMERG": "EMPTY",
+                    "GPM_IMERG": "FIXTURE" if _imerg_available() else "EMPTY",
                     "GRACE_FO": "FIXTURE" if _grace_available() else "EMPTY",
                     "MODIS_NDVI": "EMPTY",
                 },

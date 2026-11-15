@@ -112,3 +112,4 @@ def test_water_panel_serves_real_nasa_cells_with_provenance() -> None:
 def test_health_reports_smap_and_grace_fixtures() -> None:
     ds = client.get("/api/v1/health").json()["datasets"]
     assert ds["SMAP_L4"] == "FIXTURE" and ds["GRACE_FO"] == "FIXTURE"
+    assert ds["GPM_IMERG"] == "FIXTURE"

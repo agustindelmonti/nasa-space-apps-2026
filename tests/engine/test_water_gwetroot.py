@@ -46,3 +46,13 @@ def test_soy_mono_margin_is_close_to_its_unadjusted_value() -> None:
     assert soy.expected_annual_margin is not None
     # 212 (seco), 389 (normal), 495 (húmedo) con los supuestos de ejemplo: ~365 sin agua.
     assert 300 <= soy.expected_annual_margin.value <= 400
+
+
+def test_imerg_series_reaches_the_water_balance() -> None:
+    weather = _inp().water_inputs.weather
+    with_imerg = [w for w in weather if w.imerg_rain_mm is not None]
+    assert len(with_imerg) >= 25  # IMERG v07 cubre desde 1998
+    assert with_imerg[0].sources.imerg_rain is not None
+    assert all(w.sources.imerg_rain is None for w in weather if w.imerg_rain_mm is None)
+    soy = next(r for r in _out().results if r.rotation_id == "R_SOY_MONO")
+    assert "CONSERVATIVE_RAIN_SOURCE" in soy.water_reasons

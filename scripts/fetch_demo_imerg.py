@@ -17,6 +17,7 @@ import argparse
 import io
 import json
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import quote
@@ -82,10 +83,12 @@ def fetch_day(client: httpx.Client, cid: str, gid: str, ilon: int, ilat: int) ->
     headers = {"Authorization": f"Bearer {token}"} if token else {}
     url = OPENDAP.format(cid=cid, gid=quote(gid, safe=""))
     ce = f"/precipitation%5B0%5D%5B{ilon}%5D%5B{ilat}%5D;/lat%5B{ilat}%5D;/lon%5B{ilon}%5D"
-    for attempt in range(4):
+    # GES DISC devuelve 403 o 5xx sueltos bajo carga: reintentar con espera creciente.
+    for attempt in range(5):
         resp = client.get(f"{url}.dap.nc4?dap4.ce={ce}", headers=headers, timeout=120)
-        if resp.status_code < 500:
+        if resp.status_code < 500 and resp.status_code != 403:
             break
+        time.sleep(2 * (attempt + 1))
     resp.raise_for_status()
     with h5py.File(io.BytesIO(resp.content), "r") as f:
         value = float(f["precipitation"][()].ravel()[0])
@@ -115,7 +118,9 @@ def main() -> int:
         values = dict(existing)
         failed: list[str] = []
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            futures = {pool.submit(fetch_day, client, cid, gid, ilon, ilat): day for day, cid, gid in todo}
+            futures = {
+                pool.submit(fetch_day, client, cid, gid, ilon, ilat): day for day, cid, gid in todo
+            }
             for n, fut in enumerate(as_completed(futures), 1):
                 day = futures[fut]
                 try:
