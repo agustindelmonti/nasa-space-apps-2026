@@ -67,8 +67,9 @@ El motor es 100 % determinista: mismos datos, mismo resultado, sin IA, sin azar 
 5. **Suelo**: índice ΔSuelo de -100 a +100 (cobertura, carbono, nitrógeno, malezas, raíces), meses de suelo desnudo y lluvia sobre suelo desnudo.
 6. **Economía**: margen bruto por campaña según el tipo de año; campañas con pérdida, peor año y pico de capital de trabajo.
 7. **Puntaje por rol y ranking**; solo compiten las rotaciones elegibles.
-8. **¿Me conviene sembrar?**: la primera rotación contra alquilar el campo y contra barbecho.
-9. **Explicaciones** con plantillas fijas; un test verifica que cada número del texto exista en la salida.
+8. **Búsqueda exhaustiva**: además de las 5 del catálogo, el motor prueba todas las rotaciones de 1 a 3 campañas que se arman con los cultivos (385 combinaciones; quedan 277 después de las reglas agronómicas A-AGR-02 a A-AGR-05, pendientes AFA) y muestra si alguna supera a la mejor de las 5 y cuáles están en el frente de Pareto (margen, suelo y riesgo). Se precalcula a diario para los 4 perfiles predefinidos y los 4 filtros de año.
+9. **¿Me conviene sembrar?**: la primera rotación contra alquilar el campo y contra barbecho.
+10. **Explicaciones** con plantillas fijas; un test verifica que cada número del texto exista en la salida.
 
 ## La función de optimización
 
@@ -112,13 +113,13 @@ La humedad inicial de cada campaña sale de GWETROOT de NASA POWER (escalada con
 
 | Hace | No hace |
 | --- | --- |
-| Compara 5 rotaciones del lote demo | No analiza cualquier lote todavía (un solo lote cacheado) |
+| Compara 5 rotaciones del lote demo y busca entre 277 si hay alguna mejor | No analiza cualquier lote todavía (un solo lote cacheado); la búsqueda no sigue los sliders |
 | Usa 41 campañas reales de NASA POWER | No pronostica clima ni precios |
 | Ranking distinto por rol | No modela acopio, corredor ni insumos |
 | Dice si conviene sembrar o alquilar y el arriendo de equilibrio | No usa precios de mercado en vivo |
 | Balance de agua FAO-56 y calendario de vulnerabilidad | No mide el lote (grilla de ~50 km) ni usa sensores |
 | Procedencia en cada número | No da un «% de confianza» |
-| Avisa qué datos faltan | No usa todavía SMAP, IMERG ni GRACE-FO en el cálculo |
+| Avisa qué datos faltan | GRACE-FO y SMAP informan el estado del agua, no cambian el puntaje |
 | Chat por reglas con traza | No usa un modelo de lenguaje en el chat |
 | Simulador de WhatsApp | No está conectado a WhatsApp real |
 | Web en celular y proyector, API pública | Sin usuarios ni carga de lotes propios |

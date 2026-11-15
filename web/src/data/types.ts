@@ -128,3 +128,46 @@ export interface Evaluation {
   displayOrder: string[];
   inputHash: string;
 }
+
+/** Numeric columns of the precomputed search; unit and provenance are declared once per column. */
+export type SearchColumn = "score" | "expected_annual_margin" | "soil_delta_index" | "risk";
+
+export interface SearchRow {
+  rank: number;
+  rotation_id: string;
+  name: string;
+  /** [winter, summer] crop codes per campaign ("" when empty). */
+  campaigns: [string, string][];
+  in_catalog: boolean;
+  is_current: boolean;
+  pareto: boolean;
+  score: number;
+  expected_annual_margin: number | null;
+  soil_delta_index: number | null;
+  risk: number | null;
+  water_feasibility: WaterFeasibility | null;
+}
+
+/** `GET /rotations/search`: exhaustive search precomputed with the predefined profile. */
+export interface RotationSearch {
+  generator_version: string;
+  engine_version: string;
+  input_hash: string;
+  profile_id: ProfileId;
+  year_class_filter: YearClassFilter;
+  rules: string[];
+  counts: {
+    valid_campaigns: number;
+    generated: number;
+    pruned_by_rule: Record<string, number>;
+    kept_by_rules: number;
+    evaluated: number;
+    eligible: number;
+    pareto: number;
+  };
+  best_found: string | null;
+  best_catalog: string | null;
+  gain_vs_catalog: PValue | null;
+  columns: Record<SearchColumn, Pick<PValue, "unit" | "provenance">>;
+  ranking: SearchRow[];
+}

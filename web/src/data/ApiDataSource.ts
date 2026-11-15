@@ -1,5 +1,5 @@
 import { StaleResponseError, type DataSource } from "./DataSource";
-import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, Explanation, PlotContext, Rotation, SliderLimits, SowingDecision } from "./types";
+import type { ActorProfile, EngineOutput, EvaluateRequest, Evaluation, Explanation, PlotContext, ProfileId, Rotation, RotationSearch, SliderLimits, SowingDecision, YearClassFilter } from "./types";
 
 /** Typed error body of the API: `{code, message, details}`. */
 export class ApiError extends Error {
@@ -134,6 +134,19 @@ export class ApiDataSource implements DataSource {
       if (!(e instanceof Unreachable)) throw e;
       this.offline = true;
       return base;
+    }
+  }
+
+  /** `GET /rotations/search`. Never falls back to fixtures: without the API there is no search. */
+  async search(profileId: ProfileId, yearClass: YearClassFilter, signal?: AbortSignal): Promise<RotationSearch | null> {
+    if (this.offline) return null;
+    const q = new URLSearchParams({ actor: profileId, year_class_filter: yearClass });
+    try {
+      const { body } = await this.request<RotationSearch>(`/rotations/search?${q}`, { method: "GET" }, signal);
+      return body;
+    } catch (e) {
+      if (e instanceof ApiError || e instanceof Unreachable) return null;
+      throw e;
     }
   }
 

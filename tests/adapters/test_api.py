@@ -113,3 +113,24 @@ def test_health_reports_smap_and_grace_fixtures() -> None:
     ds = client.get("/api/v1/health").json()["datasets"]
     assert ds["SMAP_L4"] == "FIXTURE" and ds["GRACE_FO"] == "FIXTURE"
     assert ds["GPM_IMERG"] == "FIXTURE"
+
+
+def test_rotation_search_serves_the_precomputed_fixture(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import json
+
+    import rastrojo.application.search as search
+
+    r = client.get(f"{P}/rotations/search", params={"actor": "OWNER"})
+    assert r.status_code == 200
+    body = r.json()
+    fixture = json.loads((search.SEARCH_DIR / "OWNER_ALL.json").read_text(encoding="utf-8"))
+    assert body["input_hash"] == fixture["input_hash"]
+    assert body["ranking"] and body["counts"]["evaluated"] > 5
+    assert any(row["pareto"] for row in body["ranking"])
+
+    bad = client.get(f"{P}/rotations/search", params={"actor": "X"})
+    assert bad.status_code == 422 and bad.json()["code"] == "UNKNOWN_ACTOR"
+
+    monkeypatch.setattr(search, "SEARCH_DIR", search.SEARCH_DIR / "missing")
+    missing = client.get(f"{P}/rotations/search", params={"actor": "OWNER"})
+    assert missing.status_code == 404 and missing.json()["code"] == "SEARCH_NOT_PRECOMPUTED"

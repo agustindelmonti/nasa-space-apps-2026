@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from enum import StrEnum
 from typing import Any, Literal
 
@@ -59,6 +60,7 @@ class ErrorCode(StrEnum):
     PAYLOAD_TOO_LARGE = "PAYLOAD_TOO_LARGE"
     RATE_LIMITED = "RATE_LIMITED"
     DATA_UNAVAILABLE = "DATA_UNAVAILABLE"
+    SEARCH_NOT_PRECOMPUTED = "SEARCH_NOT_PRECOMPUTED"
     TIMEOUT = "TIMEOUT"
     ENGINE_ERROR = "ENGINE_ERROR"
     INTERNAL_ERROR = "INTERNAL_ERROR"
@@ -77,6 +79,7 @@ _STATUS = {
     ErrorCode.PAYLOAD_TOO_LARGE: 413,
     ErrorCode.RATE_LIMITED: 429,
     ErrorCode.DATA_UNAVAILABLE: 503,
+    ErrorCode.SEARCH_NOT_PRECOMPUTED: 404,
     ErrorCode.TIMEOUT: 504,
     ErrorCode.ENGINE_ERROR: 500,
     ErrorCode.INTERNAL_ERROR: 500,
@@ -341,6 +344,28 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
     @app.get(f"{API_PREFIX}/rotations/catalog")
     async def catalog() -> Response:
         return canonical_response({"rotations": [r.model_dump(mode="json") for r in CATALOG]})
+
+    @app.get(f"{API_PREFIX}/rotations/search")
+    async def rotation_search(
+        actor: str = "OWNER", year_class_filter: YearClassFilter = YearClassFilter.ALL
+    ) -> Response:
+        """Búsqueda exhaustiva precalculada (rotation-search). Nunca evalúa en el pedido."""
+        from rastrojo.application.search import SEARCH_DIR
+
+        if actor not in PROFILE_ASSUMPTIONS:
+            raise ApiError(
+                ErrorCode.UNKNOWN_ACTOR,
+                f"actor '{actor}' desconocido",
+                {"allowed": sorted(PROFILE_ASSUMPTIONS)},
+            )
+        path = SEARCH_DIR / f"{actor}_{year_class_filter.value}.json"
+        if not path.exists():
+            raise ApiError(
+                ErrorCode.SEARCH_NOT_PRECOMPUTED,
+                "la búsqueda de rotaciones no está precalculada para ese actor y filtro",
+                {"actor": actor, "year_class_filter": year_class_filter.value},
+            )
+        return canonical_response(json.loads(path.read_text(encoding="utf-8")))
 
     @app.get(f"{API_PREFIX}/actors/profiles")
     async def profiles() -> Response:

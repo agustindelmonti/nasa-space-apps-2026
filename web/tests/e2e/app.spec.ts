@@ -158,3 +158,14 @@ test("provenance tooltip opens with the keyboard and shows dataset, variable, pe
   await sup.focus();
   await expect(page.locator('.params [role="tooltip"]')).toContainText("pendiente de validar con AFA");
 });
+
+test("exhaustive search panel says whether something beats the 5, following actor and year class", async ({ page, request }) => {
+  await open(page);
+  const panel = page.locator("section.search");
+  await expect(panel.getByRole("heading", { name: "¿Hay algo mejor fuera de estas 5?" })).toBeVisible();
+  const body = await (await request.get(`${API}/rotations/search?actor=OWNER&year_class_filter=ALL`)).json();
+  const top = body.ranking[0];
+  await expect(panel.locator(".search-item").first()).toContainText(top.name);
+  await expect(panel.locator(".search-item")).toHaveCount(Math.min(5, body.ranking.length));
+  await expect(panel).toContainText("los sliders y el arriendo no cambian esta búsqueda");
+});

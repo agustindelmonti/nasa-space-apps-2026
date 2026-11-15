@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isIgnorable, type DataSource } from "./data/DataSource";
-import type { DisplayPreference, Evaluation, PlotContext, ProfileId, ProfileOverrides, YearClassFilter } from "./data/types";
+import type { DisplayPreference, Evaluation, PlotContext, ProfileId, ProfileOverrides, RotationSearch, YearClassFilter } from "./data/types";
 import { positions, rankDiff, tableOrder, toRankMap, type RankMap } from "./lib/rankDiff";
 import { AssumptionsContext } from "./components/AssumptionsContext";
 import { LotMap } from "./components/LotMap";
@@ -10,6 +10,7 @@ import { ProfilePanel } from "./components/ProfilePanel";
 import { Verdict } from "./components/Verdict";
 import { EvaluationOptions } from "./components/EvaluationOptions";
 import { RankingTable } from "./components/RankingTable";
+import { SearchPanel } from "./components/SearchPanel";
 import { EvidencePanel } from "./components/EvidencePanel";
 import { AskPanel } from "./components/AskPanel";
 import type { AgentClient } from "./data/AgentClient";
@@ -38,6 +39,7 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
   const [moves, setMoves] = useState<Record<string, number>>({});
   const [evaluationKey, setEvaluationKey] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [search, setSearch] = useState<RotationSearch | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
@@ -82,6 +84,16 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
       });
     return () => ctrl.abort();
   }, [source, ctx, profileId, overrides, yearClass, prefs, rentQq, retry]);
+
+  useEffect(() => {
+    if (!ctx || !source.search) return;
+    const ctrl = new AbortController();
+    source.search(profileId, yearClass, ctrl.signal).then(
+      (s) => !ctrl.signal.aborted && setSearch(s),
+      () => !ctrl.signal.aborted && setSearch(null),
+    );
+    return () => ctrl.abort();
+  }, [source, ctx, profileId, yearClass]);
 
   useEffect(() => () => clearTimeout(debounce.current), []);
 
@@ -202,6 +214,9 @@ export function App({ source, agent }: { source: DataSource; agent?: AgentClient
                     <EvaluationOptions yearClass={yearClass} onYearClass={setYearClass} preferences={prefs} onPreferences={setPrefs} disabled={exampleData} />
                   }
                 />
+              )}
+              {search && profile && search.profile_id === profileId && search.year_class_filter === yearClass && (
+                <SearchPanel search={search} actorLabel={profile.label} customProfile={Object.keys(overrides).length > 0} />
               )}
             </div>
             <aside className="side" aria-label="Lote, agua y perfil">
