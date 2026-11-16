@@ -1,21 +1,21 @@
-# Uso de IA en este proyecto
+# Use of AI in this project
 
-Declaración de transparencia para el jurado de NASA Space Apps Challenge 2026 (sede Rosario).
+Transparency statement for the NASA Space Apps Challenge 2026 judges (Rosario local event).
 
-## Qué herramientas usamos
+## Tools we used
 
-- **Claude Code (Anthropic)** como asistente de ingeniería: redacción de specs con OpenSpec, implementación de código, tests y documentación, siempre bajo revisión del equipo.
+- **Claude Code (Anthropic)** as an engineering assistant: writing specs with OpenSpec, implementing code, tests and documentation, always under team review.
 
-## Dónde NO hay IA
+## Where there is NO AI
 
-- **El motor de decisión es 100 % determinista.** No usa modelos de lenguaje, ni aleatoriedad, ni red. Misma entrada, misma salida byte a byte (hay tests que lo verifican).
-- **Las explicaciones se generan con plantillas deterministas** a partir de la salida del motor. Cada número del texto proviene de un dataset, de un dato del usuario o de un supuesto marcado.
+- **The decision engine is 100% deterministic.** It uses no language models, no randomness and no network. Same input, same output, byte for byte (tests verify this).
+- **Explanations are generated from deterministic templates** based on the engine output. Every number in the text comes from a dataset, from user input or from a flagged assumption.
 
-## Dónde SÍ puede haber IA en el producto
+## Where there CAN be AI in the product
 
-- **Agente "Preguntale a Rastrojo"**, en dos iteraciones. La primera (por defecto) funciona con reglas deterministas, sin modelo de lenguaje. La segunda, opcional, usa Claude (Anthropic) para entender preguntas abiertas, pero solo puede responder con lo que devuelven las tools de lectura sobre el motor; una guarda rechaza cualquier número que no venga de esas tools y, ante cualquier falla, vuelve al cerebro por reglas. Cada respuesta muestra la traza de tools usadas para poder verificarla.
-- **Capa opcional en el canal WhatsApp**, apagada por defecto, que solo reformula el texto de la plantilla para que sea más conversacional. Tiene guardas: no puede agregar ni cambiar números, cultivos ni recomendaciones; ante cualquier violación o error se usa la plantilla original.
+- **"Ask Rastrojo" agent**, in two iterations. The first (default) runs on deterministic rules, with no language model. The second, optional, uses Claude (Anthropic) to understand open questions, but it can only answer with what the read-only tools over the engine return; a guard rejects any number that does not come from those tools and, on any failure, it falls back to the rule-based brain. Every answer shows the trace of tools used so it can be verified.
+- **Optional layer on the WhatsApp channel**, off by default, that only rephrases the template text to make it more conversational. It has guards: it cannot add or change numbers, crops or recommendations; on any violation or error the original template is used.
 
-## Datos
+## Data
 
-- No se inventan datos agronómicos ni económicos. Todo valor que no viene de un dataset NASA o del usuario está registrado como supuesto en `docs/assumptions.md`, con fuente o con la marca "pendiente AFA".
+- No agronomic or economic data is invented. Every value that does not come from a NASA dataset or from the user is recorded as an assumption in `docs/assumptions.md`, with a source or the mark "pending AFA".

@@ -1,8 +1,8 @@
-# Trabajo previo al evento
+# Work done before the event
 
-Declaración para el jurado sobre qué existía antes del sábado 14/11/2026.
+Statement for the judges on what existed before Saturday, November 14, 2026.
 
-- **Código:** ninguno. Todo el código de este repositorio se escribió durante el evento (ver historial de commits fechados). No se reutiliza código de PolPilot ni de otros equipos.
-- **Investigación y planificación:** el equipo preparó antes del evento un documento interno con el contexto del problema (rotaciones en zona núcleo, actores, función de optimización), un inventario de repos públicos de Field Shift y una lista de ideas. Su contenido se resume en `docs/brief.md`.
-- **Martillador de suelo (opcional):** existió una exploración de diseño CAD previa. Si se usa, el diseño se rehace o itera dentro de este repo, y el hardware armado de antemano se declara como tal (aceptado por el Local Lead), mostrando la integración durante el evento.
-- **PolPilot:** es el producto de la startup del equipo y se menciona solo como visión de futuro ("este módulo podría vivir dentro de PolPilot Agro"). No hay código, prompts, endpoints ni esquemas de PolPilot en este repo.
+- **Code:** none. All the code in this repository was written during the event (see the dated commit history). No code from PolPilot or from other teams is reused.
+- **Research and planning:** before the event, the team prepared an internal document with the problem context (rotations in the core Pampas region, decision-makers, optimization function), an inventory of public Field Shift repositories and a list of ideas. Its content is summarized in `docs/brief.md`.
+- **Soil hammer (optional):** there was a prior CAD design exploration. If used, the design is redone or iterated within this repo, and any hardware assembled beforehand is declared as such (accepted by the Local Lead), showing the integration during the event.
+- **PolPilot:** the team members also work on a separate startup called PolPilot. It is mentioned only as a possible future home for this module. There is no PolPilot code, prompts, endpoints or schemas in this repo.

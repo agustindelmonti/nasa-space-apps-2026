@@ -1,33 +1,47 @@
 # Rastrojo
 
-**Rastrojo** es una herramienta de apoyo a la decisión para comparar rotaciones de cultivos en lotes de la zona núcleo pampeana (sur de Santa Fe), usando datos de observación de la Tierra de NASA, información de suelo del productor y las prioridades de cada actor (propietario, arrendatario, cooperativa, banco).
+**Rastrojo** is a decision-support tool that compares crop rotations for farm fields in the core Pampas region of Argentina (southern Santa Fe), using NASA Earth observation data, the farmer's soil information and the priorities of each decision-maker (owner, tenant, cooperative, bank).
 
-NASA Space Apps Challenge 2026, sede Rosario (UCEL). Desafío "Field Shift: Adapting Farms with NASA Data" y desafío local AgTech con AFA (Gestión hídrica inteligente).
+NASA Space Apps Challenge 2026, Rosario local event (UCEL). Challenge: "Field Shift: Adapting Farms with NASA Data", plus the local AgTech challenge with the AFA farmers' cooperative (smart water management).
 
-> **Apoya, no reemplaza al agrónomo.** Trabajamos con escenarios históricos reales, no con predicciones. Todo valor que no viene de un dataset o del usuario está marcado como supuesto (`ASSUMPTION`) para validar con agrónomos.
+> **It supports, not replaces, the agronomist.** We work with real historical seasons, not forecasts. Every value that does not come from a dataset or from the user is flagged as an assumption (`ASSUMPTION`) to be validated with agronomists.
 
-## Demo en vivo
+## Live demo
 
-**https://rastrojo.vercel.app** (web estática + API Python en el mismo proyecto de Vercel).
+**https://rastrojo.vercel.app** (static web app plus a Python API in the same Vercel project). The web interface is in Spanish, for farmers in Argentina.
 
-- `GET /api/v1/health`: estado de la API y de cada dataset (FIXTURE, CACHE o EMPTY).
-- `POST /api/v1/evaluate`: ranking de rotaciones para un actor, con `input_hash` SHA-256 y `engine_version`.
-- `POST /api/v1/ask`: agente con tools (versión guionada, sin LLM) que responde preguntas en lenguaje natural citando la evaluación.
+**Demo deck (7 slides, English):** [Google Slides](https://docs.google.com/presentation/d/1yFjG1d9fvnVsJwipsKSfAucojNGYETwSkc_mntoAZwo/edit?usp=sharing) · [PDF copy in this repo](docs/pitch/rastrojo-demo-deck-en.pdf)
 
-El deploy usa un snapshot climático precomputado (`data/fixtures/demo/engine_climate.json`, generado desde NASA POWER 1981-2025 para el lote demo). Un test verifica que el snapshot coincide con el cálculo en vivo.
+- `GET /api/v1/health`: status of the API and of each dataset (FIXTURE, CACHE or EMPTY).
+- `POST /api/v1/evaluate`: rotation ranking for a decision-maker, with an `input_hash` (SHA-256) and an `engine_version`.
+- `POST /api/v1/ask`: tool-using agent (rule-based version, no LLM) that answers natural-language questions by citing the evaluation.
 
-## Estado
+The deployment uses a precomputed climate snapshot (`data/fixtures/demo/engine_climate.json`, generated from NASA POWER for the demo field). A test checks that the snapshot matches the live calculation.
 
-Especificado con [OpenSpec](https://github.com/Fission-AI/OpenSpec) (17 cambios en `openspec/changes/`, validados con `openspec validate --all --strict`). Implementado: modelos de dominio, ingesta NASA POWER, escenarios climáticos, balance hídrico FAO-56, impacto en suelo, economía, motor de rotaciones, perfiles de actor, explicaciones, API, web demo y agente guionado. Pendiente: WhatsApp real (Twilio), agente con LLM, medición en campo, SMAP/IMERG/GRACE-FO/NDVI (requieren credenciales Earthdata; el motor los reporta como faltantes).
+## How it works
 
-## Cómo correrlo
+1. **Climate:** NASA POWER daily data at the field point, 1984-2024. 41 real growing seasons, classified as dry, normal or wet by rainfall terciles.
+2. **Water:** daily FAO-56 soil water balance with Penman-Monteith reference evapotranspiration (ET0) and crop coefficients. GPM IMERG daily rainfall is wired into the balance for the demo field.
+3. **Soil:** a soil index from -100 to +100 (cover, carbon, nitrogen, weeds, roots), months of bare soil and rain on bare soil.
+4. **Economics:** gross margin per season by type of year.
+5. **Decision:** `Score(r) = Margin + alpha * dSoil - lambda * Risk`, maximized over the feasible rotations. The horizon, rate, alpha and lambda depend on who decides. Risk is the expected shortfall of the worst third of seasons.
+6. **Today's water:** NASA GRACE-FO total water storage and SMAP L4 root-zone soil moisture for the field, with their percentile.
+7. **Search:** all 385 rotations of 1 to 3 seasons from the crop catalog are evaluated; the Pareto front (margin, soil, risk) is precomputed.
 
-Requisitos: Python 3.12 con [uv](https://github.com/astral-sh/uv) y Node 22+.
+The engine is 100% deterministic: same input, same output, no language model in the calculation.
+
+## Status
+
+Specified with [OpenSpec](https://github.com/Fission-AI/OpenSpec) (changes in `openspec/changes/`, validated with `openspec validate --all --strict`). Implemented: domain models, NASA POWER ingestion, climate scenarios, FAO-56 water balance, GPM IMERG rainfall, GRACE-FO and SMAP L4 water status for the demo field, soil impact, economics, rotation engine, exhaustive rotation search with Pareto front, decision-maker profiles, explanations, API, web demo and rule-based agent. Pending: real WhatsApp channel (Twilio), LLM-backed agent, field measurements, and integrating the MODIS NDVI field-history prototype into the main app.
+
+## How to run it
+
+Requirements: Python 3.12 with [uv](https://github.com/astral-sh/uv) and Node 22+.
 
 ```bash
-cp .env.example .env          # opcional; sin credenciales funciona con fixtures
-uv sync                       # instala core + data + dev
-uv run pytest                 # tests del motor, API y explicaciones
+cp .env.example .env          # optional; works with fixtures without credentials
+uv sync                       # installs core + data + dev
+uv run pytest                 # engine, API and explanation tests
 uv run uvicorn rastrojo.adapters.api:app --reload --port 8000
 
 cd web && npm ci
@@ -35,44 +49,45 @@ VITE_API_URL=http://localhost:8000 npm run dev
 npm test && npm run test:e2e  # vitest + Playwright
 ```
 
-Sin la API, la web cae a fixtures locales para que la demo no dependa de la red.
+Without the API, the web app falls back to local fixtures so the demo does not depend on the network.
 
-## Datos NASA
+## NASA data
 
-| Dataset | Uso | Resolución | Limitación principal |
+| Dataset | Use | Resolution | Main limitation |
 |---|---|---|---|
-| NASA POWER | Lluvia, temperatura, ET0, radiación | ~0.5° (meteo) | Grilla gruesa, modelado/reanálisis |
-| SMAP L4 (SPL4SMGP) | Humedad de zona de raíces | ~9 km | Modelo asimilado, no mide el lote |
-| GPM IMERG | Lluvia diaria | ~0.1° | Estimación satelital, subestima eventos locales |
-| GRACE-FO | Anomalía de almacenamiento de agua terrestre | ~300 km efectivos | Señal regional, mensual, huecos 2017-2018 |
-| MODIS / HLS NDVI | Cobertura y vigor histórico | 250 m / 30 m | Nubes, mezcla de píxeles |
+| NASA POWER | Rain, temperature, ET0, radiation, root-zone wetness | ~0.5° (meteorology) | Coarse grid, modeled/reanalysis |
+| GPM IMERG | Daily rainfall in the water balance | ~0.1° | Satellite estimate, underestimates local events |
+| SMAP L4 (SPL4SMGP) | Current root-zone soil moisture | ~9 km | Assimilation model, does not measure the field |
+| GRACE-FO | Terrestrial water storage anomaly | ~300 km effective | Regional, monthly signal, 2017-2018 gap |
+| MODIS MOD13Q1 NDVI | Field-history prototype, map layers | 250 m | Clouds, mixed pixels |
+| NASA GIBS / Worldview | Map layers (MODIS, NDVI, SMAP, IMERG) | varies | Visual context only |
 
-## Uso de IA
+## Use of AI
 
-Este repositorio se desarrolla con asistencia de **Claude Code** (Anthropic) para especificación e implementación, bajo revisión del equipo. El motor de decisión es 100 % determinista y no usa modelos de lenguaje.
+This repository was developed with the assistance of **Claude Code** (Anthropic) for specification and implementation, under team review. The decision engine is 100% deterministic and does not use language models. See `AI_USE.md`.
 
-## Herramientas de diseño
+## Design tools
 
-Usamos [Impeccable](https://github.com/pbakaus/impeccable) (Apache 2.0, vendorizado en `.claude/skills/impeccable`, commit 1995764) como skill de diseño para Claude Code. El contexto de producto está en `PRODUCT.md` y el sistema visual en `DESIGN.md`. Para activar el detector de anti-patrones en tu sesión local: `.claude/skills/impeccable/scripts/impeccable hooks on`. Chequeo manual: `.claude/skills/impeccable/scripts/impeccable detect web/src`.
+We used [Impeccable](https://github.com/pbakaus/impeccable) (Apache 2.0, vendored in `.claude/skills/impeccable`, commit 1995764) as a design skill for Claude Code. Product context is in `PRODUCT.md` and the visual system in `DESIGN.md`.
 
-## Licencia
+## License
 
-MIT. Ver `LICENSE`. 
+MIT. See `LICENSE`.
 
-### Librerías de terceros (open source)
+### Third-party libraries (open source)
 
-| Librería | Licencia | Uso |
+| Library | License | Use |
 |---|---|---|
-| FastAPI, Starlette, Uvicorn | MIT / BSD-3 | API HTTP |
-| Pydantic, pydantic-settings | MIT | Modelos de dominio y configuración |
-| PyYAML | MIT | Supuestos, glosario, intents |
-| pandas, pyarrow, pandera, httpx | BSD-3 / Apache-2.0 / MIT / BSD-3 | Ingesta y caché de NASA POWER |
-| pytest, hypothesis, ruff, mypy | MIT / MPL-2.0 / MIT / MIT | Calidad |
+| FastAPI, Starlette, Uvicorn | MIT / BSD-3 | HTTP API |
+| Pydantic, pydantic-settings | MIT | Domain models and configuration |
+| PyYAML | MIT | Assumptions, glossary, intents |
+| pandas, pyarrow, pandera, httpx | BSD-3 / Apache-2.0 / MIT / BSD-3 | NASA POWER ingestion and cache |
+| pytest, hypothesis, ruff, mypy | MIT / MPL-2.0 / MIT / MIT | Quality |
 | React, React DOM | MIT | Web |
-| Leaflet, react-leaflet | BSD-2 / Hippocratic-2.1 | Mapa |
-| lucide-react | ISC | Iconos |
-| Fontsource (Schibsted Grotesk, Atkinson Hyperlegible Next, IBM Plex Mono) | OFL-1.1 | Tipografías |
-| Vite, TypeScript, Vitest, Playwright | MIT / Apache-2.0 / MIT / Apache-2.0 | Build y tests web |
-| Impeccable | Apache-2.0 | Skill de diseño (no se distribuye en la app) |
+| Leaflet, react-leaflet | BSD-2 / Hippocratic-2.1 | Map |
+| lucide-react | ISC | Icons |
+| Fontsource (Schibsted Grotesk, Atkinson Hyperlegible Next, IBM Plex Mono) | OFL-1.1 | Fonts |
+| Vite, TypeScript, Vitest, Playwright | MIT / Apache-2.0 / MIT / Apache-2.0 | Web build and tests |
+| Impeccable | Apache-2.0 | Design skill (not shipped in the app) |
 
-Capas de mapa: NASA GIBS (dominio público) y Sentinel-2 cloudless de EOX (CC BY-NC-SA 4.0, atribuido en el mapa).
+Map layers: NASA GIBS (public domain) and Sentinel-2 cloudless by EOX (CC BY-NC-SA 4.0, credited on the map).
