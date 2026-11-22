@@ -2,56 +2,56 @@
   "cell_lat": -33.08198165893555,
   "cell_lon": -61.104774475097656,
   "dataset": "SMAP_L4",
-  "date": "2026-11-17",
+  "date": "2026-11-19",
   "ease2_col": 1273,
   "ease2_row": 1255,
   "granules": [
     {
-      "granule": "SMAP_L4_SM_gph_20261117T013000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2473,
-      "start": "2026-11-17T00:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T013000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2698,
+      "start": "2026-11-19T00:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T043000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2638,
-      "start": "2026-11-17T03:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T043000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2692,
+      "start": "2026-11-19T03:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T073000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2636,
-      "start": "2026-11-17T06:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T073000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2686,
+      "start": "2026-11-19T06:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T103000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2715,
-      "start": "2026-11-17T09:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T103000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.268,
+      "start": "2026-11-19T09:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T133000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.27,
-      "start": "2026-11-17T12:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T133000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2671,
+      "start": "2026-11-19T12:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T163000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2679,
-      "start": "2026-11-17T15:00:00.000Z"
-    },
-    {
-      "granule": "SMAP_L4_SM_gph_20261117T193000_Vv8013_001.h5_u9loH5HD",
+      "granule": "SMAP_L4_SM_gph_20261119T163000_Vv8013_001.h5_u9loH5HD",
       "sm_rootzone": 0.2658,
-      "start": "2026-11-17T18:00:00.000Z"
+      "start": "2026-11-19T15:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261117T223000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2746,
-      "start": "2026-11-17T21:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261119T193000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2644,
+      "start": "2026-11-19T18:00:00.000Z"
+    },
+    {
+      "granule": "SMAP_L4_SM_gph_20261119T223000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2636,
+      "start": "2026-11-19T21:00:00.000Z"
     }
   ],
   "lat": -33.07,
   "lon": -61.12,
   "short_name": "SPL4SMGP",
-  "sm_rootzone_daily_mean": 0.2656,
-  "sm_rootzone_pctl_daily_mean": 60.1,
+  "sm_rootzone_daily_mean": 0.2671,
+  "sm_rootzone_pctl_daily_mean": 62.9,
   "unit": "m3/m3",
   "variable": "sm_rootzone"
 }
