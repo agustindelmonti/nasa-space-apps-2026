@@ -2,55 +2,55 @@
   "cell_lat": -33.08198165893555,
   "cell_lon": -61.104774475097656,
   "dataset": "SMAP_L4",
-  "date": "2026-11-23",
+  "date": "2026-11-24",
   "ease2_col": 1273,
   "ease2_row": 1255,
   "granules": [
     {
-      "granule": "SMAP_L4_SM_gph_20261123T013000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2553,
-      "start": "2026-11-23T00:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T013000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2561,
+      "start": "2026-11-24T00:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T043000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2552,
-      "start": "2026-11-23T03:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T043000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2561,
+      "start": "2026-11-24T03:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T073000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2552,
-      "start": "2026-11-23T06:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T073000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2562,
+      "start": "2026-11-24T06:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T103000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2551,
-      "start": "2026-11-23T09:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T103000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2565,
+      "start": "2026-11-24T09:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T133000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2549,
-      "start": "2026-11-23T12:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T133000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.256,
+      "start": "2026-11-24T12:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T163000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2544,
-      "start": "2026-11-23T15:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T163000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2548,
+      "start": "2026-11-24T15:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T193000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2542,
-      "start": "2026-11-23T18:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T193000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2534,
+      "start": "2026-11-24T18:00:00.000Z"
     },
     {
-      "granule": "SMAP_L4_SM_gph_20261123T223000_Vv8013_001.h5_u9loH5HD",
-      "sm_rootzone": 0.2557,
-      "start": "2026-11-23T21:00:00.000Z"
+      "granule": "SMAP_L4_SM_gph_20261124T223000_Vv8013_001.h5_u9loH5HD",
+      "sm_rootzone": 0.2526,
+      "start": "2026-11-24T21:00:00.000Z"
     }
   ],
   "lat": -33.07,
   "lon": -61.12,
   "short_name": "SPL4SMGP",
-  "sm_rootzone_daily_mean": 0.255,
+  "sm_rootzone_daily_mean": 0.2552,
   "sm_rootzone_pctl_daily_mean": 49.0,
   "unit": "m3/m3",
   "variable": "sm_rootzone"
